@@ -4,14 +4,13 @@ import { Metadata } from "next";
 
 
 export const metadata: Metadata = {
-  title: "Cadastro - Agenrap",
+  title: "Cadastro | Agenrap",
   description: "Automatize sua agenda"
 };
 
-export default function Home() {
+export default function RegisterPage() {
   return (
-    <div className="">
-    <Input />
+    <div className="text-center py-8">
     </div>
   );
 }
