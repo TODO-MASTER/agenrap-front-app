@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cinzel, Figtree} from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 const geistCinzel = Cinzel({
   subsets:["latin"],
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body
         className={`${geistCinzel.variable} ${geistFigtree.variable} antialiased`}
       >
+                <Toaster position="top-center" theme="dark" closeButton></Toaster>
         {children}
       </body>
     </html>

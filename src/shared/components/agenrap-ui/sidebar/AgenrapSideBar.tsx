@@ -23,7 +23,7 @@ import {
 
 import { SidebarItems } from "./SidebarItems"
 import Image from "next/image"
-import minLogoAgenrap from "@/src/assets/images/agenrap-mini-icon.svg"
+import {miniIcon} from "@/src/assets/images"
 
 export default function AgenrapSidebar(
   props: React.ComponentProps<typeof Sidebar>
@@ -36,7 +36,7 @@ export default function AgenrapSidebar(
         <div className="flex h-20 w-full items-center justify-center gap-2">
 
           <Image
-            src={minLogoAgenrap}
+            src={miniIcon}
             alt="Agenrap logo"
             className={`transition-all duration-200 ${open ? "h-12.5 w-12.5" : "h-8 w-8"
               }`}
