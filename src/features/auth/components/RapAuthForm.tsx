@@ -48,7 +48,7 @@ export default function RapAuthForm(isLogin: { isLogin?: boolean }) {
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit((values) => isLogin ? onLoginSubmit(values) : onRegisterSubmit(values))}
+                onSubmit={form.handleSubmit((values) => isLogin.isLogin ? onLoginSubmit(values) : onRegisterSubmit(values))}
                 className="flex flex-col gap-6  "
             >
               {!isLogin.isLogin&&  <FormField

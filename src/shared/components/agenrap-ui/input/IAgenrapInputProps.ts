@@ -6,5 +6,6 @@ export interface IAgenrapInputProps extends Omit<React.InputHTMLAttributes<HTMLI
     label?:string,
     error?:string,
     icon?:React.ReactNode,
-    left?:boolean
+    left?:boolean,
+    removeFormMessage?:boolean
 }
