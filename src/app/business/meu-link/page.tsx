@@ -1,23 +1,35 @@
 import { macroLogo } from "@/src/assets/images";
-import InitialConfigBusiness from "@/src/features/business/components/InitialConfigBusiness/InititalConfigBusinessForm/InitialConfigBusinessForm";
+import InitialConfigNameForm from "@/src/features/business/components/InitialConfigBusiness/InititalConfigNameForm/InitialConfigNameForm";
 import AgenrapButton from "@/src/shared/components/agenrap-ui/button/AgenrapButton";
 import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/AgenrapLinkButton/AgenrapLinkButton";
 import AgenrapHeader from "@/src/shared/components/agenrap-ui/header/AgenrapHeader";
 import { initialBusinessConfigUrls } from "@/src/shared/components/agenrap-ui/menu/interfaces/IInitialBusinessConfigUrls";
+import { ToastGuider } from "@/src/shared/components/agenrap-ui/toast/ToastGuider";
 import { serverFetch } from "@/src/shared/lib/serverFetch";
 import { LoaderCircle, LucideLogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export default async function CreateBusinessPage() {
+export default async function CreateBusinessPage({
+    searchParams
+}: {
+    searchParams: Promise<{ flash?: string }>
+}) {
     const res = await serverFetch('business/search-by-user')
     const targetBusiness = await res.json();
+    const { flash: encoded } = await searchParams
+    const flash = encoded ? Buffer.from(encoded, 'base64').toString() : null
     if (targetBusiness.data != null) {
-        redirect('/business/expediente');
+        if (targetBusiness.data.alreadyInitial) {
+            redirect(`/home`);
+        } else {
+            redirect(`/business/expediente?bns=${targetBusiness.data.name}`);
+        }
     }
     return (
         <>
+            {flash && <ToastGuider message={flash} />}
             <AgenrapHeader isDefault={true}>
                 {initialBusinessConfigUrls.labels.map((url, indx) => (
                     <div key={indx} className="flex w-fit relative">
@@ -37,7 +49,7 @@ export default async function CreateBusinessPage() {
                         <LoaderCircle className="animate-spin absolute w-22 h-22" color="#F5E6CC" />
                     </AgenrapButton >
                 </div > :
-                <InitialConfigBusiness />
+                <InitialConfigNameForm />
             }
             <div className="md:hidden block  absolute bottom-0 right-0 -rotate-180">
                 <Link href={"/login"} className="">

@@ -14,12 +14,13 @@ import { initialBusinessServiceSchema, InitialBusinessServiceSchema } from "@/sr
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { macroLogo } from "@/src/assets/images";
+import { useBusinessActions } from "../../../hooks/useBusinessActions";
 
 
 
 
-export default function CreateOccupationSection() {
-
+export default function CreateOccupationForm() {
+    const {handleCreateANewServiceAction,isPending:serviceIsPending} = useBusinessActions()
     const [timeService, setTimeService] = useState([(3600 / 60) * 30])
     const form = useForm<InitialBusinessServiceSchema>({
         resolver: zodResolver(initialBusinessServiceSchema),
@@ -48,7 +49,7 @@ export default function CreateOccupationSection() {
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit((values) => console.log(values))}
+                onSubmit={form.handleSubmit((values) => handleCreateANewServiceAction(values))}
                 className="flex flex-col gap-y-2    items-center  "
             >
 
@@ -116,7 +117,7 @@ export default function CreateOccupationSection() {
                 </div>
 
                 <AgenrapButton type="submit" variant={"purplerap"} disabled={!form.formState.isValid} className={`${!form.formState.isValid ? `cursor-not-allowed` : ""} flex justify-center w-full items-center`}>
-                    {1 > 2 ? <div className="flex relative" >
+                    {serviceIsPending ? <div className="flex relative" >
                         <Image src={macroLogo} alt="" className="w-10 h-10 opacity-15 animate-pulse" />
                         <LoaderCircle className="animate-spin absolute w-10 h-10" color="#F5E6CC" />
 

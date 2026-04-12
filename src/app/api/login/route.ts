@@ -36,7 +36,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ data:data });
 
   } catch (err) {
-    console.error('LOGIN ERROR:', err);
     return NextResponse.json(
       { error: 'Erro interno no login' },
       { status: 500 }

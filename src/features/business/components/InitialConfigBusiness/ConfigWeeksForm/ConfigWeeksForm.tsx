@@ -11,8 +11,10 @@ import { DeleteIcon, LoaderCircle } from "lucide-react";
 import AgenrapButton from "@/src/shared/components/agenrap-ui/button/AgenrapButton";
 import Image from "next/image";
 import { macroLogo } from "@/src/assets/images";
+import { useBusinessActions } from "../../../hooks/useBusinessActions";
 
-export default function ConfigWeeksSection() {
+export default function ConfigWeeksForm() {
+    const {handleCreateWkPeriodAction, isPending}=useBusinessActions()
     const form = useForm<InitialBusinessWeeksSchema>({
 
         resolver: zodResolver(initialBusinessWeeksSchema),
@@ -71,7 +73,7 @@ export default function ConfigWeeksSection() {
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit((values) => console.log(values))}
+                onSubmit={form.handleSubmit((values) => handleCreateWkPeriodAction(values) )}
                 className="flex flex-col gap-y-6 mb-6    items-center  "
             >
                 <div className="flex flex-col lg:w-[35%] md:w-[55%] w-[80%] my-2">
@@ -93,9 +95,9 @@ export default function ConfigWeeksSection() {
                         <div className="bg-(--agenrap-brown-500)/15 flex justify-center md:py-2 py-1 my-2 items-center">
                             <GroupButtonWeeks fields={fields} append={append} form={form} />
                         </div>
-                        <FieldGroup className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] place-items-center w-full gap-2">
+                        <FieldGroup className="grid grid-cols-[repeat(auto-fit,minmax(210px,1fr))] place-items-center w-full  gap-2">
                             {fields.map((wk, index) => (
-                                <div className="flex flex-col  w-fit   " key={wk.id}>
+                                <div className="flex flex-col  w-fit h-full  " key={wk.id}>
                                     <div className="flex  justify-center " >
                                         <div className="flex gap-x-1 py-1  " >
 
@@ -217,7 +219,7 @@ export default function ConfigWeeksSection() {
                 </div>
                 <div className="flex flex-col items-start lg:w-[35%] md:w-[55%] w-[80%] ">
                     <AgenrapButton type="submit" variant={"purplerap"} disabled={!form.formState.isValid} className={`${!form.formState.isValid ? `cursor-not-allowed` : ""} flex justify-center w-full items-center`}>
-                        {1 > 2 ? <div className="flex relative" >
+                        {isPending ? <div className="flex relative" >
                             <Image src={macroLogo} alt="" className="w-10 h-10 opacity-15 animate-pulse" />
                             <LoaderCircle className="animate-spin absolute w-10 h-10" color="#F5E6CC" />
 

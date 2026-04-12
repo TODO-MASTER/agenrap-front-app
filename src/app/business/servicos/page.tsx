@@ -1,17 +1,26 @@
-import CreateOccupationSection from "@/src/features/business/components/InitialConfigBusiness/CreateOccupationSection/CreateOccupationSection";
-import AgenrapButton from "@/src/shared/components/agenrap-ui/button/AgenrapButton";
+
+import CreateOccupationForm from "@/src/features/business/components/InitialConfigBusiness/CreateOccupationForm/CreateOccupationForm";
 import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/AgenrapLinkButton/AgenrapLinkButton";
 import AgenrapHeader from "@/src/shared/components/agenrap-ui/header/AgenrapHeader";
 import { initialBusinessConfigUrls } from "@/src/shared/components/agenrap-ui/menu/interfaces/IInitialBusinessConfigUrls";
-import { LucideLogOut } from "lucide-react";
-import Link from "next/link";
+import { serverFetch } from "@/src/shared/lib/serverFetch";
+import { redirect } from "next/navigation";
 export default async function CreateServicePage() {
+    const res = await serverFetch('business/search-by-user')
+    const targetBusiness = await res.json();
+    if (targetBusiness.data == null) {
+        if (targetBusiness.data.alreadyInitial) {
+            redirect(`/home`);
+        } else {
+            redirect(`/business/meu-link`);
+        }
+    }
     return (
         <>
             <AgenrapHeader isDefault={true}>
                 {initialBusinessConfigUrls.labels.map((url, indx) => (
                     <div key={indx} className="flex w-fit relative">
-                        <AgenrapLinkButton variant={"brownlinkrap"} hrefLink={url.url}>
+                        <AgenrapLinkButton variant={"brownlinkrap"} hrefLink={['expediente', 'servicos'].includes(url.url) ? url.url + `?bns=${targetBusiness.data.name}` : url.url}>
                             {url.view}
                         </AgenrapLinkButton>
                     </div>
@@ -20,7 +29,7 @@ export default async function CreateServicePage() {
             </AgenrapHeader>
             <div className="flex flex-col itens-center mx-auto mt-12 mb-6 lg:w-[35%] md:w-[55%] w-[80%] ">
                 <div className="flex flex-col gap-2 mb-6">
-                    <h1 className=" lg:text-3xl md:text-2xl text-xl text-center  font-tree font-bold my-4 mb-6">Vamos configurar seus serviços</h1>
+                    <h1 className=" lg:text-3xl md:text-2xl text-lg text-center  font-tree font-semibold my-4 mb-6">Configurando primeiros serviços</h1>
                     <div className="flex flex-col">
                         <p className=" font-tree font-medium md:text-xl text-lg ">1. Fornecer o nome do serviço</p>
                         <div className="flex gap-1 mt-2  h-full w-full">
@@ -32,15 +41,9 @@ export default async function CreateServicePage() {
                         </div>
                     </div>
                 </div>
-                <CreateOccupationSection />
+                <CreateOccupationForm />
             </div>
-            <div className="md:hidden block  absolute bottom-0 right-0 -rotate-180">
-                <Link href={"/login"} className="">
-                    <AgenrapButton variant={"brownLogoutrap"} >
-                        <LucideLogOut color="#000" width={20} height={20} />
-                    </AgenrapButton>
-                </Link>
-            </div>
+
         </>
     )
 } 

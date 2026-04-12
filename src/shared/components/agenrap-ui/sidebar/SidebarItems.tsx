@@ -2,41 +2,44 @@ import {
   Rocket,
   Download,
   FolderTree,
+  FlashlightIcon,
+  FastForward,
 } from "lucide-react"
 
 export const SidebarItems = {
   navMain: [
         {
-      title: "Agenrap - Logo",
-      icon: Rocket,
+      title: "Ações Rápidas",
+      icon: FlashlightIcon
+      ,
       url: "#",
       items: [
         {
-          title: "Installation",
+          title: "Serviços",
           url: "#",
-          icon: Download,
+          icon: FastForward,
         },
       
       ],
     },
 
-         {
-      title: "Getting StartedsSS",
-      icon: Rocket,
-      url: "#",
-      items: [
-        {
-          title: "InstallationSS",
-          url: "#",
-          icon: Download,
-        },
-        {
-          title: "Project StructureSS",
-          url: "#",
-          icon: FolderTree,
-        },
-      ],
-    },
+    //      {
+    //   title: "Acesso a coisas",
+    //   icon: Rocket,
+    //   url: "#",
+    //   items: [
+    //     {
+    //       title: "Coisas legais",
+    //       url: "#",
+    //       icon: Download,
+    //     },
+    //     {
+    //       title: "investigar",
+    //       url: "#",
+    //       icon: FolderTree,
+    //     },
+    //   ],
+    // },
 
 
   ],

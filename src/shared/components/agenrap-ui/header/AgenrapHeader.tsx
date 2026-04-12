@@ -31,8 +31,8 @@ export default function AgenrapHeader({ isDefault, children }: IHeaderSettings) 
 
 
         </header> :
-        <header className="flex w-full bg-(--agenrap-brown-200) h-20 border-b border-b-black">
+        <menu className="flex w-full bg-(--agenrap-brown-200) h-20 border-b border-b-black ">
             <SidebarTrigger />
-        </header>
+        </menu>
     )
 }

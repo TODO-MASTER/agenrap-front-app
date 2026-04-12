@@ -1,3 +1,4 @@
+'use client'
 import { ClockCheck, Trash } from "lucide-react";
 import { CollapsableOccupationItemProps } from "./interfaces/CollapsableOccupationItemProps";
 import { timeUtils } from "@/src/shared/utils/timeUtils";

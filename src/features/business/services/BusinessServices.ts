@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache';
-import { InitialBusinessNameSchema } from '../../../shared/types/InititalBusinessFormSchema';
+
 import { serverFetch } from '@/src/shared/lib/serverFetch';
 import { IRequestCreateBusiness } from '@/src/shared/interfaces/requests/IRequestCreateBusiness';
 
@@ -14,6 +14,6 @@ export async function createBusinessByUrlAction(values: IRequestCreateBusiness) 
 
   if (!res.ok) throw new Error('Erro ao criar negócio');
 
-  revalidatePath('/meu-link');
+  revalidatePath('/business/meu-link');
   return res.json();
 }

@@ -1,10 +1,11 @@
 import AgenrapInput from "@/src/shared/components/agenrap-ui/input/AgenrapInput";
 import { FormControl, FormField, FormItem, FormMessage } from "@/src/shared/components/ui/form";
+import { InitialBusinessNameSchema } from "@/src/shared/types/InitialBuinessNameSchema";
 import { BriefcaseBusinessIcon, ContactRound } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
-import { InitialBusinessNameSchema} from "../../../../../shared/types/InititalBusinessFormSchema";
 
-export default function MountUrlBusinessName({ control, watch,form }: { control: any, watch: any,form:UseFormReturn<InitialBusinessNameSchema> }) {
+
+export default function MountUrlName({ control, watch }: { control: any, watch: any}) {
     const name = watch(`business.name`)
     return (
         <div className="flex flex-col lg:w-[35%] md:w-[55%] w-[90%] my-2">
