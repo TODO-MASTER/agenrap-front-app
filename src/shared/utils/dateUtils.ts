@@ -1,5 +1,6 @@
+import { WeekStringType } from "../services/Slots/SlotsService"
 
-const WEEK_DAYS: Record<number, string> = {
+export const WEEK_DAYS: Record<number, WeekStringType> = {
     0: "DOM",
     1: "SEG",
     2: "TER",
@@ -17,7 +18,11 @@ export const dateUtils = {
         return `${y}-${m}-${d}`
     },
 
-    getWeekDay: (date: Date): string => WEEK_DAYS[date.getDay()],
+    getWeekDay: (date: Date): WeekStringType => {
+        return WEEK_DAYS[date.getDay()]
+    },
+    getWeekNumber: (day: string): number =>
+        Number(Object.keys(WEEK_DAYS).find(key => WEEK_DAYS[Number(key)] === day)),
 
     getDay: (date: Date): number => date.getDate(),
 

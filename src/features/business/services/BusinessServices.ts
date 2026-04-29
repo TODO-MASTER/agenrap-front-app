@@ -3,17 +3,19 @@
 import { revalidatePath } from 'next/cache';
 
 import { serverFetch } from '@/src/shared/lib/serverFetch';
-import { IRequestCreateBusiness } from '@/src/shared/interfaces/requests/IRequestCreateBusiness';
+import { ICreateBusinessReq } from '@/src/shared/interfaces/requests/ICreateBusinessReq';
+import { IBusinessFullRes } from '@/src/shared/interfaces/responses/IBusinessRes';
 
-export async function createBusinessByUrlAction(values: IRequestCreateBusiness) {
-  const res = await serverFetch('business/create', {
+
+export async function createBusinessByUrlAction(values: ICreateBusinessReq) {
+  const res = await serverFetch<IBusinessFullRes>('business/create', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(values),
   });
 
-  if (!res.ok) throw new Error('Erro ao criar negócio');
+  
 
-  revalidatePath('/business/meu-link');
-  return res.json();
+  revalidatePath('/business/booking-link');
+  return res;
 }

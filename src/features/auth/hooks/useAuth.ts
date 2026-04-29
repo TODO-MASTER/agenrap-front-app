@@ -1,26 +1,27 @@
+'use client'
 import { toast } from "sonner";
-import { registerUser } from "../services/registerUser";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { environments } from "@/src/environments/environments";
 import { loginUser } from "../services/loginUser";
 
 export function useAuth() {
     const [isAuthLoading, setIsAuthLoading] = useState(false);
+    const searchParams = useSearchParams()
     const router = useRouter()
     const onRegisterSubmit = async (values: any) => {
         setIsAuthLoading(true);
 
         try {
-            const response = await fetch(environments.apiUrl + "user/register", {
+            const response = await fetch(environments.apiUrl + `user/register?isCustomer=${searchParams.get("cmd")=="Y"?true:false}`, {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(values)
             });
             const data = await response.json()
-            if (data.error) {
-                const parsedError = JSON.parse(data.error);
-                toast.error(parsedError.message ?? "Erro desconhecido");
+            if (data.error||data.message =="email já cadastrado!") {
+                
+                toast.error(data.message ?? "Erro desconhecido");
             } else {
                 toast.success(data.message ?? "Erro desconhecido");
                 router.push('/verify-pending-email')
@@ -40,15 +41,17 @@ export function useAuth() {
            setIsAuthLoading(true);
 
     try {
-    //   toast.success('Conectando...');
       const response = await loginUser(values);
       if(!response.data.emailHasVerified){
         router.push('/verify-pending-email')
       }else{
-        router.push('/business/meu-link')
+     
+        if(response.data.role=="Customer"){
+            router.push('/appointments')
+        }else{
+        router.push('/business/booking-link')
+        }
       }
-    //   toast.success('Login realizado com sucesso!');
-    //   router.push('/home');
     } catch (error) {
       toast.error('Erro ao tentar logar');
     } finally {

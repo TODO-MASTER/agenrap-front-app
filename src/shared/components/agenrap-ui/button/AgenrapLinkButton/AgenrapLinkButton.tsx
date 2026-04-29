@@ -21,7 +21,7 @@ export default function AgenrapLinkButton({
     const Crate = "button"
     return(
         <Link href={hrefLink!}>
-        <Crate className={`${cn(agenrapButtonVariants({variant,size,className})) +`${isLoading && variant=="purplerap"?" animate-spin transition-all ":""}`}`} disabled={disabled || isLoading} {...props}>
+        <Crate className={`${cn(agenrapButtonVariants({variant,size,className})) +`${isLoading && variant=="purplerap"?" animate-spin transition-all w-full":""}`}`} disabled={disabled || isLoading} {...props}>
             {children? isLoading && variant!="purplerap"?"Carregando...":children:icon?icon:children}
         </Crate>
         </Link>

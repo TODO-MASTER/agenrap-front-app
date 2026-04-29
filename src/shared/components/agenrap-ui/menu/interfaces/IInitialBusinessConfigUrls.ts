@@ -3,5 +3,5 @@ export interface IInitialBusinessConfigUrls{
 }
 
 export const initialBusinessConfigUrls:IInitialBusinessConfigUrls={
-    labels:[{view:"negócio",url:"negocio"},{view:"expediente",url:"expediente"},{view:"serviços",url:"servicos"}]
+    labels:[{view:"link",url:"booking-link"},{view:"horas",url:"hours"},{view:"serviços",url:"services"}]
 }

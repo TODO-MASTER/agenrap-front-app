@@ -10,7 +10,7 @@ import CollapsableOccupationItem from "@/src/shared/components/agenrap-ui/Collap
 import { Form, FormControl, FormField, FormItem } from "@/src/shared/components/ui/form";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { initialBusinessServiceSchema, InitialBusinessServiceSchema } from "@/src/shared/types/InitialBusinessServiceSchema";
+import { initialBusinessServiceSchema, InitialBusinessServiceSchema } from "@/src/shared/types/Business/InitialBusinessServiceSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { macroLogo } from "@/src/assets/images";

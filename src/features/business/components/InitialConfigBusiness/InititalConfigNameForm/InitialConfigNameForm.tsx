@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { InitialBusinessNameSchema, initialBusinessNameSchema } from "../../../../../shared/types/InitialBuinessNameSchema";
+import { InitialBusinessNameSchema, initialBusinessNameSchema } from "../../../../../shared/types/Business/InitialBuinessNameSchema";
 import { useBusinessActions } from "../../../hooks/useBusinessActions";
 import MountUrlName from "./MountUrlName";
 export default function InitialConfigNameForm() {

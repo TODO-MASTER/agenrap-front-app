@@ -1,8 +1,8 @@
 import { FieldArrayWithId, UseFieldArrayAppend, UseFormReturn } from "react-hook-form";
-import { InitialBusinessFormSchema } from "../../types/InititalBusinessFormSchema";
+import { InitialBusinessWeeksSchema } from "../../types/Business/InitialBusinessWeeksSchema";
 
 export interface IGroupWeeksProps{
-    fields:FieldArrayWithId<InitialBusinessFormSchema,"business.weeks">[],
-    append:UseFieldArrayAppend<InitialBusinessFormSchema,"business.weeks">,
-    form:UseFormReturn<InitialBusinessFormSchema>
+    fields:FieldArrayWithId<InitialBusinessWeeksSchema,"business.weeks">[],
+    append:UseFieldArrayAppend<InitialBusinessWeeksSchema,"business.weeks">,
+    form:UseFormReturn<InitialBusinessWeeksSchema>
 }

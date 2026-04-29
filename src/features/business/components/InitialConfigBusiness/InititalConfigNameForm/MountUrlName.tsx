@@ -1,11 +1,11 @@
 import AgenrapInput from "@/src/shared/components/agenrap-ui/input/AgenrapInput";
 import { FormControl, FormField, FormItem, FormMessage } from "@/src/shared/components/ui/form";
-import { InitialBusinessNameSchema } from "@/src/shared/types/InitialBuinessNameSchema";
+import { InitialBusinessNameSchema } from "@/src/shared/types/Business/InitialBuinessNameSchema";
 import { BriefcaseBusinessIcon, ContactRound } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
 
-export default function MountUrlName({ control, watch }: { control: any, watch: any}) {
+export default function MountUrlName({ control, watch }: { control: any, watch: any }) {
     const name = watch(`business.name`)
     return (
         <div className="flex flex-col lg:w-[35%] md:w-[55%] w-[90%] my-2">
@@ -23,30 +23,38 @@ export default function MountUrlName({ control, watch }: { control: any, watch: 
                 </div>
             </div>
             <div className="mt-4">
-            <FormField
-                control={control}
-                name={`business.name`}
-                
-                render={({ field }) => (
-                    <FormItem className="">
-                        <FormControl>
-                            <AgenrapInput
-                                id="rap-full-name"
-                                label="Nome"
-                                variant="brownrap"
-                                autoComplete="off"
-                                placeholder="nome do seu negócio ex:salao-agenrap"
-                                icon={<BriefcaseBusinessIcon size={25} />}
-                                left={true}
 
-                                {...field}
+                <FormField
+                    control={control}
+                    name={`business.name`}
+                    render={({ field }) => (
+                        <FormItem className="">
+                            <FormControl>
+                                <AgenrapInput
+                                    {...field}
+                                    id="rap-full-name"
+                                    label="Nome"
+                                    variant="brownrap"
+                                    autoComplete="off"
+                                    placeholder="nome do seu negócio ex:salao-agenrap"
+                                    icon={<BriefcaseBusinessIcon size={25} />}
+                                    left={true}
+                                    value={"@" + (field.value?.replace(/^@/, "") ?? "")}
+                                    onChange={(e) => {
+                                        const raw = e.target.value
+                                            .replace(/^@/, "")
+                                            .replace(/\s+/g, "-")
+                                            .replace(/[^a-zA-Z0-9-]/g, "")
+                                        field.onChange("@" + raw)
+                                    }}
+                                />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
 
-                            />
-                        </FormControl>
-                    </FormItem>
-                )}
-            />
             </div>
+
             <div className="flex gap-1 py-1 h-full items-center min-w-0">
                 <span className="flex  h-2.5 w-2.5 rounded-full bg-(--agenrap-blue-500)"></span>
                 <p className="font-tree font-semi-bold text-sm shrink-0">Link</p>

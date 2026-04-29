@@ -1,6 +1,6 @@
 'use client'
 import { ClockCheck, Trash } from "lucide-react";
-import { CollapsableOccupationItemProps } from "./interfaces/CollapsableOccupationItemProps";
+import { CollapsableOccupationItemProps } from "../../../../interfaces/business/CollapsableOccupationItemProps";
 import { timeUtils } from "@/src/shared/utils/timeUtils";
 export default function CollapsableOccupationItem({ name, duration, price,remove,indx }: CollapsableOccupationItemProps) {
     return (

@@ -1,15 +1,16 @@
 'use client'
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
-import { InitialBusinessNameSchema } from "../../../shared/types/InitialBuinessNameSchema";
+import { InitialBusinessNameSchema } from "../../../shared/types/Business/InitialBuinessNameSchema";
 import { createBusinessByUrlAction } from "../services/BusinessServices";
 import { toast } from "sonner";
-import { InitialBusinessWeeksSchema } from "@/src/shared/types/InitialBusinessWeeksSchema";
+import { InitialBusinessWeeksSchema } from "@/src/shared/types/Business/InitialBusinessWeeksSchema";
 import { CreatWorkingPeriod } from "../services/WorkingService";
-import { InitialBusinessServiceSchema } from "@/src/shared/types/InitialBusinessServiceSchema";
+import { InitialBusinessServiceSchema } from "@/src/shared/types/Business/InitialBusinessServiceSchema";
 import { timeUtils } from "@/src/shared/utils/timeUtils";
 import { currencyUtils } from "@/src/shared/utils/currencyUtils";
 import { CreateANewService } from "../services/ServiceService";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export function useBusinessActions() {
   const searchParams = useSearchParams()
@@ -25,8 +26,10 @@ export function useBusinessActions() {
         const data = await createBusinessByUrlAction(bodyMount);
         toast.success(data.message || 'Nova tarefa!');
       } catch (e) {
-        toast.error(e instanceof Error ? e.message : 'Erro ao criar tarefa');
-      }
+              if (isRedirectError(e)) throw e; 
+      toast.error(e instanceof Error ? e.message : 'Erro ao tentar cadastrar negócio');
+    }
+      
     });
   }
   function handleCreateWkPeriodAction(values: InitialBusinessWeeksSchema) {
@@ -50,9 +53,9 @@ export function useBusinessActions() {
           //  
          
           if(!data.data.alreadyInitial){
-            router.push(`/business/servicos?bns=${businessName}`)
+            router.push(`/business/services?bns=${businessName}`)
           }else{
-               router.push(`/home`)
+               router.push(`/home?bns=${businessName}`)
           }
         }
       } catch (e) {
@@ -82,9 +85,9 @@ export function useBusinessActions() {
           const data = await CreateANewService(bodyServiceMount, businessName);
           toast.success(data.message || 'serviços cadastrados!');
         if(!data.data.alreadyInitial){
-            router.push(`/business/expediente?bns=${businessName}`)
+            router.push(`/business/hours?bns=${businessName}`)
           }else{
-               router.push(`/home`)
+               router.push(`/home?bns=${businessName}`)
           }
         }
       } catch (e) {

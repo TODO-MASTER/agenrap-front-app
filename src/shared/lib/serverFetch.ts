@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 
 type Options = RequestInit & { auth?: boolean };
 
-export async function serverFetch(path: string, options: Options = {}) {
+export async function serverFetch<T = unknown>(path: string, options: Options = {}) {
   const apiUrl = environments.apiUrl;
   if (!apiUrl) throw new Error('API_URL não definida');
 
@@ -22,8 +22,11 @@ export async function serverFetch(path: string, options: Options = {}) {
   });
 
   if (res.status === 401 || res.status === 403) {
-    redirect('/');
+    redirect('/login');
   }
 
-  return res;
+
+  const text = await res.text();
+  const data = text ? JSON.parse(text) as T : null as T;
+  return data;
 }

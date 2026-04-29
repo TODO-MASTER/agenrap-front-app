@@ -1,7 +1,7 @@
 'use client'
 
 import { useFieldArray, useForm } from "react-hook-form";
-import { initialBusinessWeeksSchema, InitialBusinessWeeksSchema } from "../../../../../shared/types/InitialBusinessWeeksSchema";
+import { initialBusinessWeeksSchema, InitialBusinessWeeksSchema } from "../../../../../shared/types/Business/InitialBusinessWeeksSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import GroupButtonWeeks from "./GroupButtonWeeks";
 import { FieldGroup } from "@/src/shared/components/ui/field";

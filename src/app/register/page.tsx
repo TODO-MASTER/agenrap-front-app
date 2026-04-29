@@ -5,6 +5,7 @@ import AgenrapHeader from "../../shared/components/agenrap-ui/header/AgenrapHead
 import RapAuthForm from "../../features/auth/components/RapAuthForm";
 import Image from "next/image";
 import { macroLogo } from "../../assets/images";
+import { redirect } from "next/navigation";
 
 
 
@@ -13,7 +14,15 @@ export const metadata: Metadata = {
   description: "Automatize sua agenda"
 };
 
-export default function RegisterPage() {
+export default async function RegisterPage({
+    searchParams
+}: {
+    searchParams: Promise<{ cmd?: string }>
+})  {
+  const {cmd:cmdp} = await searchParams;
+  if(cmdp!="Y"&&cmdp!="N"||!cmdp){
+    redirect("/welcome")
+  }
   return (
     <main className="w-full h-full min-h-lvh   flex">
       <div className="w-full h-full flex justify-center items-center absolute inset-0 -z-10">
@@ -29,6 +38,16 @@ export default function RegisterPage() {
         </div>
       </div>
       <div className="w-[50%]  hidden lg:flex flex-col p-32 pl-7 bg-(--agenrap-brown-500)/75  ">
+      {cmdp=="Y"?<div className="flex gap-1">
+          <span className="w-1.75 h-full  bg-(--agenrap-yellow-200)"></span>
+          <div className="flex flex-col gap-y-1">
+          <p className="text-white font-tree font-bold lg:text-5xl text-2xl  ">Agora seu agendamento</p>
+          <p className="text-white font-tree font-bold lg:text-5xl text-2xl mb-2">é muito rápido</p>
+          <p className="text-white font-tree font-medium lg:text-xl text-lg ">Aqui você agenda sozinho,</p>
+          <p className="text-white font-tree font-medium lg:text-xl text-lg">com dados referentes ao serviço antecipados</p>
+          <p className="text-white font-tree font-medium lg:text-xl text-lg">em conjunto a um ambiente preparado para seu conforto!</p>
+          </div>
+        </div>:
         <div className="flex gap-1">
           <span className="w-1.75 h-full  bg-(--agenrap-yellow-200)"></span>
           <div className="flex flex-col gap-y-1">
@@ -39,14 +58,9 @@ export default function RegisterPage() {
           <p className="text-white font-tree font-medium lg:text-xl text-lg">atender bem e cuidar do seu dia a dia.</p>
           </div>
         </div>
+}
       </div>
-      {/* <SidebarProvider>
-        <AgenrapSidebar color="#" />
-        <SidebarInset>
-          <AgenrapHeader />
-           
-        </SidebarInset>
-      </SidebarProvider> */}
+
     </main>
   );
 }

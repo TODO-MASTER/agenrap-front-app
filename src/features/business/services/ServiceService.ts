@@ -1,19 +1,19 @@
 'use server'
-import { IServiceRequestDTO } from "@/src/shared/interfaces/requests/IServiceRequestDTO";
+
+import { IServiceReq } from "@/src/shared/interfaces/requests/IServiceReq";
+import { ICreateServiceRes } from "@/src/shared/interfaces/responses/IServiceRes";
+
 import { serverFetch } from "@/src/shared/lib/serverFetch";
 import { revalidatePath } from "next/cache";
 
-export async function CreateANewService(values:IServiceRequestDTO,businessName:string){
-    const res = await serverFetch(`service/create?businessName=${businessName}`,{
+export async function CreateANewService(values:IServiceReq,businessName:string){
+    const res = await serverFetch<ICreateServiceRes>(`service/create?businessName=${businessName}`,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(values.services)
     })
-    const data = await res.json();
-    if(!res.ok){
-        throw new Error(data.message|| "Falha tentativa de salvar serviço!")
-    }
-    revalidatePath("/business/expediente")
-    return data
+
+    revalidatePath("/business/hours")
+    return res
 
 }

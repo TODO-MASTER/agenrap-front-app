@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PUBLIC_ROUTES = ['/login', '/register'];
-const PROTECTED_ROUTES = ['/home','/business'];
+const PUBLIC_ROUTES    = ['/login', '/register'];
+const PROTECTED_ROUTES = ['/home', '/business','/appointments','/schedule'];
 
 function isTokenExpired(token: string): boolean {
   try {
@@ -16,24 +16,27 @@ function isTokenExpired(token: string): boolean {
 }
 
 export function proxy(request: NextRequest) {
-  const token = request.cookies.get('token')?.value;
+  const token        = request.cookies.get('token')?.value;
   const { pathname } = request.nextUrl;
+  const tokenValido  = token && !isTokenExpired(token);
 
-  const isProtected = PROTECTED_ROUTES.some(r => pathname.startsWith(r));
+  const isProtected = PROTECTED_ROUTES.some(r => pathname.startsWith(r))
+                   || pathname.startsWith('/@');
   const isPublic    = PUBLIC_ROUTES.some(r => pathname.startsWith(r));
 
-  const tokenValido = token && !isTokenExpired(token);
   if (isProtected && !tokenValido) {
+    if (request.method === 'POST') return NextResponse.next();
+    
     const response = NextResponse.redirect(new URL('/login', request.url));
     if (token) response.cookies.delete('token');
     return response;
   }
 
-  if (isPublic && token) {
+if (isPublic && token) {
     const response = NextResponse.next();
     response.cookies.delete('token');
     return response;
-  }
+}
 
   return NextResponse.next();
 }
