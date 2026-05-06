@@ -29,15 +29,6 @@ export default async function HomePage({
             redirect(`/business/booking-link?flash=${msg}`)
         }
     return (
-     <DashboardSidebarProvider>
-      <AgenrapSidebar color="#" />
-     <SidebarInset className="flex flex-col overflow-hidden">
-        <div className="flex md:hidden w-full">
-        <AgenrapHeader isDefault={false} />
-        </div>
-        <main className="flex-1 p-4">
-        </main>
-      </SidebarInset>
-    </DashboardSidebarProvider>
+     <>oie</>
     )
 }

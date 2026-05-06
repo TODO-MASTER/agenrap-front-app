@@ -9,7 +9,7 @@ useEffect(() => {
   let timeout: NodeJS.Timeout
   const checkMobile = () => {
     clearTimeout(timeout)
-    timeout = setTimeout(() => setOpen(window.innerWidth < 768), 100)
+    timeout = setTimeout(() => setOpen(window.innerWidth < 1024), 100)
   }
   checkMobile()
   window.addEventListener("resize", checkMobile)
@@ -22,7 +22,7 @@ useEffect(() => {
   return (
     <SidebarProvider
     defaultOpen={false}
-      style={{ "--sidebar-width-icon": "6rem" } as React.CSSProperties}
+      style={{ "--sidebar-width-icon": "9rem" } as React.CSSProperties}
       className="overflow-hidden"
     >
       {children}

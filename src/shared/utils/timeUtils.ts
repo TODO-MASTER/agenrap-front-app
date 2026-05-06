@@ -1,3 +1,18 @@
+const DAY_LABELS: Record<string, string> = {
+  SEG: "Segunda",
+  TER: "Terça",
+  QUA: "Quarta",
+  QUI: "Quinta",
+  SEX: "Sexta",
+  SAB: "Sábado",
+  DOM: "Domingo",
+}
+
+export function translateDayName(short: string | undefined): string {
+    if (!short) return ""
+    return DAY_LABELS[short.toUpperCase()] ?? short
+}
+
 export const timeUtils = {
   toMinutes: (time: string) => {
     const [h, m] = time.split(":")
@@ -19,4 +34,7 @@ toHourString: (value: number) => {
     const m = Math.floor((value % 3600) / 60)
     return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`
 }
+
+
+
 }

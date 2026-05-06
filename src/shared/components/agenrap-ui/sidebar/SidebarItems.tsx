@@ -1,9 +1,8 @@
 import {
-  Rocket,
-  Download,
-  FolderTree,
+  Clock,
   FlashlightIcon,
-  FastForward,
+  HandPlatter,
+  LayoutDashboard,
 } from "lucide-react"
 
 export const SidebarItems = {
@@ -15,9 +14,23 @@ export const SidebarItems = {
       url: "#",
       items: [
         {
+          title: "Dashboard",
+          url: "/dashboard",
+          icon: LayoutDashboard,
+          iconClass: "text-(--agenrap-purple-500) ",
+        },
+        {
           title: "Serviços",
-          url: "#",
-          icon: FastForward,
+          url: "/dashboard/service/list",
+          icon: HandPlatter,
+          iconClass: "text-(--agenrap-purple-500) ",
+          activeFor: ["/dashboard/service/list", "/dashboard/service/new"],
+        },
+        {
+          title: "Jornada",
+          url: "/dashboard/journey/list",
+          icon: Clock,
+          iconClass: "text-(--agenrap-purple-500) ",
         },
       
       ],

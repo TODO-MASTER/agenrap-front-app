@@ -13,7 +13,7 @@ export default function CollapsableOccupationItem({ name, duration, price,remove
                 </div>
             </div>
             <div className="flex justify-end w-[60%] min-h-full rounded-r-md rounded-tl-[4.40rem] bg-(--agenrap-brown-200)/95 ">
-            <button type="button" className="flex absolute justify-end -mt-2 -mr-2  bg-red-300/15 rounded-md p-1" onClick={()=>remove(indx)}><Trash color="red"/></button>
+            <button type="button" className="flex absolute justify-end -mt-2 -mr-2  bg-red-300/15 rounded-md  p-1" onClick={()=>remove(indx)}><Trash color="red"/></button>
                 <div className="flex justify-end md:w-[75%] w-[95%] h-[75%] rounded-br-md self-end py-2 pl-2 pr-1 rounded-tl-[4.40rem] bg-(--agenrap-gray-800)/50 ">
                     <p className="text-white self-end font-tree font-bold md:text-4xl text-nowrap text-xl">{price.split(",")[0]},<span className="md:text-xl text-lg ">{price.split(",")[1]}</span></p>
                 </div>

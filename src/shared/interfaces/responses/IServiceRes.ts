@@ -11,3 +11,16 @@ export interface ICreateServiceRes{
 		services:IServicesRes[]
 	}
 }
+
+export interface IEditServiceRes{
+	message:string
+	data:{
+		alreadyInitial:boolean,
+		service:IServicesRes
+	}
+}
+
+export interface IDeleteServiceRes{
+	message:string
+	data:boolean
+}

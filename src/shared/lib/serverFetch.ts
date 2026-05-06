@@ -28,5 +28,10 @@ export async function serverFetch<T = unknown>(path: string, options: Options = 
 
   const text = await res.text();
   const data = text ? JSON.parse(text) as T : null as T;
+  if (!res.ok) {
+    const errorMessage = (data as { message?: string })?.message || 'Erro na requisição';
+    throw new Error(errorMessage);
+}
+
   return data;
 }

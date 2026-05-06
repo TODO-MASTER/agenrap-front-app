@@ -31,4 +31,12 @@ export const initialBusinessServiceSchema = z.object({
         }
     })
 })
+
+export const editBusinessServiceSchema = z.object({
+    name: z.string().min(3, "Mínimo 3 caracteres").max(40, "Máximo de 40 caracteres"),
+    duration: z.string().max(5, "tamanho não suportado!"),
+    price: z.string().min(2, "minimo 2 caracteres"),
+})
+
+export type EditBusinessServiceSchema = z.infer<typeof editBusinessServiceSchema>
 export type InitialBusinessServiceSchema = z.infer<typeof initialBusinessServiceSchema>

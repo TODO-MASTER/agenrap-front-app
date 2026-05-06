@@ -14,7 +14,7 @@ export default async function CreateServicePage({
     const { bns: bsnEncoded } = await searchParams
     const res = await serverFetch<IBusinessRes>(`business/search-by-user?businessName=${bsnEncoded}`)
     if (res && res.alreadyInitial) {
-        redirect(`/home?bns=${bsnEncoded}`);
+        redirect(`/dashboard?bns=${bsnEncoded}`);
     } 
     else if (!res) {
         const msg = Buffer.from('Primeiro selecione ou crie um negócio').toString('base64')

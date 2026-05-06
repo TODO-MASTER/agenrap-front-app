@@ -10,6 +10,7 @@ export const agenrapButtonVariants = cva(
                 brownlinkrap: "text-black bg-(--agenrap-brown-400) outline-none hover:bg-(--agenrap-brown-500)/15 hover:text-black/50 rounded-md cursor-pointer font-figtree font-medium text-sm",
                 brownLogoutrap: "text-black md:bg-(--agenrap-brown-400) bg-(--agenrap-brown-500)/15 outline-none md:hover:bg-(--agenrap-brown-500)/15 hover:text-black/50 md:rounded-md cursor-pointer font-figtree font-medium text-sm",
                 pictureHangerRap:"border-4 font-tree  border-(--agenrap-yellow-200)/85 rounded-xs bg-(--agenrap-pure-white)  justify-center flex flex-col gap-2 items-center",
+                minBrownRap:"w-full h-[100px] outline-none text-white  hover:opacity-90 cursor-pointer font-figtree font-medium text-2xl bg-(--agenrap-brown-500) border-l-4 border-(--agenrap-brown-200)/75",
                 rapblue:"bg-red-200"
             },
             size: {

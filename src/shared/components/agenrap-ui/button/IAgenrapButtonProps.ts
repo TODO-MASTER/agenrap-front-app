@@ -7,5 +7,6 @@ export interface IAgenrapButtonProps extends React.ButtonHTMLAttributes<HTMLButt
     isLoading?:boolean
     icon?:boolean
     hrefLink?:string
+    plusClassName?:string
     
 }

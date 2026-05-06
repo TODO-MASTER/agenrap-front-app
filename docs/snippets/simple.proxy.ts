@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const PUBLIC_ROUTES = ['/login', '/register'];
-const PROTECTED_ROUTES = ['/home','/business'];
+const PROTECTED_ROUTES = ['/dashboard','/business'];
 
 function isTokenExpired(token: string): boolean {
   try {

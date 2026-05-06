@@ -17,7 +17,7 @@ export default async function BusinessInitialConfigPage({
       const {bns:bsn } = await searchParams
     const res = await serverFetch<IBusinessRes>(`business/search-by-user?businessName=${bsn}`)
         if (res&&res.alreadyInitial) {
-            redirect(`/home?bns=${bsn}`);
+            redirect(`/dashboard?bns=${bsn}`);
         }
         else if (!res) {
         const msg = Buffer.from('Primeiro selecione ou crie um negócio').toString('base64')

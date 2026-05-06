@@ -12,6 +12,7 @@ export default function AgenrapLinkButton({
     isLoading,
     asThouched,
     asChild,
+    plusClassName,
     icon,
     hrefLink,
     children,
@@ -20,8 +21,8 @@ export default function AgenrapLinkButton({
 }:IAgenrapButtonProps){
     const Crate = "button"
     return(
-        <Link href={hrefLink!}>
-        <Crate className={`${cn(agenrapButtonVariants({variant,size,className})) +`${isLoading && variant=="purplerap"?" animate-spin transition-all w-full":""}`}`} disabled={disabled || isLoading} {...props}>
+        <Link className={`${plusClassName} `} href={hrefLink!}>
+        <Crate className={`${cn(agenrapButtonVariants({variant,size,className})) +`${isLoading && variant=="purplerap"?" animate-spin transition-all  w-full":""} ${plusClassName}`} `} disabled={disabled || isLoading} {...props}>
             {children? isLoading && variant!="purplerap"?"Carregando...":children:icon?icon:children}
         </Crate>
         </Link>

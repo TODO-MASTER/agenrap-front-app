@@ -7,7 +7,7 @@ export default function CardServiceFit({ name, duration, value}: CollapsableOccu
     return (
         <div className=" flex flex-col w-full    pl-3 gap-y-1 relative bg-(--agenrap-gray-800)">
             <div className="flex flex-col gap-y-2 py-2 ">
-                <p className="font-tree lg:text-2xl md:text-xl pl-2  text-white font-extrabold italic">{name}</p>
+                <p className="font-tree lg:text-2xl md:text-xl pl-2  break-all text-white font-extrabold italic">{name}</p>
                 <div className="flex gap-x-1">
                     <ClockCheck color="#fff" />
                     <p className="font-tree text-lg text-white font-medium">{duration}</p>

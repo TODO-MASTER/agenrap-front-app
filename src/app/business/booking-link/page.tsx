@@ -22,7 +22,7 @@ export default async function CreateBusinessPage({
     const res = await serverFetch<IBusinessRes[]>(`business/search-all-business`)
 
             if (res.length==1&&res[0].alreadyInitial) {
-                redirect(`/home?bns=${res[0].name}`);
+                redirect(`/dashboard?bns=${res[0].name}`);
             }
             else if (res.length==1) {
             redirect(`/business/hours?bns=${res[0].name}`)

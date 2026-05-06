@@ -14,7 +14,7 @@ import { macroLogo } from "@/src/assets/images";
 import { useBusinessActions } from "../../../hooks/useBusinessActions";
 
 export default function ConfigWeeksForm() {
-    const {handleCreateWkPeriodAction, isPending}=useBusinessActions()
+    const { handleCreateWkPeriodAction, isPending } = useBusinessActions()
     const form = useForm<InitialBusinessWeeksSchema>({
 
         resolver: zodResolver(initialBusinessWeeksSchema),
@@ -73,7 +73,7 @@ export default function ConfigWeeksForm() {
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit((values) => handleCreateWkPeriodAction(values) )}
+                onSubmit={form.handleSubmit((values) => handleCreateWkPeriodAction(values))}
                 className="flex flex-col gap-y-6 mb-6    items-center  "
             >
                 <div className="flex flex-col lg:w-[35%] md:w-[55%] w-[80%] my-2">
@@ -93,7 +93,7 @@ export default function ConfigWeeksForm() {
 
                     <section className="flex flex-col ">
                         <div className="bg-(--agenrap-brown-500)/15 flex justify-center md:py-2 py-1 my-2 items-center">
-                            <GroupButtonWeeks fields={fields} append={append} form={form} />
+                            <GroupButtonWeeks weeks={null} fields={fields} append={append} form={form} />
                         </div>
                         <FieldGroup className="grid grid-cols-[repeat(auto-fit,minmax(210px,1fr))] place-items-center w-full  gap-2">
                             {fields.map((wk, index) => (
@@ -143,7 +143,7 @@ export default function ConfigWeeksForm() {
                                                                 value={field.value}
                                                                 onChange={(e) => {
                                                                     field.onChange(e);
-                                                                    form.trigger(`business.weeks.${index}.end`);
+                                                                    form.trigger([`business.weeks.${index}.initial`, `business.weeks.${index}.end`]);
                                                                 }}
                                                                 label="De"
                                                                 variant="brownrap"
@@ -175,7 +175,9 @@ export default function ConfigWeeksForm() {
                                                                     value={field.value}
                                                                     onChange={(e) => {
                                                                         field.onChange(e);
-                                                                        form.trigger(`business.weeks.${index}.initial`);
+                                                                        form.trigger([`business.weeks.${index}.initial`, `business.weeks.${index}.end`]);
+
+
                                                                     }}
                                                                     label="Fim"
                                                                     variant="brownrap"
