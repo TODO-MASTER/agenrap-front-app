@@ -1,10 +1,11 @@
-import { BusinessInitializer } from "@/src/shared/components/agenrap-ui/initializers/BusinessInitializer"
-import { serverFetch } from "@/src/shared/lib/serverFetch"
-import { IBusinessCtx } from "@/src/shared/types/Business/IBusinessCtx"
+import { BusinessInitializer } from "@/src/shared/components/agenrap-ui/initializers/business-initializer"
+import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
+
 import { Metadata } from "next"
-import ShowcaseSection from "@/src/features/customers/components/ServiceShowcase/ShowcaseSection/ShowcaseSection"
-import OnlineCalendarSection from "@/src/features/customers/components/ServiceShowcase/OnlineCalendarSection"
-import ServiceShowcaseHeader from "@/src/shared/components/agenrap-ui/header/ServiceShowcaseHeader"
+import ShowcaseSection from "@/src/features/customers/components/service-showcase/showcase-section/showcase-section"
+import OnlineCalendarSection from "@/src/features/customers/components/service-showcase/online-calendar-section"
+import ServiceShowcaseHeader from "@/src/shared/components/agenrap-ui/header/service-showcase-header"
+import { BusinessCtx } from "@/src/shared/types"
 
 export const metadata: Metadata = {
   title: "Agenda - Agenrap",
@@ -20,7 +21,7 @@ export default async function ServiceScheduleServicePage({ params }: { params: P
     const { rap: rawRap } = await params
     const rap = decodeURIComponent(rawRap)
     if (!rap?.startsWith("@")) return <div>ALGO ESTÁ ERRADO</div>
-    const targetBuinessWithServices = await serverFetch<IBusinessCtx>(`business/per?businessName=${rap}`)
+    const targetBuinessWithServices = await serverFetch<BusinessCtx>(`business/per?businessName=${rap}`)
     if (!targetBuinessWithServices) return <div>Negócio não encontrado</div>
     return (
         <>

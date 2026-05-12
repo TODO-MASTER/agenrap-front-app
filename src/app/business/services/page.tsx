@@ -1,10 +1,10 @@
 
-import CreateOccupationForm from "@/src/features/business/components/InitialConfigBusiness/CreateOccupationForm/CreateOccupationForm";
-import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/AgenrapLinkButton/AgenrapLinkButton";
-import AgenrapHeader from "@/src/shared/components/agenrap-ui/header/AgenrapHeader";
-import { initialBusinessConfigUrls } from "@/src/shared/components/agenrap-ui/menu/interfaces/IInitialBusinessConfigUrls";
-import { IBusinessRes } from "@/src/shared/interfaces/responses/IBusinessRes";
-import { serverFetch } from "@/src/shared/lib/serverFetch";
+import CreateOccupationForm from "@/src/features/business/components/initial-config-business/create-occupation-form/create-occcupation-form";
+import { BusinessRes } from "@/src/features/business/types/business.types";
+import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-link-button";
+import AgenrapHeader from "@/src/shared/components/agenrap-ui/header/agenrap-header";
+import { initialBusinessConfigUrls } from "@/src/shared/components/agenrap-ui/menu/types/initial-business-config-urls";
+import { serverFetch } from "@/src/shared/lib/server-fetch.lib";
 import { redirect } from "next/navigation";
 export default async function CreateServicePage({
     searchParams
@@ -12,7 +12,7 @@ export default async function CreateServicePage({
     searchParams: Promise<{ bns: string }>
 }) {
     const { bns: bsnEncoded } = await searchParams
-    const res = await serverFetch<IBusinessRes>(`business/search-by-user?businessName=${bsnEncoded}`)
+    const res = await serverFetch<BusinessRes>(`business/search-by-user?businessName=${bsnEncoded}`)
     if (res && res.alreadyInitial) {
         redirect(`/dashboard?bns=${bsnEncoded}`);
     } 

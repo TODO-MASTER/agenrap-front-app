@@ -1,17 +1,15 @@
 import { miniIcon } from "@/src/assets/images";
-import BusinessDisplay from "@/src/features/customers/components/BusinessShowcase/BusinessDisplay";
-import ScheduleEntrance from "@/src/features/customers/components/SearchRap/ScheduleEntrance";
-import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/AgenrapLinkButton/AgenrapLinkButton";
-import { BusinessInitializer } from "@/src/shared/components/agenrap-ui/initializers/BusinessInitializer";
-import { IBusinessRes } from "@/src/shared/interfaces/responses/IBusinessRes";
-import { serverFetch } from "@/src/shared/lib/serverFetch";
-import { IBusinessCtx } from "@/src/shared/types/Business/IBusinessCtx";
+import BusinessDisplay from "@/src/features/customers/components/business-showcase/business-display";
+import ScheduleEntrance from "@/src/features/customers/components/search-rap/schedule-entrance";
+import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-link-button";
+import { serverFetch } from "@/src/shared/lib/server-fetch.lib";
+import { BusinessCtx } from "@/src/shared/types";
 import { List, Search } from "lucide-react";
 import Image from "next/image";
 type PageMode = 'search' | 'list'
 
 export default async function ServiceSchedulePage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
-    const res = await serverFetch<IBusinessCtx[]>(`business/search-all-business`)
+    const res = await serverFetch<BusinessCtx[]>(`business/search-all-business`)
     const { mode: rawMode } = await searchParams
 
     const mode: PageMode = (() => {
@@ -43,7 +41,7 @@ export default async function ServiceSchedulePage({ searchParams }: { searchPara
 
             <div className="h-dvh flex bg-(--agenrap-gray-200) gap-y-3 flex-col   ">
 
-                <div className="h-dvh   bg-(--agenrap-yellow-200)/25  rounded-md p-8 gap-y-8 pt-12 flex flex-col  w-full ">
+                <div className="h-dvh rounded-md p-8 gap-y-8 pt-12 flex flex-col  w-full ">
                     <div className="flex w-full flex-wrap  items-center gap-y-8 justify-between">
                         <div className="flex  items-center gap-x-2">
                             <Image src={miniIcon} alt="icone da marca agenrap" className="w-18 h-18" />

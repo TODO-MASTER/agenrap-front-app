@@ -1,12 +1,11 @@
-import { macroLogo } from "@/src/assets/images";
-import InitialConfigNameForm from "@/src/features/business/components/InitialConfigBusiness/InititalConfigNameForm/InitialConfigNameForm";
-import AgenrapButton from "@/src/shared/components/agenrap-ui/button/AgenrapButton";
-import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/AgenrapLinkButton/AgenrapLinkButton";
-import AgenrapHeader from "@/src/shared/components/agenrap-ui/header/AgenrapHeader";
-import { initialBusinessConfigUrls } from "@/src/shared/components/agenrap-ui/menu/interfaces/IInitialBusinessConfigUrls";
-import { ToastGuider } from "@/src/shared/components/agenrap-ui/toast/ToastGuider";
-import {IBusinessRes } from "@/src/shared/interfaces/responses/IBusinessRes";
-import { serverFetch } from "@/src/shared/lib/serverFetch";
+import InitialConfigNameForm from "@/src/features/business/components/initial-config-business/initial-config-name-form/initial-config-name-form";
+import { BusinessRes } from "@/src/features/business/types/business.types";
+import AgenrapButton from "@/src/shared/components/agenrap-ui/button/agenrap-button";
+import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-link-button";
+import AgenrapHeader from "@/src/shared/components/agenrap-ui/header/agenrap-header";
+import { initialBusinessConfigUrls } from "@/src/shared/components/agenrap-ui/menu/types/initial-business-config-urls";
+import { ToastGuider } from "@/src/shared/components/agenrap-ui/toast/toast-guider";
+import { serverFetch } from "@/src/shared/lib/server-fetch.lib";
 import {LucideLogOut } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -19,7 +18,7 @@ export default async function CreateBusinessPage({
 
     const { flash: encoded } = await searchParams
     const flash = encoded ? Buffer.from(encoded, 'base64').toString() : null
-    const res = await serverFetch<IBusinessRes[]>(`business/search-all-business`)
+    const res = await serverFetch<BusinessRes[]>(`business/search-all-business`)
 
             if (res.length==1&&res[0].alreadyInitial) {
                 redirect(`/dashboard?bns=${res[0].name}`);

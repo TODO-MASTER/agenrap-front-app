@@ -1,8 +1,8 @@
 import { Metadata } from "next";
-import AgenrapSidebar from "../../shared/components/agenrap-ui/sidebar/AgenrapSideBar";
+import AgenrapSidebar from "../../shared/components/agenrap-ui/sidebar/agenrap-side-bar";
 import { SidebarInset, SidebarProvider } from "../../shared/components/ui/sidebar";
-import AgenrapHeader from "../../shared/components/agenrap-ui/header/AgenrapHeader";
-import RapAuthForm from "../../features/auth/components/RapAuthForm";
+import AgenrapHeader from "../../shared/components/agenrap-ui/header/agenrap-header";
+import RapAuthForm from "../../features/auth/components/rap-auth-form";
 import Image from "next/image";
 import { macroLogo } from "../../assets/images";
 import { redirect } from "next/navigation";

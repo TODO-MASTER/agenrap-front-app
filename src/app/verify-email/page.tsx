@@ -1,7 +1,7 @@
 import { calytraPureLogo, calytraPureType, macroLogo, verifyMediumIcon } from "@/src/assets/images";
 import { environments } from "@/src/environments/environments";
-import RetryVerifyEmailButton from "@/src/features/auth/components/button/RetryVerifyEmailButton";
-import AgenrapButton from "@/src/shared/components/agenrap-ui/button/AgenrapButton";
+import RetryVerifyEmailButton from "@/src/features/auth/components/button/retry-verify-email-button";
+import AgenrapButton from "@/src/shared/components/agenrap-ui/button/agenrap-button";
 import { HeartHandshake, LoaderCircle, ShieldCheck } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";

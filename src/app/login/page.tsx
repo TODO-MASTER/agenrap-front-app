@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import RapAuthForm from "../../features/auth/components/RapAuthForm";
+import RapAuthForm from "../../features/auth/components/rap-auth-form";
 import Image from "next/image";
 import { macroLogo, verifyMediumIcon } from "../../assets/images";
 
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description: "Faça seu Login"
 };
 
-export default function RegisterPage() {
+export default function LoginPage() {
     return (
         <main className="w-full h-full min-h-lvh   flex">
             <div className="w-[50%]  hidden lg:flex flex-col p-32 pl-7 bg-(--agenrap-brown-500)/75  ">

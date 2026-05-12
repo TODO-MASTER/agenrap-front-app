@@ -1,6 +1,6 @@
-import DashboardSidebarProvider from "@/src/providers/DashboardSidebarProvider";
-import AgenrapHeader from "@/src/shared/components/agenrap-ui/header/AgenrapHeader";
-import AgenrapSidebar from "@/src/shared/components/agenrap-ui/sidebar/AgenrapSideBar";
+import DashboardSidebarProvider from "@/src/providers/dashboard-side-bar-provider";
+import AgenrapHeader from "@/src/shared/components/agenrap-ui/header/agenrap-header";
+import AgenrapSidebar from "@/src/shared/components/agenrap-ui/sidebar/agenrap-side-bar";
 import { SidebarInset } from "@/src/shared/components/ui/sidebar";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

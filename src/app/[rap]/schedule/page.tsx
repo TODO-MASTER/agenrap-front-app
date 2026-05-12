@@ -1,13 +1,9 @@
-import QuickSchedulingAnnouncementSection from "@/src/features/customers/ScheduleMaker/QuickSchedulingAnnouncementSection"
-import QuickSchedulingSection from "@/src/features/customers/ScheduleMaker/QuickSchedulingSection"
-import AgenrapCalendar from "@/src/shared/components/agenrap-ui/calendar/AgenrapCalendar"
-import CardServiceFit from "@/src/shared/components/agenrap-ui/card/CardServiceFit"
-import { BusinessInitializer } from "@/src/shared/components/agenrap-ui/initializers/BusinessInitializer"
-import { IServicesRes } from "@/src/shared/interfaces/responses/IServiceRes"
-import { serverFetch } from "@/src/shared/lib/serverFetch"
-import { IBusinessCtx } from "@/src/shared/types/Business/IBusinessCtx"
-import { currencyUtils } from "@/src/shared/utils/currencyUtils"
-import { CalendarClockIcon } from "lucide-react"
+import { Service } from "@/src/features/business/types"
+import QuickSchedulingAnnouncementSection from "@/src/features/customers/components/schedule-maker/quick-scheduling-announcement-section"
+import QuickSchedulingSection from "@/src/features/customers/components/schedule-maker/quick-scheduling-section"
+import { BusinessInitializer } from "@/src/shared/components/agenrap-ui/initializers/business-initializer"
+import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
+import { BusinessCtx } from "@/src/shared/types"
 
 export default async function AppointmentPage({ params, searchParams, }: { params: Promise<{ rap: string }>, searchParams: Promise<{ svs?: string }> }) {
     const { rap: rawRap } = await params
@@ -17,8 +13,8 @@ export default async function AppointmentPage({ params, searchParams, }: { param
 
     if (!rap?.startsWith("@")) return <div>ALGO ESTÁ ERRADO</div>
 
-    const businessTarget = await serverFetch<IBusinessCtx>(`business/per?businessName=${rap}`)
-    const svsById = await serverFetch<IServicesRes>(`service/get-one?svsId=${svsId}`)
+    const businessTarget = await serverFetch<BusinessCtx>(`business/per?businessName=${rap}`)
+    const svsById = await serverFetch<Service>(`service/get-one?svsId=${svsId}`)
     if (svsById == null) return <div>Serviço não encontrado</div>
     return (
         <div className="flex flex-col my-12  items-center  w-full justify-center ">

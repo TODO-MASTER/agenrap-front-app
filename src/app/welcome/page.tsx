@@ -1,5 +1,5 @@
 import { miniIcon } from "@/src/assets/images";
-import AgenrapChooseProfileButton from "@/src/shared/components/agenrap-ui/button/AgenrapLinkButton/AgenrapChooseProfileButton";
+import AgenrapChooseProfileButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-chose-profile-button";
 import { Building2, DoorOpen, Gem } from "lucide-react";
 import Image from "next/image";
 
