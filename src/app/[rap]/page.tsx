@@ -6,6 +6,8 @@ import ShowcaseSection from "@/src/features/customers/components/service-showcas
 import OnlineCalendarSection from "@/src/features/customers/components/service-showcase/online-calendar-section"
 import ServiceShowcaseHeader from "@/src/shared/components/agenrap-ui/header/service-showcase-header"
 import { BusinessCtx } from "@/src/shared/types"
+import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 
 export const metadata: Metadata = {
   title: "Agenda - Agenrap",
@@ -20,16 +22,28 @@ export const metadata: Metadata = {
 export default async function ServiceScheduleServicePage({ params }: { params: Promise<{ rap: string }> }) {
     const { rap: rawRap } = await params
     const rap = decodeURIComponent(rawRap)
+
     if (!rap?.startsWith("@")) return <div>ALGO ESTÁ ERRADO</div>
-    const targetBuinessWithServices = await serverFetch<BusinessCtx>(`business/per?businessName=${rap}`)
-    if (!targetBuinessWithServices) return <div>Negócio não encontrado</div>
+
+    const targetBusinessWithServices = await serverFetch<BusinessCtx>(
+        `business/per?businessName=${rap}`
+    )
+
+    if (!targetBusinessWithServices) return <div>Negócio não encontrado</div>
+
+    const token = (await cookies()).get('token')?.value
+    const isLoggedIn = !!token
+
+    if (!isLoggedIn) {
+        redirect(`/login?rap=${encodeURIComponent(rap)}`)
+    }
+
     return (
         <>
-        <BusinessInitializer data={targetBuinessWithServices}/>
-            <ServiceShowcaseHeader/>
+            <BusinessInitializer data={targetBusinessWithServices} />
+            <ServiceShowcaseHeader />
             <OnlineCalendarSection />
             <ShowcaseSection rap={rap}/>
-
         </>
     )
 }

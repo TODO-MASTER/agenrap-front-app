@@ -1,4 +1,5 @@
 import {
+  Calendars,
   Clock,
   FlashlightIcon,
   HandPlatter,
@@ -37,6 +38,12 @@ export const SidebarItems = {
           title: "Jornada",
           url: "/dashboard/journey/list",
           icon: Clock,
+          iconClass: "text-(--agenrap-purple-500) ",
+        },
+        {
+          title: "agendamentos",
+          url: "/dashboard/appointments",
+          icon: Calendars,
           iconClass: "text-(--agenrap-purple-500) ",
         },
       

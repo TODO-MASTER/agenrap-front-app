@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { JoinScheduleByRapName } from "../services/customer.service";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import { GetFullDays, saveAppointment } from "@/src/shared/services/appointment.service";
+import { GetFullDays, handleCancelAppointment, saveAppointment } from "@/src/shared/services/appointment.service";
 import { BusinessCtx } from "@/src/shared/types";
 import { AppointmentReq } from "@/src/shared/types/appointment.types";
 import { GetBusinessPerRap } from "@/src/shared/services/business.service";
@@ -15,6 +15,7 @@ export function useCustomerActions() {
   const [isJoinPending, startJoinTransition] = useTransition();
   const [isSaveAppointmentPending, startSaveAppointment] = useTransition();
   const [isStartBookedDaysTransition, startBookedDaysTransition] = useTransition();
+  const [isStartCancelApptTransition,startCancelApptTransition] = useTransition()
   const router = useRouter();
    const useSearchParam = useSearchParams()
    const serviceId = useSearchParam.get("svs")
@@ -89,11 +90,32 @@ export function useCustomerActions() {
     })
   }
   const handleMonthChange = async (month: Date,setFullDays:Dispatch<SetStateAction<string[]>>) => {
+    if(serviceId==null)return
     startBookedDaysTransition(async () => {
     const bookedDays = await GetFullDays(Number(serviceId), month.getMonth()+1, month.getFullYear())
     setFullDays(bookedDays.data.days) 
         })
 }
+  const handleCancelAppointmentAction = async (appontmentId:number,businessId:number,customerId:number|null=null,onSucess:()=>void) => {
+    if(!businessId){
+              toast.error('Verifique o arroba rap e tente novamente! :/');
+      return
+    }
+    startCancelApptTransition(async () => {
+    const res =await  handleCancelAppointment(businessId,appontmentId,customerId)
+    try{
+      if(res.data){
+        toast.success(res.message??"agendamento está cancelado!")
+        onSucess()
+      }
+    } catch (e) {
+        if (isRedirectError(e)) throw e;
+        toast.error(e instanceof Error ? e.message : 'Erro desconhecido');
 
-  return { handleSearchByRap, handleJoinScheduleByRap, isGetOnePending, isJoinPending,isSaveAppointmentPending,handleSaveAppointment,handleMonthChange,isStartBookedDaysTransition };
+      }
+
+        })
+}
+
+  return { handleSearchByRap, handleJoinScheduleByRap,handleCancelAppointmentAction,isStartCancelApptTransition, isGetOnePending, isJoinPending,isSaveAppointmentPending,handleSaveAppointment,handleMonthChange,isStartBookedDaysTransition };
 }

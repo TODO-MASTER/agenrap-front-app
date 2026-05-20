@@ -6,8 +6,20 @@ export async function loginUser(values: any) {
     });
 
     const data = await response.json();
-
- 
+console.log('response.ok:', response.ok);
+console.log('data:', JSON.stringify(data));
+    if (!response.ok) {
+        let message = 'Erro ao tentar logar';
+        if (data.error) {
+            try {
+                const parsed = JSON.parse(data.error);
+                message = parsed.message ?? message;
+            } catch {
+                message = data.error ?? message;
+            }
+        }
+        throw new Error(message);
+    }
 
     return data;
 }

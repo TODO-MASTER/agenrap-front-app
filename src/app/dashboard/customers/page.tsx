@@ -27,9 +27,27 @@ export default async function DashCustomerPage({
     const resCustomers = await getDashCustomersByRap(bns??"",pageNumber)
     
     return(
-        <>
-        <BusinessInitializer data={targetBuinessWithServices}/>
-        <TableCustomerSection customers={resCustomers.data}/>
-        </>
+    <>
+        <BusinessInitializer data={targetBuinessWithServices} />
+        <div className="flex flex-col mx-auto mt-8 mb-6 lg:w-[90%] w-[95%]">
+            <div className="flex flex-col gap-1 mb-6">
+                <h1 className="font-tree font-semibold lg:text-2xl text-xl">
+                    Clientes
+                </h1>
+                <p className="font-tree text-sm text-(--agenrap-brown-500)/60">
+                    {resCustomers.data.length > 0
+                        ? `${resCustomers.totalCount} cliente${resCustomers.totalCount !== 1 ? "s" : ""} cadastrado${resCustomers.totalCount !== 1 ? "s" : ""}`
+                        : "Nenhum cliente cadastrado ainda"}
+                </p>
+            </div>
+            <TableCustomerSection 
+            page={resCustomers.page} 
+            hasNextPage={resCustomers.hasNextPage} 
+            hasPrevPage={resCustomers.hasPreviousPage} 
+            totalPages={resCustomers.totalPages} 
+            customers={resCustomers.data} />
+        </div>
+    </>
+
     )
 }

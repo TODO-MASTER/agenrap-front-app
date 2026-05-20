@@ -15,6 +15,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/src/shared/c
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  notHaveFallBack:string,
     meta?: Record<string, unknown>
     renderDrawer?: (props: {
     row: TData
@@ -27,6 +28,7 @@ export default function AgenrapTable<TData, TValue>({
   columns,
   data,
   meta,
+  notHaveFallBack,
   renderDrawer,
 }: DataTableProps<TData, TValue>) {
 
@@ -68,17 +70,17 @@ useEffect(() => {
 
   return (
     <>
- <div className="w-[90%] mx-auto">
-  <div className=" border rounded-md overflow-hidden">
+ <div className="w-full mx-auto">
+  <div className=" overflow-hidden">
     <ScrollArea scrollHideDelay={99999} className="w-full lg:overflow-visible">
       <div className="w-full">
 
         <Table className="whitespace-nowrap border-0">
           <TableHeader className=" border-0 "  >
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}  >
+              <TableRow key={headerGroup.id}  className="border-0">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className={` font-tree text-white md:text-lg text-sm font-medium py-4 bg-(--agenrap-brown-500) ${!header.column.getAfter() ? 'text-right' : 'text-left'} `} >
+                  <TableHead key={header.id} className={`px-4 font-tree text-white md:text-lg text-sm font-medium py-4 bg-(--agenrap-brown-500) ${!header.column.getAfter() ? 'text-right' : 'text-left'} `} >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -98,19 +100,20 @@ useEffect(() => {
   if (window.innerWidth < 1024) openDrawer(row.original)
   }}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className={`  py-4 font-tree ${!cell.column.getAfter() ? 'text-right' : 'text-left'}`} >
+                    <TableCell key={cell.id} className={`px-4  bg-(--agenrap-gray-800)/5 border-b border-(--agenrap-brown-500)/50  py-4 font-tree ${!cell.column.getAfter() ? 'text-right' : 'text-left'}`} >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
                     </TableCell>
                   ))}
+                  
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  Ainda não há clientes.
+                <TableCell colSpan={columns.length} className="h-24 text-center border-b border-(--agenrap-brown-500)/50">
+                  {notHaveFallBack}
                 </TableCell>
               </TableRow>
             )}

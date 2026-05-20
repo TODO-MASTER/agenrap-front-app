@@ -13,6 +13,21 @@ export type AppointmentRes = ApiResponse<{
   hour: string
 }>
 
+export type AppointmentCancelRes = ApiResponse<{
+  userId:number
+  appointmentId: number
+  serviceId: number
+  businessId:number
+  customerId:number
+  userName: string
+  serviceName: string
+  serviceDuration: string
+  serviceValue: number
+  workingPeriodWeek: string
+  appointmentDate: string
+  appointmentHour: string
+}[]>
+
 export type BookedDaysRes = ApiResponse<{
   days: string[]
 }>

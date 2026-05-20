@@ -102,7 +102,7 @@ export default function AgenrapSidebar(
                   >
                     <button className={`rounded-md w-[60%] bg-(--agenrap-purple-500)/15 hover:bg-(--agenrap-purple-500)/25 transition-colors 
                     ${isActive ? "border-2 border-(--agenrap-purple-500)/75" : ""}
-                    ${!isMobile ? "flex items-center flex-col p-2" : "flex items-center justify-center gap-2 p-4"}`}>
+                    ${!isMobile ? "flex items-center flex-col p-2" : "flex gap-2 p-4"}`}>
                       {item.icon && <item.icon className={`h-6 w-6 shrink-0 ${item.iconClass ?? ""}`} />}
                       <p className="text-sm text-black font-tree font-medium text-center">{item.title}</p>
                     </button>

@@ -3,16 +3,11 @@
 
 import { CustomerJoinScheduleRes } from "@/src/features/customers/types/appointment.types";
 import { serverFetch } from "@/src/shared/lib/server-fetch.lib";
-import { revalidatePath } from "next/cache";
-
 export async function JoinScheduleByRapName(businessName:string){
       const res = await serverFetch<CustomerJoinScheduleRes>(`business/join-in-schedule?businessName=${businessName}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
     
-      
-    
-      revalidatePath('/appointments');
       return res;
 }

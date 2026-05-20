@@ -16,6 +16,7 @@ import { normalizeWeek } from "@/src/shared/utils/normalize-week.utils";
 import { GetBusinessPerRap } from "@/src/shared/services/business.service";
 import { saveAppointment } from "@/src/shared/services/appointment.service";
 import { AppointmentReq } from "@/src/shared/types/appointment.types";
+import { completeAllAppointmentsAsync, CompleteAppointmentsReq } from "@/src/features/business/services/appointment.service";
 export function useBusinessActions() {
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition();
@@ -250,8 +251,35 @@ export function useBusinessActions() {
   
       })
     }
+          const handleCompleteAllppointmentsAction = async (businessId:number,Ids:Set<number>, onSucess:()=>void) => {
+  
+      startTransition(async () => {
+        try {
+  
+          var mountAppointmentBody :CompleteAppointmentsReq ={
+            businessId:businessId,
+            appointmentIds:Array.from(Ids)
+          } 
+  
+          const targetBuinessWithServices = await completeAllAppointmentsAsync(mountAppointmentBody)
+  
+          if (targetBuinessWithServices.data == null) {
+            toast.error(targetBuinessWithServices.message || "Algo deu errado, tente mais tarde!")
+          }else{
+          toast.success(targetBuinessWithServices.message || "entrando em agenda")
+          onSucess()
+          }
+        } catch (e) {
+          if (isRedirectError(e)) throw e;
+          toast.error(e instanceof Error ? e.message : 'Erro ao tentar entrar em agenda');
+  
+        }
+  
+  
+      })
+    }
   
 
   
-  return { handleCreateBusinessAction, handleCreateWkPeriodAction, handleCreateANewServiceAction, handleEditServiceAction,handleDeleteServiceAction,handleEditWorkingPeriodAction,handleDeleteWkpAction,handleManagerSaveAppointment, isPending };
+  return { handleCreateBusinessAction, handleCreateWkPeriodAction, handleCreateANewServiceAction, handleEditServiceAction,handleDeleteServiceAction,handleEditWorkingPeriodAction,handleDeleteWkpAction,handleManagerSaveAppointment,handleCompleteAllppointmentsAction, isPending };
 }

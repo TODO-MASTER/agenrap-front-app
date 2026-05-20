@@ -9,6 +9,8 @@ export type BusinessRes = {
   name: string
   userId: number
   alreadyInitial?: boolean
+  hasWorkingPeriods:boolean
+  hasServices:boolean
 }
 
 export type CreateBusinessRes = ApiResponse<BusinessRes>

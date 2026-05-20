@@ -2,11 +2,13 @@ import { calytraPureLogo, calytraPureType, macroLogo, verifyMediumIcon } from "@
 import { environments } from "@/src/environments/environments";
 import RetryVerifyEmailButton from "@/src/features/auth/components/button/retry-verify-email-button";
 import AgenrapButton from "@/src/shared/components/agenrap-ui/button/agenrap-button";
+import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-link-button";
+import { getPendingRap } from "@/src/shared/utils/cookies.utils";
 import { HeartHandshake, LoaderCircle, ShieldCheck } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-
+import { cookies } from "next/headers"
 
 
 
@@ -17,6 +19,9 @@ export const metadata: Metadata = {
 
 export default async function VerifyEmailPage({ searchParams }: { searchParams: Promise<{ token: string }> }) {
     const { token } = await searchParams
+
+
+    const pendingRap = (await cookies()).get("pendingRap")?.value
 
     if (!token) return <div className="flex justify-center items-center text-2xl font-tree">token inválido</div>
 
@@ -51,12 +56,13 @@ export default async function VerifyEmailPage({ searchParams }: { searchParams: 
             </div>
             <h1 className="text-2xl font-tree font-bold">Usuário Verificado</h1>
             <div className="flex flex-col">
-                <AgenrapButton
+                <AgenrapLinkButton
                     asChild
+                    hrefLink={pendingRap ? `/login?rap=${pendingRap}` : `/login`}
                     className="flex justify-center items-center w-full px-12 mt-2 mb-0.5"
                 >
-                    <Link href="/login">Página de Login</Link>
-                </AgenrapButton>
+                    Página de Login
+                </AgenrapLinkButton>
                 <div className="flex gap-x-0.5 justify-end items-center py-1">
                     <ShieldCheck width={25} height={25} color="#2563EB" />
                     <Image src={calytraPureType} alt="calytra protection" className=" w-25" />

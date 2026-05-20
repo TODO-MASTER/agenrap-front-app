@@ -22,7 +22,7 @@ useEffect(() => {
   return (
     <SidebarProvider
     defaultOpen={false}
-      style={{ "--sidebar-width-icon": "9rem" } as React.CSSProperties}
+      style={{ "--sidebar-width-icon": "12rem" } as React.CSSProperties}
       className="overflow-hidden"
     >
       {children}
