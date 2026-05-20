@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PUBLIC_ROUTES = ['/login', '/register','/welcome'];
+const PUBLIC_ROUTES = ['/login', '/register','/welcome','/verify-email','/verify-pending-email'];
 const PROTECTED_ROUTES = ['/dashboard', '/business', '/appointments', '/schedule'];
 
 function isTokenExpired(token: string): boolean {
@@ -27,6 +27,12 @@ export function proxy(request: NextRequest) {
     if (request.method === 'POST') return NextResponse.next();
     const response = NextResponse.redirect(new URL('/login', request.url));
     if (token) response.cookies.delete('token');
+    return response;
+  }
+  if(!isPublic && tokenValido){
+    const pendingRap = request.cookies.get('pendingRap')?.value
+     const response = NextResponse.next();
+    if(pendingRap)  response.cookies.delete('pendingRap');
     return response;
   }
 

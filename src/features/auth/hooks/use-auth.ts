@@ -6,6 +6,8 @@ import { environments } from "@/src/environments/environments";
 import { loginUser } from "../services/login-user";
 import { JoinScheduleByRapName } from "@/src/features/customers/services/customer.service";
 import { clearPendingRap, getPendingRap, setPendingRap } from "@/src/shared/utils/cookies.utils";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { GetBusinessPerRap } from "@/src/shared/services/business.service";
 
 export function useAuth() {
     const [isAuthLoading, setIsAuthLoading] = useState(false);
@@ -105,6 +107,11 @@ const withCheckRapLogin = async (values: any) => {
     
     const rap = await onLoginSubmit(values)
     if (rap) {
+        const tgbyRap = await GetBusinessPerRap(rap)
+        if(!tgbyRap.haveAct){
+
+       
+        try{
         const response = await JoinScheduleByRapName(rap)
         clearPendingRap()
         if (response.data) {
@@ -114,6 +121,14 @@ const withCheckRapLogin = async (values: any) => {
             toast.error(response.message ?? "algo deu errado")
             router.push("/appointments")
         }
+    }catch (e) {
+              if (isRedirectError(e)) throw e;
+              toast.error(e instanceof Error ? e.message : 'Erro ao tentar entrar em agenda');
+      
+            }
+             }else{
+                router.push(`/${rap}`)
+             }
     }
     setIsAuthLoading(false)
 }
