@@ -9,25 +9,26 @@ import { getDefaultClassNames } from "react-day-picker"
 import { useCustomerActions } from "@/src/features/customers/hooks/use-customer-actions"
 import { BusinessCtx } from "@/src/shared/types"
 
-export type AgenrapCalendarProps= {
-    business:BusinessCtx,
-    date:Date|undefined,
-    setDate:Dispatch<SetStateAction<Date | undefined>>,
-    fullDays:string[]
-    setFullDays:Dispatch<SetStateAction<string[]>>
+export type AgenrapCalendarProps = {
+    business: BusinessCtx,
+    date: Date | undefined,
+    setDate: Dispatch<SetStateAction<Date | undefined>>,
+    fullDays: string[]
+    setFullDays: Dispatch<SetStateAction<string[]>>
     className: string
+    isOwner?: boolean
 }
-export default function AgenrapCalendar({business,date,setDate,className,fullDays,setFullDays }: AgenrapCalendarProps) {
-        const {handleMonthChange } = useCustomerActions()
-    useEffect(()=>{
+export default function AgenrapCalendar({ business, date, setDate, className, fullDays, setFullDays,isOwner  }: AgenrapCalendarProps) {
+    const { handleMonthChange } = useCustomerActions()
+    useEffect(() => {
         console.log(date)
-    },[date])
-   
+    }, [date])
+
 
     return (
         <Calendar mode="single" selected={date} onSelect={setDate} locale={ptBR}
             className={`w-full  rounded-md border font-tree border-[#FFE082]/50 bg-(--agenrap-gray-800) text-white ${className}`}
-             onMonthChange={(month) => handleMonthChange(month, setFullDays)}
+            onMonthChange={(month) => handleMonthChange(month, setFullDays)}
             disabled={(day) => {
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
@@ -36,9 +37,9 @@ export default function AgenrapCalendar({business,date,setDate,className,fullDay
                 const isWorkingDay = business?.weeks.some(wk =>
                     day.getDay() === dateUtils.getWeekNumber(wk.week)
                 );
-                const isFullDay = fullDays.includes(dateUtils.toDateString(day));
+                 const isFullDay = !isOwner && fullDays.includes(dateUtils.toDateString(day));
 
-                return isBeforeToday || !isWorkingDay||isFullDay;
+                return isBeforeToday || !isWorkingDay || isFullDay;
             }}
             classNames={{
                 weekday: cn("text-white/80 w-full mb-2", ...getDefaultClassNames().weekday),
@@ -48,7 +49,7 @@ export default function AgenrapCalendar({business,date,setDate,className,fullDay
                     "data-[selected=true]:bg-blue-600",
                     "data-[selected=true]:text-black",
                     "data-[selected=true]:bg-blue-700",
-                
+
                     "outline-none"
 
                 ),

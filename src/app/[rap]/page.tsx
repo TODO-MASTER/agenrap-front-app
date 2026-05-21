@@ -34,6 +34,8 @@ export default async function ServiceScheduleServicePage({ params }: { params: P
     const token = (await cookies()).get('token')?.value
     const isLoggedIn = !!token
 
+        if(targetBusinessWithServices.isOwner) redirect(`/dashboard?bns=${rap}`)
+
     if (!isLoggedIn) {
         redirect(`/login?rap=${encodeURIComponent(rap)}`)
     }

@@ -5,6 +5,7 @@ import { BusinessInitializer } from "@/src/shared/components/agenrap-ui/initiali
 import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
 import { AppointmentCancelRes } from "@/src/shared/types/appointment.types"
 import { BusinessCtx } from "@/src/shared/types"
+import { redirect } from "next/navigation"
 
 export default async function AppointmentPage({ params, searchParams, }: { params: Promise<{ rap: string }>, searchParams: Promise<{ svs?: string }> }) {
     const { rap: rawRap } = await params
@@ -20,6 +21,7 @@ export default async function AppointmentPage({ params, searchParams, }: { param
 
     const appointments = await serverFetch<AppointmentCancelRes>(`appointment/next-view?businessId=${businessTarget?.id}`)
     const existingAppointment = appointments?.data?.[0] ?? null
+    if(businessTarget.isOwner) redirect(`/dashboard?bns=${rap}`)
 
     return (
         <div className="flex flex-col my-12 items-center w-full justify-center">

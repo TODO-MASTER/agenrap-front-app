@@ -56,7 +56,7 @@ export default function QuickSchedulingSection({ existingAppointment }: Props) {
         handleMonthChange(new Date(), setFullDays)
     }, [])
 
-    if (!showBooking && existingAppointment) {
+    if (!showBooking && !business?.isOwner && existingAppointment) {
         const apptDate = dateUtils.fromDateString(existingAppointment.appointmentDate)
         const day = apptDate.getDate()
         const month = MONTHS[apptDate.getMonth()]
@@ -137,7 +137,7 @@ export default function QuickSchedulingSection({ existingAppointment }: Props) {
                 <p className="font-tree font-bold text-4xl text-black">Dias Livres</p>
             </div>
             <div className="flex md:flex-nowrap p-2 flex-wrap gap-x-5 bg-(--agenrap-yellow-200)/50 gap-y-4 justify-center">
-                <AgenrapCalendar fullDays={fullDays} setFullDays={setFullDays} business={business!} date={date} setDate={setDate} className="lg:w-[50%] w-full" />
+                <AgenrapCalendar isOwner={business?.isOwner} fullDays={fullDays} setFullDays={setFullDays} business={business!} date={date} setDate={setDate} className="lg:w-[50%] w-full" />
 
                 <div className="lg:w-[50%] w-full flex flex-col rounded-lg">
                     <div className="p-2 flex w-full rounded-t-md bg-(--agenrap-gray-800)">

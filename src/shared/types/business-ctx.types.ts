@@ -16,6 +16,7 @@ export type BusinessCtx= {
     weeks:WkCtx[]
     mnrName?:string
     qtdServices?: number,
-    haveAct?:boolean
+    haveAct?:boolean,
+    isOwner?:boolean
     
 }
