@@ -7,6 +7,7 @@ export type  AgenrapInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement
     error?:string,
     icon?:React.ReactNode,
     left?:boolean,
-    removeFormMessage?:boolean
+    removeFormMessage?:boolean,
+    labelIcon?:React.ReactNode
     
 }

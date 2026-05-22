@@ -12,7 +12,7 @@ export const labelErrorStyles = {
         calyBlack: { label: "text-black", error: "bg-black/5 p-2" },
         calyGhost: { label: "text-black", error: "bg-black/5 p-2" }
     };
-export default function AgenrapInput({ className, size, variant, allErrors, id, icon, label, left,removeFormMessage, ...props }: AgenrapInputProps) {
+export default function AgenrapInput({ className, size, variant, allErrors, id, icon, label,labelIcon, left,removeFormMessage, ...props }: AgenrapInputProps) {
     
     const { error } = useFormField()
     const hasError = !!error 
@@ -23,7 +23,10 @@ export default function AgenrapInput({ className, size, variant, allErrors, id, 
 
     return (
         <div className="flex flex-col gap-y-2">
+            <div className="flex items-center gap-x-1">
             {label && <FormLabel htmlFor={`${id}`} className={styles.label}>{label}</FormLabel>}
+            {labelIcon && labelIcon}
+            </div>
             <div className={`${
                  cn(agenrapInputVariants({ variant, size, className })) 
                 } rounded-[2px] pr-2`}

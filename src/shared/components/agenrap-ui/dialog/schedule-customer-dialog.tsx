@@ -146,7 +146,7 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
                 <p className="font-tree text-white text-lg font-semibold leading-tight">Agendar</p>
                 {customer && (
                   <p className="font-tree text-(--agenrap-purple-500) text-sm font-normal leading-tight">
-                    {customer.name}
+                    {customer.firstName}
                     {customer.telephone && (
                       <span className="text-white/30 ml-1">· {customer.telephone}</span>
                     )}
@@ -332,7 +332,7 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
                   dateUtils.toDateString(date!),
                   selectedSlot!,
                   customer!.id,
-                  customer!.name,
+                  customer!.initials,
                   () => {
                     setOpen(false)
                     router.refresh()
