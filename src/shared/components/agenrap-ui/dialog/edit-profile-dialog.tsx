@@ -72,14 +72,7 @@ export default function EditProfileDialog({ user }: { user: UserProfile }) {
           </DialogHeader>
 
           <div className="px-5 py-5">
-            {missingPhone && (
-              <div className="flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/20 rounded-lg px-3 py-2 mb-4">
-                <span style={{ color: 'var(--agenrap-yellow-200)' }} className="text-xs">⚠</span>
-                <p className="text-xs font-tree" style={{ color: 'var(--agenrap-yellow-200)' }}>
-                  Telefone não cadastrado
-                </p>
-              </div>
-            )}
+        
             <ProfileTabs user={user} />
           </div>
         </DialogContent>

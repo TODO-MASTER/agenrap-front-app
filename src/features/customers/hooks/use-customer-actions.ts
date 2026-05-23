@@ -1,13 +1,14 @@
 'use client'
 import { Dispatch, SetStateAction, useTransition } from "react";
 import { toast } from "sonner";
-import { JoinScheduleByRapName } from "../services/customer.service";
+import { ChangePasswordAction, JoinScheduleByRapName, UpdatePhoneAction } from "../services/customer.service";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { GetFullDays, handleCancelAppointment, saveAppointment } from "@/src/shared/services/appointment.service";
 import { BusinessCtx } from "@/src/shared/types";
 import { AppointmentReq } from "@/src/shared/types/appointment.types";
 import { GetBusinessPerRap } from "@/src/shared/services/business.service";
+import { ContactSchema, PasswordSchema } from "@/src/features/customers/schemas/customer-profile.schema";
 
 
 export function useCustomerActions() {
@@ -16,6 +17,8 @@ export function useCustomerActions() {
   const [isSaveAppointmentPending, startSaveAppointment] = useTransition();
   const [isStartBookedDaysTransition, startBookedDaysTransition] = useTransition();
   const [isStartCancelApptTransition,startCancelApptTransition] = useTransition()
+      const [isPhonePending, startPhoneTransition] = useTransition()
+    const [isPasswordPending, startPasswordTransition] = useTransition()
   const router = useRouter();
    const useSearchParam = useSearchParams()
    const serviceId = useSearchParam.get("svs")
@@ -116,6 +119,44 @@ export function useCustomerActions() {
 
         })
 }
+   function handleUpdatePhone(
+        values: ContactSchema,
+        onSuccess: () => void,
+        onError: () => void
+    ) {
+        startPhoneTransition(async () => {
+            try {
+                await UpdatePhoneAction(values.telephone ?? '')
+                toast.success('Telefone atualizado com sucesso!')
+                onSuccess()
+            } catch (e) {
+                toast.error(e instanceof Error ? e.message : 'Erro ao atualizar telefone')
+                onError()
+            }
+        })
+    }
+ 
+    function handleChangePassword(
+        values: PasswordSchema,
+        onSuccess: () => void,
+        onError: () => void
+    ) {
+        startPasswordTransition(async () => {
+            try {
+                await ChangePasswordAction(values.currentPassword, values.newPassword)
+                toast.success('Senha alterada com sucesso!')
+                onSuccess()
+            } catch (e) {
+                toast.error(e instanceof Error ? e.message : 'Erro ao alterar senha')
+                onError()
+            }
+        })
+    }
+ 
 
-  return { handleSearchByRap, handleJoinScheduleByRap,handleCancelAppointmentAction,isStartCancelApptTransition, isGetOnePending, isJoinPending,isSaveAppointmentPending,handleSaveAppointment,handleMonthChange,isStartBookedDaysTransition };
+  return { handleSearchByRap, handleJoinScheduleByRap,handleCancelAppointmentAction,
+    handleChangePassword,
+    handleUpdatePhone,
+    handleSaveAppointment,handleMonthChange,
+    isStartCancelApptTransition, isGetOnePending, isJoinPending,isSaveAppointmentPending,isStartBookedDaysTransition,isPhonePending,isPasswordPending };
 }

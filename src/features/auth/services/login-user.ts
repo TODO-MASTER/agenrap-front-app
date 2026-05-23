@@ -6,8 +6,6 @@ export async function loginUser(values: any) {
     });
 
     const data = await response.json();
-console.log('response.ok:', response.ok);
-console.log('data:', JSON.stringify(data));
     if (!response.ok) {
         let message = 'Erro ao tentar logar';
         if (data.error) {

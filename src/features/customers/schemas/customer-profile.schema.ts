@@ -1,11 +1,7 @@
 import { z } from "zod"
 
 export const contactSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'E-mail obrigatório')
-    .email('E-mail inválido'),
-  phone: z
+  telephone: z
     .string()
     .transform(v => v.replace(/\D/g, ''))
     .refine(v => v === '' || v.length === 10 || v.length === 11, {

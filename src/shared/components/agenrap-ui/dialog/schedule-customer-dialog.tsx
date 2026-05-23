@@ -192,7 +192,7 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
               {/* Card do agendamento ativo */}
               <div className="flex items-stretch rounded-xl overflow-hidden bg-(--agenrap-gray-800) border border-white/5">
                 <div className="w-1.5 shrink-0" style={{ background: 'linear-gradient(to bottom, #FFE082, #C46210)' }} />
-                <div className="flex flex-col items-center justify-center px-5 py-4 border-r border-white/5 min-w-[5rem]">
+                <div className="flex flex-col items-center justify-center px-5 py-4 border-r border-white/5 min-w-20">
                   <span className="text-[9px] font-black tracking-[0.35em] text-(--agenrap-yellow-200) uppercase">{month}</span>
                   <span className="text-[2.5rem] font-black leading-none text-white mt-0.5">{day}</span>
                   <span className="text-[9px] tracking-widest font-bold mt-1 text-gray-500 uppercase">{activeAppointment.workingPeriodWeek}</span>
