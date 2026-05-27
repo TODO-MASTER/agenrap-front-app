@@ -1,18 +1,22 @@
 'use client'
 
-import { Feedback } from "@/src/features/customers/components/business-showcase/profile-form/profile-feedback";
+import { macroLogo } from "@/src/assets/images";
+import { useCustomerActions } from "@/src/features/customers/hooks/use-customer-actions";
 import { passwordSchema, PasswordSchema } from "@/src/features/customers/schemas/customer-profile.schema";
 import AgenrapButton from "@/src/shared/components/agenrap-ui/button/agenrap-button";
 import AgenrapInput from "@/src/shared/components/agenrap-ui/input/agenrap-input";
 import { Form, FormControl, FormField, FormItem } from "@/src/shared/components/ui/form";
 import { Separator } from "@/src/shared/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, KeyRound, KeySquare } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function PasswordTab() {
-    const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
+    const { handleChangePassword, isPasswordPending } = useCustomerActions()
+    const router = useRouter()
     const [showCurrent, setShowCurrent] = useState(false)
     const [showNew, setShowNew] = useState(false)
     const [showConfirm, setShowConfirm] = useState(false)
@@ -23,17 +27,15 @@ export default function PasswordTab() {
         mode: 'onChange',
     })
 
-    const hasErrors = form.formState.isDirty && !form.formState.isValid
 
     async function onSubmit(values: PasswordSchema) {
-        setFeedback(null)
-        try {
-            await new Promise(r => setTimeout(r, 700))
-            setFeedback({ type: 'success', msg: 'Senha alterada com sucesso!' })
-            form.reset()
-        } catch {
-            setFeedback({ type: 'error', msg: 'Senha atual incorreta ou erro no servidor.' })
-        }
+        handleChangePassword(
+            values,
+            () => {
+                router.refresh()
+                form.reset()
+            },
+        )
     }
 
     const EyeToggle = ({ show, onToggle }: { show: boolean; onToggle: () => void }) => (
@@ -140,15 +142,19 @@ export default function PasswordTab() {
                     )}
                 </div>
 
-                {feedback && <Feedback type={feedback.type} message={feedback.msg} />}
 
-<AgenrapButton
-    type="submit"
-    variant="purplerap"
-    disabled={form.formState.isSubmitting || !form.formState.isValid}
-    className={`w-full transition-all cursor-not-allowed disabled:opacity-50 disabled:cursor-not-allowed ${hasErrors ? "ring-2 ring-red-400/60 ring-offset-1" : ""}`}
->
-                    {form.formState.isSubmitting ? 'Alterando…' : 'Alterar senha'}
+                <AgenrapButton
+                    type="submit"
+                    variant="purplerap"
+                    disabled={form.formState.isSubmitting || !form.formState.isValid || !form.formState.isDirty || isPasswordPending }
+                    className={`w-full justify-center  items-center    ${(!form.formState.isValid || !form.formState.isDirty) && "transition-all cursor-not-allowed disabled:opacity-50 disabled:cursor-not-allowed"}`}
+                >
+                    {isPasswordPending ? (
+                        <div className="flex w-full justify-center items-center relative">
+                            <Image src={macroLogo} alt="" className="w-6 h-6 opacity-15 animate-pulse" />
+                            <LoaderCircle className="animate-spin absolute w-10 h-10" color="#F5E6CC" />
+                        </div>
+                    ) : 'Salvar nova senha'}
                 </AgenrapButton>
             </form>
         </Form>

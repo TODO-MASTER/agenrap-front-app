@@ -13,19 +13,5 @@ export async function JoinScheduleByRapName(businessName:string){
       return res;
 }
 
-export async function UpdatePhoneAction(telephone: string) {
-    return await serverFetch<ApiResponse<boolean>>('user/update-phone', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ telephone }),
-    })
-}
 
-export async function ChangePasswordAction(currentPassword: string, newPassword: string) {
-    return await serverFetch<void>('user/change-password', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ currentPassword, newPassword }),
-    })
-}
  

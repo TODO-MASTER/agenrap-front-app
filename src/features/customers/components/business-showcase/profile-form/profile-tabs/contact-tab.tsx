@@ -15,32 +15,88 @@ import Image from "next/image"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useCustomerActions } from "@/src/features/customers/hooks/use-customer-actions"
+import { UserAuthRes } from "@/src/shared/services/user.service"
+import { useRouter } from "next/navigation"
  
-export default function ContactTab({ user }: { user: UserProfile }) {
+export default function ContactTab({ user }: { user: UserAuthRes }) {
+    const { handleUpdateProfile, isPhonePending } = useCustomerActions()
+    const router = useRouter()
     const [phoneDisplay, setPhoneDisplay] = useState(
-        user.phone ? maskPhone(user.phone) : ''
+        user.telephone ? maskPhone(user.telephone) : ''
     )
- 
-    const { handleUpdatePhone, isPhonePending } = useCustomerActions()
- 
+
     const form = useForm<ContactSchema>({
         resolver: zodResolver(contactSchema),
-        defaultValues: { telephone: user.phone ?? '' },
+        defaultValues: {
+            firstName: user.firstName ?? '',
+            lastName: user.lastName ?? '',
+            telephone: user.telephone ?? '',
+        },
         mode: 'onChange',
     })
- 
+
     function onSubmit(values: ContactSchema) {
-        handleUpdatePhone(
-            values,
-            () => form.reset({ telephone: values.telephone }),
-            () => {}
-        )
+        handleUpdateProfile(values, () => {
+            router.refresh()
+            form.reset({
+                firstName: values.firstName,
+                lastName: values.lastName,
+                telephone: values.telephone,
+            })
+        })
     }
- 
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
- 
+
+                <div className="flex gap-3">
+                    <FormField
+                        control={form.control}
+                        name="firstName"
+                        render={({ field }) => (
+                            <FormItem className="flex-1">
+                                <FormControl>
+                                    <AgenrapInput
+                                        id="firstName"
+                                        label="Nome"
+                                        variant="cyberYellowRap"
+                                        autoComplete="off"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                {form.formState.errors.firstName && (
+                                    <p className="text-xs text-red-400 font-tree mt-0.5">
+                                        {form.formState.errors.firstName.message}
+                                    </p>
+                                )}
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="lastName"
+                        render={({ field }) => (
+                            <FormItem className="flex-1">
+                                <FormControl>
+                                    <AgenrapInput
+                                        id="lastName"
+                                        label="Sobrenome"
+                                        variant="cyberYellowRap"
+                                        autoComplete="off"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                {form.formState.errors.lastName && (
+                                    <p className="text-xs text-red-400 font-tree mt-0.5">
+                                        {form.formState.errors.lastName.message}
+                                    </p>
+                                )}
+                            </FormItem>
+                        )}
+                    />
+                </div>
+
                 <div className="flex flex-col gap-1">
                     <FormField
                         control={form.control}
@@ -70,7 +126,10 @@ export default function ContactTab({ user }: { user: UserProfile }) {
                                         onChange={e => {
                                             const masked = maskPhone(e.target.value)
                                             setPhoneDisplay(masked)
-                                            form.setValue('telephone', masked.replace(/\D/g, ''), { shouldValidate: true })
+                                            form.setValue('telephone', masked.replace(/\D/g, ''), {
+                                                shouldValidate: true,
+                                                shouldDirty: true,
+                                            })
                                         }}
                                         placeholder="(11) 99999-9999"
                                     />
@@ -87,21 +146,20 @@ export default function ContactTab({ user }: { user: UserProfile }) {
                         O estabelecimento pode precisar do seu número para confirmar agendamentos.
                     </p>
                 </div>
- 
+
                 <AgenrapButton
                     type="submit"
                     variant="purplerap"
-                    disabled={isPhonePending || !form.formState.isValid}
-                    className="w-full flex justify-center items-center"
+                    disabled={isPhonePending || !form.formState.isValid || !form.formState.isDirty}
+                    className={`w-full justify-center items-center ${(!form.formState.isValid || !form.formState.isDirty) && "transition-all cursor-not-allowed disabled:opacity-50 disabled:cursor-not-allowed"}`}
                 >
                     {isPhonePending ? (
-                        <div className="flex relative">
+                        <div className="flex w-full justify-center items-center relative">
                             <Image src={macroLogo} alt="" className="w-6 h-6 opacity-15 animate-pulse" />
-                            <LoaderCircle className="animate-spin absolute w-6 h-6" color="#F5E6CC" />
+                            <LoaderCircle className="animate-spin absolute w-10 h-10" color="#F5E6CC" />
                         </div>
-                    ) : 'Salvar telefone'}
+                    ) : 'Salvar perfil'}
                 </AgenrapButton>
- 
             </form>
         </Form>
     )

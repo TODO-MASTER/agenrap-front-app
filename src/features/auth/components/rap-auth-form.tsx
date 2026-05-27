@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { setPendingRap } from "@/src/shared/utils/cookies.utils";
+import Link from "next/link";
 
 export default function RapAuthForm({ isLogin }: { isLogin?: boolean }) {
     const { onRegisterSubmit, withCheckRapLogin, isAuthLoading } = useAuth();
@@ -174,21 +175,44 @@ export default function RapAuthForm({ isLogin }: { isLogin?: boolean }) {
                     </p>
                 )}
 
-                {isLogin && (
-                    <p className="text-center text-sm font-tree text-(--agenrap-brown-500)/60">
-                        Não tem uma conta?{" "}
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (rap) setPendingRap(rap)
-                                router.push(rap ? `/register?cmd=Y&rap=${rap}` : "/register?cmd=Y")
-                            }}
-                            className="font-semibold text-(--agenrap-purple-500) hover:underline cursor-pointer"
-                        >
-                            Criar conta
-                        </button>
-                    </p>
-                )}
+              {!isLogin && (
+    <p className="text-center text-sm font-tree text-(--agenrap-brown-500)/60">
+        Já tem uma conta?{" "}
+        <button
+            type="button"
+            onClick={() => {
+                if (rap) setPendingRap(rap)
+                router.push(rap ? `/login?rap=${rap}` : "/login")
+            }}
+            className="font-semibold text-(--agenrap-brown-500) hover:underline cursor-pointer"
+        >
+            Entrar
+        </button>
+    </p>
+)}
+
+{isLogin && (
+    <div className="flex flex-col gap-3">
+        <p className="text-center text-sm font-tree text-black/85">
+            Não tem uma conta?{" "}
+            <button
+                type="button"
+                onClick={() => {
+                    if (rap) setPendingRap(rap)
+                    router.push(rap ? `/register?cmd=Y&rap=${rap}` : "/register?cmd=Y")
+                }}
+                className="font-semibold text-(--agenrap-purple-500) hover:underline cursor-pointer"
+            >
+                Criar conta
+            </button>
+        </p>
+        <p className="text-center text-sm font-tree text-(--agenrap-brown-500)/60">
+            <Link href="/forgot-password" className="font-semibold text-(--agenrap-brown-500)/60 hover:text-(--agenrap-brown-500) hover:underline transition-colors">
+                Esqueci minha senha
+            </Link>
+        </p>
+    </div>
+)}
             </form>
         </Form>
     )

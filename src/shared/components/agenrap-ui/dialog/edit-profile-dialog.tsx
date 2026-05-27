@@ -2,13 +2,14 @@
 
 import ProfileTabs, { UserProfile } from "@/src/features/customers/components/business-showcase/profile-form/profile-tabs/profile-tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/shared/components/ui/dialog"
+import { UserAuthRes } from "@/src/shared/services/user.service"
 import { VisuallyHidden } from "radix-ui"
 
 import { useState } from "react"
 
-export default function EditProfileDialog({ user }: { user: UserProfile }) {
+export default function EditProfileDialog({ user }: { user: UserAuthRes }) {
   const [open, setOpen] = useState(false)
-  const missingPhone = !user.phone
+  const missingPhone = !user.telephone
 
   return (
     <>

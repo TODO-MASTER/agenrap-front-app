@@ -1,7 +1,7 @@
 'use client'
 import { Dispatch, SetStateAction, useTransition } from "react";
 import { toast } from "sonner";
-import { ChangePasswordAction, JoinScheduleByRapName, UpdatePhoneAction } from "../services/customer.service";
+import { JoinScheduleByRapName } from "../services/customer.service";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { GetFullDays, handleCancelAppointment, saveAppointment } from "@/src/shared/services/appointment.service";
@@ -9,6 +9,7 @@ import { BusinessCtx } from "@/src/shared/types";
 import { AppointmentReq } from "@/src/shared/types/appointment.types";
 import { GetBusinessPerRap } from "@/src/shared/services/business.service";
 import { ContactSchema, PasswordSchema } from "@/src/features/customers/schemas/customer-profile.schema";
+import { ChangePasswordAction, UpdateProfileAction } from "@/src/shared/services/user.service";
 
 
 export function useCustomerActions() {
@@ -119,36 +120,42 @@ export function useCustomerActions() {
 
         })
 }
-   function handleUpdatePhone(
-        values: ContactSchema,
-        onSuccess: () => void,
-        onError: () => void
-    ) {
-        startPhoneTransition(async () => {
-            try {
-                await UpdatePhoneAction(values.telephone ?? '')
-                toast.success('Telefone atualizado com sucesso!')
-                onSuccess()
-            } catch (e) {
-                toast.error(e instanceof Error ? e.message : 'Erro ao atualizar telefone')
-                onError()
+function handleUpdateProfile(values: ContactSchema, onSuccess: () => void) {
+    startPhoneTransition(async () => {
+        try {
+            const response = await UpdateProfileAction(values)
+            if (response.data) {
+                toast.success(response.message ?? 'Perfil atualizado com sucesso!')
+            } else {
+                toast.error(response.message ?? 'Erro ao atualizar perfil!')
             }
-        })
-    }
+            onSuccess()
+        } catch (e) {
+            if (isRedirectError(e)) throw e
+            toast.error(e instanceof Error ? e.message : 'Erro desconhecido')
+        }
+    })
+}
  
     function handleChangePassword(
         values: PasswordSchema,
         onSuccess: () => void,
-        onError: () => void
     ) {
         startPasswordTransition(async () => {
             try {
-                await ChangePasswordAction(values.currentPassword, values.newPassword)
-                toast.success('Senha alterada com sucesso!')
+                const response =await ChangePasswordAction(values.currentPassword, values.newPassword)
+                               if(response.data){
+
+                  toast.success(response.message??'Telefone atualizado com sucesso!')
+                }else{
+                    toast.error(response.message??'Erro ao tentar atualizar telefone!')
+                }
                 onSuccess()
             } catch (e) {
-                toast.error(e instanceof Error ? e.message : 'Erro ao alterar senha')
-                onError()
+                       if (isRedirectError(e)) throw e;
+        toast.error(e instanceof Error ? e.message : 'Erro desconhecido');
+
+      
             }
         })
     }
@@ -156,7 +163,7 @@ export function useCustomerActions() {
 
   return { handleSearchByRap, handleJoinScheduleByRap,handleCancelAppointmentAction,
     handleChangePassword,
-    handleUpdatePhone,
+    handleUpdateProfile,
     handleSaveAppointment,handleMonthChange,
     isStartCancelApptTransition, isGetOnePending, isJoinPending,isSaveAppointmentPending,isStartBookedDaysTransition,isPhonePending,isPasswordPending };
 }

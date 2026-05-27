@@ -5,27 +5,30 @@ import ScheduleEntrance from "@/src/features/customers/components/search-rap/sch
 import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-link-button";
 import EditProfileDialog from "@/src/shared/components/agenrap-ui/dialog/edit-profile-dialog";
 import { serverFetch } from "@/src/shared/lib/server-fetch.lib";
+import { UserAuthRes } from "@/src/shared/services/user.service";
 import { BusinessCtx } from "@/src/shared/types";
 import { List, Search } from "lucide-react";
 import Image from "next/image";
 type PageMode = 'search' | 'list'
 
-export default async function ServiceSchedulePage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
-    const res = await serverFetch<BusinessCtx[]>(`business/search-all-business`)
-    const { mode: rawMode } = await searchParams
+export default async function ServiceSchedulePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ mode?: string }>
+}) {
+  const [{ mode: rawMode }, res, user] = await Promise.all([
+    searchParams,
+    serverFetch<BusinessCtx[]>('business/search-all-business'),
+    serverFetch<UserAuthRes>('user/get-one'),
+  ])
 
-    const mode: PageMode = (() => {
-        if (res.length === 0) return 'search'
-        if (rawMode === 'search') return 'search'
-        return 'list'
-    })()
+  const mode: PageMode = (() => {
+    if (res.length === 0) return 'search'
+    if (rawMode === 'search') return 'search'
+    return 'list'
+  })()
 
-    const user:UserProfile={
-        email:"teste@gmail.com",
-        fullName:"Adair Nogueira",
-        id:"aaa",
-        initials:"AB",
-    }
+
 
     if (mode === 'search') {
         return (
@@ -52,7 +55,6 @@ export default async function ServiceSchedulePage({ searchParams }: { searchPara
       <div className="h-dvh rounded-md p-8 gap-y-8 pt-12 flex flex-col w-full">
 
         <div className="flex w-full flex-wrap items-center gap-y-4 justify-between">
-          {/* Logo + título */}
           <div className="flex items-center gap-x-2">
             <Image src={miniIcon} alt="icone da marca agenrap" className="w-18 h-18" />
             <h3 className="font-tree lg:text-4xl md:text-2xl text-xl font-medium">
@@ -60,7 +62,6 @@ export default async function ServiceSchedulePage({ searchParams }: { searchPara
             </h3>
           </div>
 
-          {/* Avatar + botão Adicionar — agrupados no mesmo lado */}
           <div className="flex items-center gap-x-3 md:w-fit w-full justify-end">
             <EditProfileDialog user={user} />
             <AgenrapLinkButton

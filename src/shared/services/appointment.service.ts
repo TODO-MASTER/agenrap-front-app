@@ -3,7 +3,6 @@
 import { AppointmentCancelRes, AppointmentReq, AppointmentRes, BookedDaysRes } from "@/src/shared/types/appointment.types";
 import { serverFetch } from "../lib/server-fetch.lib";
 import { ApiResponse } from "@/src/shared/types";
-import { boolean } from "zod";
 
 export async function saveAppointment(values:AppointmentReq,serviceId:string,customerId:number|null){
           const res = await serverFetch<AppointmentRes>(`appointment/save${customerId!=null?`/customer/${customerId}`:""}?serviceId=${serviceId}`, {
