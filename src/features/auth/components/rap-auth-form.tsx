@@ -175,21 +175,6 @@ export default function RapAuthForm({ isLogin }: { isLogin?: boolean }) {
                     </p>
                 )}
 
-              {!isLogin && (
-    <p className="text-center text-sm font-tree text-(--agenrap-brown-500)/60">
-        Já tem uma conta?{" "}
-        <button
-            type="button"
-            onClick={() => {
-                if (rap) setPendingRap(rap)
-                router.push(rap ? `/login?rap=${rap}` : "/login")
-            }}
-            className="font-semibold text-(--agenrap-brown-500) hover:underline cursor-pointer"
-        >
-            Entrar
-        </button>
-    </p>
-)}
 
 {isLogin && (
     <div className="flex flex-col gap-3">
