@@ -20,11 +20,11 @@ import { useEffect, useState } from "react";
 import { NormalizedWeek } from "@/src/shared/utils/normalize-week.utils";
 
 interface ICtnCreateWkpProps {
-    tgBns: string,
+    tgrap: string,
     weeks: NormalizedWeek[]
 }
 
-export default function AddWorkingPeriodForm({ tgBns, weeks }: ICtnCreateWkpProps) {
+export default function AddWorkingPeriodForm({ tgrap, weeks }: ICtnCreateWkpProps) {
     const { handleCreateWkPeriodAction, isPending } = useBusinessActions()
     const linkButtonResponsive = "md:w-fit  md:rounded-none md:h-21.25 md:px-3  md:gap-x-1 md:items-center md:self-auto  md:justify-center " +
         " items-center   justify-start  w-full  flex  w-fit self-end px-4 py-2 h-fit gap-x-2"
@@ -56,7 +56,7 @@ export default function AddWorkingPeriodForm({ tgBns, weeks }: ICtnCreateWkpProp
                     <h1 className="lg:text-4xl md:text-3xl text-2xl font-tree font-medium">Adicionar Expediente</h1>
                     <div className="md:w-fit w-full  flex justify-end">
 
-                        <AgenrapLinkButton variant={"minBrownRap"} hrefLink={`/dashboard/journey/list?bns=${tgBns}`} className={`${linkButtonResponsive} `}   >
+                        <AgenrapLinkButton variant={"minBrownRap"} hrefLink={`/dashboard/journey/list?rap=${tgrap}`} className={`${linkButtonResponsive} `}   >
                             <Watch color="#fff" size={25} />
                             <p className="font-tree md:text-2xl text-lg ">Ver Adicionados</p></AgenrapLinkButton>
                     </div>
@@ -143,7 +143,7 @@ export default function AddWorkingPeriodForm({ tgBns, weeks }: ICtnCreateWkpProp
                         }
                         <div className="flex flex-col items-start w-full mt-4">
                             {weeks.filter(wk=>wk.active).length == 7 ?
-                                <AgenrapLinkButton variant={"purplerap"} hrefLink={`/dashboard/journey/list?bns=${tgBns}`} className="w-full flex justify-center items-center" plusClassName="flex justify-center w-full items-center">
+                                <AgenrapLinkButton variant={"purplerap"} hrefLink={`/dashboard/journey/list?rap=${tgrap}`} className="w-full flex justify-center items-center" plusClassName="flex justify-center w-full items-center">
                                     <Watch color="#fff" size={25} />
                                     <p className="font-tree md:text-2xl text-lg ">Ver Adicionados</p></AgenrapLinkButton>
                                 :

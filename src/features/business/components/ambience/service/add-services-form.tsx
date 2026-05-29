@@ -18,7 +18,7 @@ import { macroLogo } from "@/src/assets/images";
 import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-link-button";
 import { ScrollArea, ScrollBar } from "@/src/shared/components/ui/scroll-area";
 
-export default function AddServicesForm({tgBns}:{tgBns:string}) {
+export default function AddServicesForm({tgrap}:{tgrap:string}) {
     const { handleCreateANewServiceAction, isPending: serviceIsPending } = useBusinessActions()
     const [timeService, setTimeService] = useState([(3600 / 60) * 30])
     const linkButtonResponsive = "md:w-fit  md:rounded-none md:h-21.25 md:px-3  md:gap-x-1 md:items-center md:self-auto  md:justify-center " +
@@ -57,7 +57,7 @@ export default function AddServicesForm({tgBns}:{tgBns:string}) {
                     <h1 className="lg:text-4xl md:text-2xl text-2xl font-tree font-medium">Adicionar Serviços</h1>
                     <div className="md:w-fit w-full  flex justify-end">
 
-                    <AgenrapLinkButton variant={"minBrownRap"} hrefLink={`/dashboard/service/list?bns=${tgBns}`} className={`${linkButtonResponsive}`}   >
+                    <AgenrapLinkButton variant={"minBrownRap"} hrefLink={`/dashboard/service/list?rap=${tgrap}`} className={`${linkButtonResponsive}`}   >
                         <LucideGalleryVerticalEnd color="#fff" size={25} />
                         <p className="font-tree md:text-2xl text-lg ">Ver Todos</p></AgenrapLinkButton>
                     </div>

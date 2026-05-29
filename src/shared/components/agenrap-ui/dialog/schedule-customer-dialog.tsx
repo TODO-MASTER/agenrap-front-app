@@ -137,7 +137,6 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
         showCloseButton={false}
         aria-describedby={undefined}
       >
-        {/* Header — sempre visível */}
         <DialogHeader className="flex w-full justify-start px-6 py-4 border-b border-(--agenrap-purple-500)/10 shrink-0">
           <DialogTitle className="flex justify-between items-center">
             <div className="flex items-center gap-x-3">
@@ -159,8 +158,6 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
             </button>
           </DialogTitle>
         </DialogHeader>
-
-        {/* STEP: Checando agendamento ativo */}
         {step === 'check' && (
           <div className="flex flex-col items-center justify-center gap-3 px-6 py-12">
             <div className="flex relative justify-center items-center">
@@ -170,8 +167,6 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
             <p className="font-tree text-white/50 text-sm">Verificando agendamentos ativos...</p>
           </div>
         )}
-
-        {/* STEP: Cliente tem agendamento ativo */}
         {step === 'hasActive' && activeAppointment && (() => {
           const apptDate = dateUtils.fromDateString(activeAppointment.appointmentDate)
           const day = apptDate.getDate()
@@ -181,7 +176,6 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
 
           return (
             <div className="flex flex-col gap-4 px-5 py-5">
-              {/* Aviso */}
               <div className="flex items-start gap-3 bg-(--agenrap-yellow-200)/10 border border-(--agenrap-yellow-200)/20 rounded-xl px-4 py-3">
                 <AlertTriangle size={18} className="text-(--agenrap-yellow-200) shrink-0 mt-0.5" />
                 <p className="font-tree text-sm text-(--agenrap-yellow-200)/80 leading-snug">
@@ -189,7 +183,6 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
                 </p>
               </div>
 
-              {/* Card do agendamento ativo */}
               <div className="flex items-stretch rounded-xl overflow-hidden bg-(--agenrap-gray-800) border border-white/5">
                 <div className="w-1.5 shrink-0" style={{ background: 'linear-gradient(to bottom, #FFE082, #C46210)' }} />
                 <div className="flex flex-col items-center justify-center px-5 py-4 border-r border-white/5 min-w-20">

@@ -12,8 +12,8 @@ function getError(value: string): string | null {
     const raw = value.replace(/^@/, "")
     if (raw.length === 0) return null
     if (raw.length < 2) return "Mínimo dois caracteres após o @"
-    if (/[A-Z]/.test(raw)) return "Use apenas letras minúsculas"
-    if (/[^a-z0-9-]/.test(raw)) return "Use apenas letras, números e hífens"
+    if (!/^[a-z0-9]+(?:[._-]?[a-z0-9]+)*$/.test(raw))
+        return "Use apenas letras minúsculas, números, ponto, hífen ou underscore."
     return null
 }
 
@@ -34,13 +34,12 @@ export default function ScheduleEntrance() {
                 placeholder="Ex. @agenrap-servico"
                 left
                 value={value.length>0? "@" + (value?.replace(/^@/, "") ?? ""):""}
-                onChange={(e) => {
-                    const raw = e.target.value
-                        .replace(/^@/, "")
-                        .replace(/\s+/g, "-")
-                        .replace(/[^a-zA-Z0-9-]/g, "")
-                    setValue("@" + raw)
-                }}
+onChange={(e) => {
+    const raw = e.target.value
+        .replace(/^@/, "")
+        .toLowerCase()
+    setValue("@" + raw)
+}}
                 icon={<HandPlatter size={25}/>}
             />
             {error && (

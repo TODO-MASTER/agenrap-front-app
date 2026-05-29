@@ -22,3 +22,34 @@ export function maskPhone(value: string): string {
   if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
 }
+
+export function normalizePublicHandle(
+  value?: string | null
+): string {
+  return (value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/^@+/, "")
+}
+
+export function formatPublicHandle(
+  value?: string | null
+): string {
+  const normalized =
+    normalizePublicHandle(value)
+
+  return normalized
+    ? `@${normalized}`
+    : ""
+}
+
+export function isValidPublicHandle(
+  value?: string | null
+): boolean {
+  const normalized =
+    normalizePublicHandle(value)
+
+  return /^[a-z0-9]+(?:[._-]?[a-z0-9]+)*$/.test(
+    normalized
+  )
+}

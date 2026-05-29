@@ -10,6 +10,7 @@ import { AppointmentReq } from "@/src/shared/types/appointment.types";
 import { GetBusinessPerRap } from "@/src/shared/services/business.service";
 import { ContactSchema, PasswordSchema } from "@/src/features/customers/schemas/customer-profile.schema";
 import { ChangePasswordAction, UpdateProfileAction } from "@/src/shared/services/user.service";
+import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
 
 
 export function useCustomerActions() {
@@ -24,12 +25,12 @@ export function useCustomerActions() {
    const useSearchParam = useSearchParams()
    const serviceId = useSearchParam.get("svs")
 
-  const handleSearchByRap = (businessName: string, setSearchBsn: Dispatch<SetStateAction<"not-init" | BusinessCtx | null>>) => {
+  const handleSearchByRap = (atSign: string, setSearchBsn: Dispatch<SetStateAction<"not-init" | BusinessCtx | null>>) => {
 
     startGetOneTransition(async () => {
       try {
 
-        const targetBuinessWithServices = await GetBusinessPerRap(businessName)
+        const targetBuinessWithServices = await GetBusinessPerRap(atSign)
         setSearchBsn(targetBuinessWithServices)
       } catch (e) {
         if (isRedirectError(e)) throw e;
@@ -51,7 +52,7 @@ export function useCustomerActions() {
 
         }else{
         toast.success(targetBuinessWithServices.message || "entrando em agenda")
-        router.push(`/${targetBuinessWithServices.data.name}`)
+        router.push(`/${formatPublicHandle(targetBuinessWithServices.data.atSign)}`)
         }
       } catch (e) {
         if (isRedirectError(e)) throw e;

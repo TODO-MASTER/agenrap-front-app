@@ -4,10 +4,11 @@ import { BusinessRes } from "@/src/features/business/types/business.types"
 import { BusinessInitializer } from "@/src/shared/components/agenrap-ui/initializers/business-initializer"
 import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
 import { BusinessCtx } from "@/src/shared/types"
+import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 import { redirect } from "next/navigation"
 interface SearchParams {
     page?: string
-    bns?: string
+    rap?: string
 }
 
 export default async function DashCustomerPage({
@@ -15,16 +16,16 @@ export default async function DashCustomerPage({
 }: {
     searchParams: Promise<SearchParams>
 }) {
-    const { page, bns } = await searchParams
+    const { page, rap } = await searchParams
         const pageNumber = Number(page) || 1
-    const res = await serverFetch<BusinessRes>(`business/search-by-user?businessName=${bns}`)
+    const res = await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(rap)}`)
     if (!res || !res.alreadyInitial) {
         const msg = Buffer.from('Primeiro selecione um negócio').toString('base64')
         redirect(`/business/booking-link?flash=${msg}`)
     }
-        const targetBuinessWithServices = await serverFetch<BusinessCtx>(`business/per?businessName=${bns}`)
+        const targetBuinessWithServices = await serverFetch<BusinessCtx>(`business/per?atSign=${normalizePublicHandle(rap)}`)
     if(!targetBuinessWithServices)return <div>Algo deu errado!</div>
-    const resCustomers = await getDashCustomersByRap(bns??"",pageNumber)
+    const resCustomers = await getDashCustomersByRap(rap??"",pageNumber)
     
     return(
     <>

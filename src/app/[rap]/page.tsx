@@ -8,6 +8,7 @@ import ServiceShowcaseHeader from "@/src/shared/components/agenrap-ui/header/ser
 import { BusinessCtx } from "@/src/shared/types"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
+import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 
 export const metadata: Metadata = {
   title: "Agenda - Agenrap",
@@ -26,7 +27,7 @@ export default async function ServiceScheduleServicePage({ params }: { params: P
     if (!rap?.startsWith("@")) return <div>ALGO ESTÁ ERRADO</div>
 
     const targetBusinessWithServices = await serverFetch<BusinessCtx>(
-        `business/per?businessName=${rap}`
+        `business/per?atSign=${normalizePublicHandle(rap)}`
     )
 
     if (!targetBusinessWithServices) return <div>Negócio não encontrado</div>
@@ -34,7 +35,7 @@ export default async function ServiceScheduleServicePage({ params }: { params: P
     const token = (await cookies()).get('token')?.value
     const isLoggedIn = !!token
 
-        if(targetBusinessWithServices.isOwner) redirect(`/dashboard?bns=${rap}`)
+        if(targetBusinessWithServices.isOwner) redirect(`/dashboard?rap=${rap}`)
 
     if (!isLoggedIn) {
         redirect(`/login?rap=${encodeURIComponent(rap)}`)

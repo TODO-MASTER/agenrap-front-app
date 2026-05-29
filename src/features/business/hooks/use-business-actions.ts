@@ -1,7 +1,7 @@
 'use client'
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction, useTransition } from "react";
-import { InitialBusinessNameSchema } from "../schemas/business.schema";
+import { InitialatSignSchema } from "../schemas/business.schema";
 import { createBusinessByUrlAction } from "../services/business.service";
 import { toast } from "sonner";
 import { EditBusinessWorkingPeriodSchema, InitialBusinessWeeksSchema } from "@/src/features/business/schemas/business-week.schema";
@@ -17,6 +17,7 @@ import { GetBusinessPerRap } from "@/src/shared/services/business.service";
 import { saveAppointment } from "@/src/shared/services/appointment.service";
 import { AppointmentReq } from "@/src/shared/types/appointment.types";
 import { completeAllAppointmentsAsync, CompleteAppointmentsReq } from "@/src/features/business/services/appointment.service";
+import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
 export function useBusinessActions() {
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition();
@@ -27,23 +28,22 @@ export function useBusinessActions() {
   const usePathName = usePathname();
   const setBusiness = useBusinessStore((state) => state.setBusiness)
 
-  function handleCreateBusinessAction(values: InitialBusinessNameSchema) {
-    let bodyMount = {
-      name: values.business.name
-    }
+function handleCreateBusinessAction(values: InitialatSignSchema) {
     startTransition(async () => {
-      try {
-        const data = await createBusinessByUrlAction(bodyMount);
-        toast.success(data.message || 'Nova tarefa!');
-      } catch (e) {
-        if (isRedirectError(e)) throw e;
-        toast.error(e instanceof Error ? e.message : 'Erro ao tentar cadastrar negócio');
-      }
-
-    });
-  }
+        try {
+            const data = await createBusinessByUrlAction({
+                name: values.business.name,
+                atSign: values.business.atSign,
+            })
+            toast.success(data.message || 'Negócio cadastrado!')
+        } catch (e) {
+            if (isRedirectError(e)) throw e
+            toast.error(e instanceof Error ? e.message : 'Erro ao tentar cadastrar negócio')
+        }
+    })
+}
   function handleCreateWkPeriodAction(values: InitialBusinessWeeksSchema) {
-    const businessName = searchParams.get("bns")
+    const atSign = searchParams.get("rap")
     let bodyMount = {
       weeks: values.business.weeks.map(wkp => {
         return {
@@ -55,17 +55,21 @@ export function useBusinessActions() {
     }
     startTransition(async () => {
       try {
-        if (!businessName) {
+        if (!atSign) {
           router.push("/login")
         } else {
-          const data = await CreatWorkingPeriod(bodyMount, businessName);
+          const data = await CreatWorkingPeriod(bodyMount, atSign);
           toast.success(data.message || 'Periodo cadastrado!');
           //  
 
           if (!data.data.alreadyInitial) {
-            router.push(`/business/services?bns=${businessName}`)
-          } else {
-            router.push(`/dashboard?bns=${businessName}`)
+            router.push(`/business/services?rap=${formatPublicHandle(atSign)}`)
+          }
+          else if (usePathName === '/dashboard/journey/new' && data.data.alreadyInitial) {
+    router.push(`/dashboard/journey/list?rap=${formatPublicHandle(atSign)}`)
+}
+          else {
+            router.push(`/dashboard?rap=${formatPublicHandle(atSign)}`)
           }
         }
       } catch (e) {
@@ -74,7 +78,7 @@ export function useBusinessActions() {
     });
   }
   function handleCreateANewServiceAction(values: InitialBusinessServiceSchema) {
-    const businessName = searchParams.get("bns")
+    const atSign = searchParams.get("rap")
 
     let bodyServiceMount = {
       services: values.business.occupations.map(wkp => {
@@ -90,18 +94,18 @@ export function useBusinessActions() {
     }
     startTransition(async () => {
       try {
-        if (!businessName) {
+        if (!atSign) {
           router.push("/login")
         } else {
-          const data = await CreateANewService(bodyServiceMount, businessName);
+          const data = await CreateANewService(bodyServiceMount, atSign);
           toast.success(data.message || 'serviços cadastrados!');
           if (usePathName.startsWith("/dashboard/service/new")) {
-            router.push(`/dashboard/service/list?bns=${businessName}`)
+            router.push(`/dashboard/service/list?rap=${formatPublicHandle(atSign)}`)
           } else {
             if (!data.data.alreadyInitial) {
-              router.push(`/business/hours?bns=${businessName}`)
+              router.push(`/business/hours?rap=${formatPublicHandle(atSign)}`)
             } else {
-              router.push(`/dashboard?bns=${businessName}`)
+              router.push(`/dashboard?rap=${formatPublicHandle(atSign)}`)
             }
           }
         }
@@ -111,7 +115,7 @@ export function useBusinessActions() {
     });
   }
   function handleEditServiceAction(values: EditBusinessServiceSchema, setOpenEdit: Dispatch<SetStateAction<boolean>>) {
-    const businessName = searchParams.get("bns")
+    const atSign = searchParams.get("rap")
 
 
     let durationMount = timeUtils.toHourString(Number(values.duration))
@@ -125,15 +129,15 @@ export function useBusinessActions() {
     }
     startTransition(async () => {
       try {
-        if (!businessName || !tgService?.id) {
+        if (!atSign || !tgService?.id) {
           toast.error("Erro desconhecido ocorreu!");
           setOpenEdit(false)
           return
         } else {
-          const data = await EditServiceService(bodyServiceMount, businessName, tgService.id);
+          const data = await EditServiceService(bodyServiceMount, atSign, tgService.id);
           toast.success(data.message || 'Serviço foi editado!');
 
-          const resService = await GetBusinessPerRap(businessName)
+          const resService = await GetBusinessPerRap(atSign)
           setBusiness(resService)
           setOpenEdit(false)
 
@@ -147,10 +151,10 @@ export function useBusinessActions() {
 
 
     function handleDeleteServiceAction(setOpenDelete: Dispatch<SetStateAction<boolean>>) {
-    const businessName = searchParams.get("bns")
+    const atSign = searchParams.get("rap")
     startTransition(async () => {
       try {
-        if (!businessName || !tgService?.id) {
+        if (!atSign || !tgService?.id) {
           toast.error("Erro desconhecido ocorreu!");
           setOpenDelete(false)
           return
@@ -158,7 +162,7 @@ export function useBusinessActions() {
           const data = await DeleteServiceService(tgService?.id);
           toast.success(data.message || 'Serviço foi deletado!');
 
-          const resService = await GetBusinessPerRap(businessName)
+          const resService = await GetBusinessPerRap(atSign)
           setBusiness(resService)
           setOpenDelete(false)
 
@@ -169,7 +173,7 @@ export function useBusinessActions() {
     });
   }
     function handleEditWorkingPeriodAction(values: EditBusinessWorkingPeriodSchema, setOpenEdit: Dispatch<SetStateAction<boolean>>) {
-    const businessName = searchParams.get("bns")
+    const atSign = searchParams.get("rap")
 
     let bodyWkpMount = {
       week: values.name,
@@ -180,15 +184,15 @@ export function useBusinessActions() {
     }
     startTransition(async () => {
       try {
-        if (!businessName||!tgWkp?.id) {
+        if (!atSign||!tgWkp?.id) {
           toast.error("Erro desconhecido ocorreu!");
           setOpenEdit(false)
           return
         } else {
-          const data = await EditWorkingPeriodService(bodyWkpMount, businessName, tgWkp?.id);
+          const data = await EditWorkingPeriodService(bodyWkpMount, atSign, tgWkp?.id);
           toast.success(data.message || 'Periodo foi editado!');
 
-          const resWorkingPeriod = await GetWorkingPeriodPerRap(businessName)
+          const resWorkingPeriod = await GetWorkingPeriodPerRap(atSign)
           setWeeks(normalizeWeek(resWorkingPeriod))
           setOpenEdit(false)
 
@@ -200,18 +204,18 @@ export function useBusinessActions() {
   }
 
       function handleDeleteWkpAction(setOpenDelete: Dispatch<SetStateAction<boolean>>) {
-    const businessName = searchParams.get("bns")
+    const atSign = searchParams.get("rap")
     startTransition(async () => {
       try {
-        if (!businessName || !tgWkp?.id) {
+        if (!atSign || !tgWkp?.id) {
           toast.error("Erro desconhecido ocorreu!");
           setOpenDelete(false)
           return
         } else {
-          const data = await DeleteWkpService(businessName,tgWkp?.id);
+          const data = await DeleteWkpService(atSign,tgWkp?.id);
           toast.success(data.message || 'Periodo foi deletado!');
 
-        const resWorkingPeriod = await GetWorkingPeriodPerRap(businessName)
+        const resWorkingPeriod = await GetWorkingPeriodPerRap(atSign)
           setWeeks(normalizeWeek(resWorkingPeriod))
           setOpenDelete(false)
 

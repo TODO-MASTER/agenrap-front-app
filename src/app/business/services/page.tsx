@@ -4,18 +4,19 @@ import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap
 import AgenrapHeader from "@/src/shared/components/agenrap-ui/header/agenrap-header";
 import { initialBusinessConfigUrls } from "@/src/shared/components/agenrap-ui/menu/types/initial-business-config-urls";
 import { serverFetch } from "@/src/shared/lib/server-fetch.lib";
+import { formatPublicHandle, normalizePublicHandle } from "@/src/shared/utils/formatters.utils";
 import { redirect } from "next/navigation";
 
 export default async function CreateServicePage({
     searchParams
 }: {
-    searchParams: Promise<{ bns: string }>
+    searchParams: Promise<{ rap: string }>
 }) {
-    const { bns: bsnEncoded } = await searchParams
-    const res = await serverFetch<BusinessRes>(`business/search-by-user?businessName=${bsnEncoded}`)
+    const { rap: bsnEncoded } = await searchParams
+    const res = await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(bsnEncoded)}`)
 
     if (res && res.alreadyInitial) {
-        redirect(`/dashboard?bns=${bsnEncoded}`);
+        redirect(`/dashboard?rap=${formatPublicHandle(bsnEncoded)}`);
     }
     else if (!res) {
         const msg = Buffer.from('Primeiro selecione ou crie um negócio').toString('base64')
@@ -27,7 +28,7 @@ export default async function CreateServicePage({
             <AgenrapHeader isDefault={true}>
                 {initialBusinessConfigUrls.labels.map((url, indx) => (
                     <div key={indx} className="flex w-fit relative">
-                        <AgenrapLinkButton variant={"brownlinkrap"} hrefLink={['hours', 'services'].includes(url.url) ? url.url + `?bns=${res.name}` : url.url}>
+                        <AgenrapLinkButton variant={"brownlinkrap"} hrefLink={['hours', 'services'].includes(url.url) ? url.url + `?rap=${res.atSign}` : url.url}>
                             {url.view}
                         </AgenrapLinkButton>
                     </div>
@@ -61,7 +62,7 @@ export default async function CreateServicePage({
                             <p className="font-tree text-sm text-(--agenrap-brown-500)/70">
                                 Seus serviços já foram cadastrados. Agora configure seu expediente para ativar a agenda.
                             </p>
-                            <AgenrapLinkButton variant="brownlinkrap" hrefLink={`hours?bns=${res.name}`}>
+                            <AgenrapLinkButton variant="brownlinkrap" hrefLink={`hours?rap=${res.atSign}`}>
                                 Continuar para Expediente →
                             </AgenrapLinkButton>
                         </div>

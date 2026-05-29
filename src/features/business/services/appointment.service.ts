@@ -1,6 +1,7 @@
 'use server'
 import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
 import { ApiResponse, PageableResponse } from "@/src/shared/types"
+import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 
 export type AppointmentFull = {
   appointmentId: number
@@ -32,7 +33,7 @@ export async function getDashAppointmentsByRap(
     pageSize = 10,
 ) {
     return await serverFetch<PageableResponse<AppointmentFull[]>>(
-        `appointment/paginated?page=${page}&pageSize=${pageSize}&rap=${rap}${filter ? `&filter=${filter}` : ''}`,
+        `appointment/paginated?page=${page}&pageSize=${pageSize}&atSign=${normalizePublicHandle(rap)}${filter ? `&filter=${filter}` : ''}`,
         { method: 'GET', headers: { 'Content-Type': 'application/json' } }
     )
 }

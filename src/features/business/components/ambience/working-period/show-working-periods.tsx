@@ -9,11 +9,11 @@ import DeleteWorkingPeriodDialog from "@/src/shared/components/agenrap-ui/dialog
 import { NormalizedWeek } from "@/src/shared/utils/normalize-week.utils";
 
 export type RapWorkingPeriodProps= {
-    tgBns: string,
+    tgrap: string,
     weeks: NormalizedWeek[]
 }
 
-export default function ShowWorkingPeriods({ tgBns, weeks }: RapWorkingPeriodProps) {
+export default function ShowWorkingPeriods({ tgrap, weeks }: RapWorkingPeriodProps) {
     const setSelectWorkingPeriod = useBusinessStore(bsCtx => bsCtx.setSelectedWorkingPeriod)
     const [editWkpOpen, setEditWkpOpen] = useState<boolean>(false)
     const [deleteWkpOpen, setDeleteWkpOpen] = useState<boolean>(false)
@@ -36,7 +36,7 @@ export default function ShowWorkingPeriods({ tgBns, weeks }: RapWorkingPeriodPro
                     <h1 className="lg:text-4xl md:text-3xl text-2xl font-tree font-medium">Sua semana</h1>
                     <div className="md:w-fit w-full  flex justify-end">
 
-                        <AgenrapLinkButton variant={"minBrownRap"} hrefLink={`/dashboard/journey/new?bns=${tgBns}`} className={`${linkButtonResponsive} `}   >
+                        <AgenrapLinkButton variant={"minBrownRap"} hrefLink={`/dashboard/journey/new?rap=${tgrap}`} className={`${linkButtonResponsive} `}   >
                             <BadgePlus color="#fff" size={25} />
                             <p className="font-tree md:text-2xl text-lg ">Adicionar</p></AgenrapLinkButton>
                     </div>

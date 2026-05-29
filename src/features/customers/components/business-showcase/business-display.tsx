@@ -6,6 +6,7 @@ import { GetNextAppointments } from "@/src/shared/services/appointment.service";
 import { useBusinessStore } from "@/src/shared/store/use-business.store";
 import { BusinessCtx } from "@/src/shared/types";
 import { AppointmentCancelRes } from "@/src/shared/types/appointment.types";
+import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
 import { DoorOpen, ScrollText, X } from "lucide-react";
 import { startTransition, useState } from "react";
 
@@ -42,7 +43,7 @@ function handleOpen(bs: BusinessCtx) {
                     <div>
                         <div className="flex flex-col" >
                             <CardBusiness name={bs.mnrName!} init={bs.weeks[0]?.initial?.slice(0, 5) ?? ""} end={bs.weeks[0]?.end?.slice(0, 5) ?? ""} qtdService={bs.qtdServices!} />
-                            <AgenrapLinkButton hrefLink={`/${bs.name}`}>
+                            <AgenrapLinkButton hrefLink={`/${formatPublicHandle(bs.atSign)}`}>
                                 Ver serviços
                             </AgenrapLinkButton>
                         </div>

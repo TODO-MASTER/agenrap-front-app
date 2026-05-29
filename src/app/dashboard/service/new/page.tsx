@@ -2,15 +2,16 @@ import AddServicesForm from "@/src/features/business/components/ambience/service
 import { BusinessRes } from "@/src/features/business/types/business.types"
 
 import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
+import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 import { redirect } from "next/navigation"
 
 export default async function CreateServicePage({
     searchParams
 }: {
-    searchParams: Promise<{ bns: string }>
+    searchParams: Promise<{ rap: string }>
 }) {
-    const { bns: bsnEncoded } = await searchParams
-    const res = await serverFetch<BusinessRes>(`business/search-by-user?businessName=${bsnEncoded}`)
+    const { rap: bsnEncoded } = await searchParams
+    const res = await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(bsnEncoded)}`)
     if (!res || !res.alreadyInitial) {
         const msg = Buffer.from('Primeiro selecione um negócio').toString('base64')
         redirect(`/business/booking-link?flash=${msg}`)
@@ -18,7 +19,7 @@ export default async function CreateServicePage({
     return (
         <div className="flex flex-col ">
          
-            <AddServicesForm tgBns={bsnEncoded} />
+            <AddServicesForm tgrap={bsnEncoded} />
         </div>
     )
 }

@@ -32,7 +32,7 @@ export default function AgenrapSidebar(
   const { open, isMobile,setOpenMobile } = useSidebar()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const bns = searchParams.get("bns")
+  const rap = searchParams.get("rap")
   const router = useRouter()
 
 
@@ -73,7 +73,7 @@ export default function AgenrapSidebar(
                       {group.items.map((item) => (
                         <SidebarMenuSubItem key={item.title}>
                           <SidebarMenuSubButton asChild >
-                            <a href={`${item.url}?bns=${bns}`} className="flex items-center gap-2">
+                            <a href={`${item.url}?rap=${rap}`} className="flex items-center gap-2">
                               {item.icon && <item.icon className={`h-4 w-4 shrink-0 ${item.iconClass ?? ""}`} />}
                               <span>{item.title}</span>
                             </a>
@@ -96,7 +96,7 @@ export default function AgenrapSidebar(
                     key={item.title}
                     className="flex justify-center w-full"
                     onClick={() => {
-    router.push(`${item.url}?bns=${bns}`)
+    router.push(`${item.url}?rap=${rap}`)
     if (isMobile) setOpenMobile(false)
 }}
                   >

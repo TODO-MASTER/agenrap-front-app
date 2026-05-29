@@ -7,6 +7,7 @@ import DeleteServiceDialog from "@/src/shared/components/agenrap-ui/dialog/delet
 import EditServiceDialog from "@/src/shared/components/agenrap-ui/dialog/edit-service-dialog"
 import { useBusinessStore } from "@/src/shared/store/use-business.store"
 import { currencyUtils } from "@/src/shared/utils/currency.utils"
+import { formatPublicHandle } from "@/src/shared/utils/formatters.utils"
 import { BadgePlus, Pencil, Trash, X } from "lucide-react"
 import { useState } from "react"
 
@@ -23,7 +24,7 @@ export default function ShowcaseDashServices() {
                                 <h1 className="lg:text-4xl md:text-2xl text-2xl font-tree font-medium">Meus Serviços</h1>
                                 <div className="md:w-fit w-full justify-end flex ">
             
-                                <AgenrapLinkButton variant={"minBrownRap"} hrefLink={`/dashboard/service/new?bns=${business?.name}`} className={`${linkButtonResponsive}`}   >
+                                <AgenrapLinkButton variant={"minBrownRap"} hrefLink={`/dashboard/service/new?rap=${formatPublicHandle(business?.atSign)}`} className={`${linkButtonResponsive}`}   >
                                     <BadgePlus color="#fff" size={25} />
                                     <p className="font-tree md:text-2xl text-lg ">Adicionar</p></AgenrapLinkButton>
                                 </div>

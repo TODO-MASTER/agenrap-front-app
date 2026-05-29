@@ -5,16 +5,17 @@ import { BusinessInitializer } from "@/src/shared/components/agenrap-ui/initiali
 
 import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
 import { GetBusinessPerRap } from "@/src/shared/services/business.service"
+import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 
 import { redirect } from "next/navigation"
 
 export default async function ShowServicePage({
     searchParams
 }: {
-    searchParams: Promise<{ bns: string }>
+    searchParams: Promise<{ rap: string }>
 }) {
-    const { bns: bsnEncoded } = await searchParams
-    const res = await serverFetch<BusinessRes>(`business/search-by-user?businessName=${bsnEncoded}`)
+    const { rap: bsnEncoded } = await searchParams
+    const res = await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(bsnEncoded)}`)
     if (!res || !res.alreadyInitial) {
         const msg = Buffer.from('Primeiro selecione um negócio').toString('base64')
         redirect(`/business/booking-link?flash=${msg}`)

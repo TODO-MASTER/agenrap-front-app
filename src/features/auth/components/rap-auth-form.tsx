@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { setPendingRap } from "@/src/shared/utils/cookies.utils";
 import Link from "next/link";
+import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
 
 export default function RapAuthForm({ isLogin }: { isLogin?: boolean }) {
     const { onRegisterSubmit, withCheckRapLogin, isAuthLoading } = useAuth();
@@ -184,7 +185,7 @@ export default function RapAuthForm({ isLogin }: { isLogin?: boolean }) {
                 type="button"
                 onClick={() => {
                     if (rap) setPendingRap(rap)
-                    router.push(rap ? `/register?cmd=Y&rap=${rap}` : "/register?cmd=Y")
+                    router.push(rap ? `/register?cmd=Y&rap=${formatPublicHandle(rap)}` : "/register?cmd=Y")
                 }}
                 className="font-semibold text-(--agenrap-purple-500) hover:underline cursor-pointer"
             >

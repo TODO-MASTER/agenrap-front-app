@@ -191,7 +191,10 @@ export default function TableCustomerSection({ customers,page,totalPages,hasNext
                   <p className="text-black font-tree text-sm">Agendar</p>
                 </button>
                 <button
-                  onClick={onClose}
+                  onClick={()=> {onClose()
+                      handleOpen(business!,row)
+
+                  }}
                   className="flex flex-col items-center gap-y-2 py-4 rounded-xl bg-(--agenrap-gray-800)/5 active:bg-(--agenrap-gray-800)/10 transition-colors"
                 >
                   <span className="rounded-md bg-(--agenrap-gray-800) p-1.5">

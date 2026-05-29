@@ -11,6 +11,7 @@ export type WkCtx={
 
 export type BusinessCtx= {
     id: number,
+    atSign:string,
     name: string,
     services:Service[]
     weeks:WkCtx[]

@@ -57,7 +57,7 @@ export default function AgenrapDialogJoinSchedule({ open, setOpen,business }: Di
                          
                         <AgenrapButton
                             className="w-full"
-                          onClick={() => handleJoinScheduleByRap(business.name)}
+                          onClick={() => handleJoinScheduleByRap(business.atSign)}
                         >
                             Adicionar
                         </AgenrapButton>

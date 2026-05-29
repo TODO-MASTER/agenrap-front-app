@@ -5,32 +5,33 @@ import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap
 import AgenrapHeader from "@/src/shared/components/agenrap-ui/header/agenrap-header";
 import { initialBusinessConfigUrls } from "@/src/shared/components/agenrap-ui/menu/types/initial-business-config-urls";
 import { serverFetch } from "@/src/shared/lib/server-fetch.lib";
+import { formatPublicHandle, normalizePublicHandle } from "@/src/shared/utils/formatters.utils";
 import { redirect } from "next/navigation";
 
 
 export default async function BusinessInitialConfigPage({
     searchParams
 }: {
-    searchParams: Promise<{ bns:string }>
+    searchParams: Promise<{ rap:string }>
 })  {
-      const {bns:bsn } = await searchParams
-    const res = await serverFetch<BusinessRes>(`business/search-by-user?businessName=${bsn}`)
+      const {rap:bsn } = await searchParams
+    const res = await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(bsn)}`)
+        console.log(bsn)
         if (res&&res.alreadyInitial) {
-            redirect(`/dashboard?bns=${bsn}`);
+            redirect(`/dashboard?rap=${bsn}`);
         }
         else if (!res) {
         const msg = Buffer.from('Primeiro selecione ou crie um negócio').toString('base64')
         redirect(`/business/booking-link?flash=${msg}`)
     }
     const hasWorkingPeriods = res.hasWorkingPeriods
-    console.log(res)
-    
+
     return (
         <>
             <AgenrapHeader isDefault={true}>
                 {initialBusinessConfigUrls.labels.map((url, indx) => (
                     <div key={indx} className="flex w-fit relative">
-                        <AgenrapLinkButton variant={"brownlinkrap"} hrefLink={['hours', 'services'].includes(url.url) ? url.url + `?bns=${res.name}` : url.url}>
+                        <AgenrapLinkButton variant={"brownlinkrap"} hrefLink={['hours', 'services'].includes(url.url) ? url.url + `?rap=${formatPublicHandle(res.atSign)}` : url.url}>
                             {url.view}
                         </AgenrapLinkButton>
                     </div>
@@ -51,7 +52,7 @@ export default async function BusinessInitialConfigPage({
                 <p className="font-tree text-sm text-(--agenrap-brown-500)/70">
                     Seus dias e horários de atendimento já foram salvos. O próximo passo é cadastrar seus serviços para ativar a agenda.
                 </p>
-                <AgenrapLinkButton variant="brownlinkrap" hrefLink={`services?bns=${res.name}`}>
+                <AgenrapLinkButton variant="brownlinkrap" hrefLink={`services?rap=${formatPublicHandle(res.atSign)}`}>
                     Continuar para Serviços →
                 </AgenrapLinkButton>
             </div>
