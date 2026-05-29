@@ -20,9 +20,6 @@ export type AgenrapCalendarProps = {
 }
 export default function AgenrapCalendar({ business, date, setDate, className, fullDays, setFullDays,isOwner  }: AgenrapCalendarProps) {
     const { handleMonthChange } = useCustomerActions()
-    useEffect(() => {
-        console.log(date)
-    }, [date])
 
 
     return (

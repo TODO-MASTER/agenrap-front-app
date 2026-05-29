@@ -16,7 +16,6 @@ export default async function BusinessInitialConfigPage({
 })  {
       const {rap:bsn } = await searchParams
     const res = await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(bsn)}`)
-        console.log(bsn)
         if (res&&res.alreadyInitial) {
             redirect(`/dashboard?rap=${bsn}`);
         }

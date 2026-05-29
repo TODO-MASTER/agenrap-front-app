@@ -51,7 +51,6 @@ const visibleColumns = isCompleted
       router.refresh()
       setSelectedIds(new Set())
     })
-    console.log('completar:', ids)
   }
 
   return (
