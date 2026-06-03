@@ -6,11 +6,8 @@ import { PageableResponse } from "@/src/shared/types";
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils";
 
 export async function getDashCustomersByRap(rap: string, page = 1, pageSize = 5) {
-  const res =  await serverFetch<PageableResponse<BusinessCustomer[]>>(`user/paginated?page=${page}&pageSize=${pageSize}&atSign=${normalizePublicHandle(rap)} `, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-
-  });
-
-  return res;
+    return serverFetch<PageableResponse<BusinessCustomer[]>>(
+        `user/paginated-merge?page=${page}&pageSize=${pageSize}&atSign=${normalizePublicHandle(rap)}`,
+        { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+    )
 }

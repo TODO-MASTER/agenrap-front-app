@@ -18,6 +18,7 @@ import CardDayWeek from "@/src/shared/components/agenrap-ui/card/card-day-week/c
 
 import { useEffect, useState } from "react";
 import { NormalizedWeek } from "@/src/shared/utils/normalize-week.utils";
+import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/button/agenrap-segment-button";
 
 interface ICtnCreateWkpProps {
     tgrap: string,
@@ -50,16 +51,14 @@ export default function AddWorkingPeriodForm({ tgrap, weeks }: ICtnCreateWkpProp
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit((values) => handleCreateWkPeriodAction(values))}
-                className="flex flex-col gap-y-8 md:gap-y-16 lg:py-6 lg:px-8 md:py-4 px-2 items-center "
+                className="flex flex-col gap-y-4 md:gap-y-10 lg:py-6 lg:px-8 md:py-4 px-2 items-center"
             >
                 <div className="flex w-full  items-center justify-between  gap-y-2 md:flex-nowrap flex-wrap">
-                    <h1 className="lg:text-4xl md:text-3xl text-2xl font-tree font-medium">Adicionar Expediente</h1>
-                    <div className="md:w-fit w-full  flex justify-end">
-
-                        <AgenrapLinkButton variant={"minBrownRap"} hrefLink={`/dashboard/journey/list?rap=${tgrap}`} className={`${linkButtonResponsive} `}   >
-                            <Watch color="#fff" size={25} />
-                            <p className="font-tree md:text-2xl text-lg ">Ver Adicionados</p></AgenrapLinkButton>
-                    </div>
+                    <h1 className="lg:text-4xl md:text-3xl text-2xl font-tree font-medium">Expediente</h1>
+                    <AgenrapSegmentedControl segments={[
+                        { label: 'Adicionar', href: `/dashboard/journey/new?rap=${tgrap}`, active: true },
+                        { label: 'Ver Todos', href: `/dashboard/journey/list?rap=${tgrap}`, active: false },
+                    ]} />
 
                 </div>
 

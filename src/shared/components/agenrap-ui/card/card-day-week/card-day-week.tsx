@@ -16,101 +16,76 @@ export default function CardDayWeek({ form, index, remove,mode='edit' }: ICardDa
         const isShow = mode === 'show';
     const initial = form.getValues(`business.weeks.${index}.initial`);
     const end = form.getValues(`business.weeks.${index}.end`);
-    return (
-        <div className="flex flex-col  w-full bg-(--agenrap-gray-800) rounded-xl p-2 pl-4 pb-4">
-            <div className="flex w-full justify-end">
-
-                <button type="button" className=" border-0 hover:animate-pulse h-full   cursor-pointer" onClick={() => remove(index)}><X color="red" /></button>
-            </div>
-                        <div className="flex flex-col w-full">
-            <p className="text-white font-tree text-lg ">Dia</p>
-            <p className="text-(--agenrap-yellow-200) font-tree text-lg font-medium">{translateDayName(form.getValues(`business.weeks.${index}.name`))}</p>
-            </div>
-            {isShow ? (
-             
-                <div className="flex gap-x-4 mt-1">
-                    <div className="flex flex-col">
-                        <span className="text-white text-sm font-tree">De</span>
-                        <span className="text-(--agenrap-yellow-200) font-medium font-tree">{initial.slice(0,5)}</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-white text-sm font-tree">Fim</span>
-                        <span className="text-(--agenrap-yellow-200) font-medium font-tree">{end.slice(0,5)}</span>
-                    </div>
+return (
+    <div className="flex flex-col w-full bg-(--agenrap-gray-800) rounded-md overflow-hidden border-l-4 border-(--agenrap-yellow-200)">
+        <div className="flex w-full justify-between items-center px-4 pt-3 pb-1">
+            <p className="text-(--agenrap-yellow-200) font-tree text-xl font-semibold">
+                {translateDayName(form.getValues(`business.weeks.${index}.name`))}
+            </p>
+            <button type="button" className="cursor-pointer hover:opacity-70 transition-opacity" onClick={() => remove(index)}>
+                <X color="red" size={18} />
+            </button>
+        </div>
+        {isShow ? (
+            <div className="flex items-center gap-x-2 px-4 pb-4 mt-2">
+                <div className="flex flex-col">
+                    <span className="text-white/40 text-xs font-tree uppercase tracking-wide">Início</span>
+                    <span className="text-white font-semibold font-tree text-base">{initial.slice(0, 5)}</span>
                 </div>
-            ) : (
-            <div className="flex gap-x-1">
+                <span className="text-white/30 mt-3">→</span>
+                <div className="flex flex-col">
+                    <span className="text-white/40 text-xs font-tree uppercase tracking-wide">Fim</span>
+                    <span className="text-white font-semibold font-tree text-base">{end.slice(0, 5)}</span>
+                </div>
+            </div>
+        ) : (
+            <div className="flex gap-x-1 px-4 pb-4">
                 <FormField
                     control={form.control}
                     name={`business.weeks.${index}.initial`}
-
                     render={({ field }) => (
-                        <FormItem className="">
+                        <FormItem>
                             <FormControl>
                                 <AgenrapInput
                                     id={`${index}`}
                                     type="time"
-
                                     value={field.value}
-                                    onChange={(e) => {
-                                        field.onChange(e);
-                                        form.trigger(`business.weeks.${index}.end`);
-                                    }}
-                                    label="De"
+                                    onChange={(e) => { field.onChange(e); form.trigger(`business.weeks.${index}.end`) }}
+                                    label="Início"
                                     variant="cyberYellowRap"
                                     autoComplete="off"
-                                    placeholder="nome do seu negócio ex:salao-agenrap"
-                                    allErrors={"calyBlackInputError"}
+                                    allErrors="calyBlackInputError"
                                     className="[&::-webkit-calendar-picker-indicator]:hidden"
-
-                                    removeFormMessage={true}
+                                    removeFormMessage
                                 />
                             </FormControl>
                         </FormItem>
                     )}
                 />
-
                 <FormField
                     control={form.control}
                     name={`business.weeks.${index}.end`}
-
                     render={({ field }) => (
-                        <div className="flex items-center gap-x-1">
-                            <FormItem className="">
-                                <FormControl >
-
-                                    <AgenrapInput
-                                        id={`${index}`}
-                                        type="time"
-
-                                        value={field.value}
-                                        onChange={(e) => {
-                                            field.onChange(e);
-                                            form.trigger(`business.weeks.${index}.initial`);
-                                        }}
-                                        label="Fim"
-                                        variant="cyberYellowRap"
-                                        autoComplete="off"
-                                        placeholder="nome do seu negócio ex:salao-agenrap"
-                                        allErrors={"calyBlackInputError"}
-                                        className="[&::-webkit-calendar-picker-indicator]:hidden"
-
-                                        removeFormMessage={true}
-                                    />
-
-
-
-                                </FormControl>
-
-                            </FormItem>
-
-                        </div>
-
+                        <FormItem>
+                            <FormControl>
+                                <AgenrapInput
+                                    id={`${index}`}
+                                    type="time"
+                                    value={field.value}
+                                    onChange={(e) => { field.onChange(e); form.trigger(`business.weeks.${index}.initial`) }}
+                                    label="Fim"
+                                    variant="cyberYellowRap"
+                                    autoComplete="off"
+                                    allErrors="calyBlackInputError"
+                                    className="[&::-webkit-calendar-picker-indicator]:hidden"
+                                    removeFormMessage
+                                />
+                            </FormControl>
+                        </FormItem>
                     )}
                 />
-                
             </div>
-            )}
-        </div>
-    )
+        )}
+    </div>
+)
 }

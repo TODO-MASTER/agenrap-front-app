@@ -185,7 +185,7 @@ export default function RapAuthForm({ isLogin }: { isLogin?: boolean }) {
                 type="button"
                 onClick={() => {
                     if (rap) setPendingRap(rap)
-                    router.push(rap ? `/register?cmd=Y&rap=${formatPublicHandle(rap)}` : "/register?cmd=Y")
+                    router.push(rap ? `/register?cmd=Y&rap=${formatPublicHandle(rap)}` : "/welcome")
                 }}
                 className="font-semibold text-(--agenrap-purple-500) hover:underline cursor-pointer"
             >

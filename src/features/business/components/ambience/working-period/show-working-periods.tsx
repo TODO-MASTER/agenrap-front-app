@@ -7,6 +7,7 @@ import { useBusinessStore } from "@/src/shared/store/use-business.store";
 import EditWorkingPeriodDialog from "@/src/shared/components/agenrap-ui/dialog/edit-working-period-dialog";
 import DeleteWorkingPeriodDialog from "@/src/shared/components/agenrap-ui/dialog/delete-working-period-dialog";
 import { NormalizedWeek } from "@/src/shared/utils/normalize-week.utils";
+import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/button/agenrap-segment-button";
 
 export type RapWorkingPeriodProps= {
     tgrap: string,
@@ -19,9 +20,6 @@ export default function ShowWorkingPeriods({ tgrap, weeks }: RapWorkingPeriodPro
     const [deleteWkpOpen, setDeleteWkpOpen] = useState<boolean>(false)
         const storeWeeks = useBusinessStore(bsCtx => bsCtx.weeks)
     const setWeeks = useBusinessStore(bsCtx => bsCtx.setWeeks)
-    const linkButtonResponsive = "md:w-fit  md:rounded-none md:h-21.25 md:px-3  md:gap-x-1 md:items-center md:self-auto  md:justify-center " +
-        " items-center   justify-start  w-full  flex  w-fit self-end px-4 py-2 h-fit gap-x-2"
-
     useEffect(() => {
         setWeeks(weeks) 
     }, [])
@@ -33,24 +31,19 @@ export default function ShowWorkingPeriods({ tgrap, weeks }: RapWorkingPeriodPro
                 className="flex flex-col gap-y-8 md:gap-y-16 lg:py-6 lg:px-8 md:py-4 px-2 items-center "
             >
                 <div className="flex w-full  items-center justify-between  gap-y-2 md:flex-nowrap flex-wrap">
-                    <h1 className="lg:text-4xl md:text-3xl text-2xl font-tree font-medium">Sua semana</h1>
-                    <div className="md:w-fit w-full  flex justify-end">
+                    <h1 className="lg:text-4xl md:text-3xl text-2xl font-tree font-medium">Expediente</h1>
+                    <AgenrapSegmentedControl segments={[
+                        { label: 'Adicionar', href: `/dashboard/journey/new?rap=${tgrap}`, active: false },
+                        { label: 'Ver Todos', href: `/dashboard/journey/list?rap=${tgrap}`, active: true },
+                    ]} />
 
-                        <AgenrapLinkButton variant={"minBrownRap"} hrefLink={`/dashboard/journey/new?rap=${tgrap}`} className={`${linkButtonResponsive} `}   >
-                            <BadgePlus color="#fff" size={25} />
-                            <p className="font-tree md:text-2xl text-lg ">Adicionar</p></AgenrapLinkButton>
-                    </div>
 
                 </div>
 
-                <section className="flex flex-col lg:w-[55%] md:w-[75%]">
+                <section className="flex flex-col w-full">
 
                     <div className="flex flex-col  w-full   ">
-                        <div className=" flex ">
 
-                            <p className="text-2xl font-tree my-2 text-start ">Todos os dias</p>
-
-                        </div>
                         <div className="flex flex-wrap gap-4 gap-y-8 mt-12">
                             {storeWeeks.filter(w => w.active).map((wk) => (
                                 <div key={wk.id} className="flex flex-col relative">

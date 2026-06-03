@@ -10,9 +10,9 @@ import { handleCancelAppointment } from "@/src/shared/services/appointment.servi
 import { AppointmentCancelRes } from "@/src/shared/types/appointment.types"
 import { AlertTriangle, CalendarDays, LoaderCircle, X } from "lucide-react"
 import Image from "next/image"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { VisuallyHidden } from "radix-ui"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 type AppointmentItem = AppointmentCancelRes['data'][number]
 
@@ -27,11 +27,13 @@ type Step = 'list' | 'confirm'
 export default function ShowAppointmentsDialog({ open, onClose, appointments }: ShowAppointmentsDialogProps) {
     const {handleCancelAppointmentAction,isStartCancelApptTransition}=useCustomerActions()
     const [step, setStep] = useState<Step>('list')
+      const router = useRouter()
     const [selected, setSelected] = useState<AppointmentItem | null>(null)
     const usePathName = usePathname()
 
     function handleSelect(appt: AppointmentItem) {
         setSelected(appt)
+
         setStep('confirm')
     }
 
@@ -128,8 +130,9 @@ export default function ShowAppointmentsDialog({ open, onClose, appointments }: 
         {step === 'confirm' && (
           <AgenrapButton
             className="bg-(--agenrap-purple-500) hover:bg-(--agenrap-purple-500)/85 text-white h-9 w-fit rounded-lg text-sm px-4"
-            onClick={() => handleCancelAppointmentAction(selected!.appointmentId,selected!.businessId,usePathName==='/dashboard/customers'?selected?.userId: null, () => {
+            onClick={() => handleCancelAppointmentAction(selected!.appointmentId,selected!.businessId,usePathName==='/dashboard/customers'?selected?.userId??null:null,usePathName==='/dashboard/customers'?selected?.customerId??null:null, () => {
               setStep('list')
+                      router.refresh()
               onClose()
             })}>
             {isStartCancelApptTransition

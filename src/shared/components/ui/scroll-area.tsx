@@ -31,7 +31,6 @@ function ScrollArea({
 function ScrollBar({
   className,
   orientation = "vertical",
-  primitiveThumbVar,
   ...props
 }: React.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>) {
   return (
@@ -50,7 +49,7 @@ function ScrollBar({
     >
       <ScrollAreaPrimitive.ScrollAreaThumb
         data-slot="scroll-area-thumb"
-        className={`relative flex-1 ${primitiveThumbVar}`}
+        className={`relative flex-1`}
       />
     </ScrollAreaPrimitive.ScrollAreaScrollbar>
   )

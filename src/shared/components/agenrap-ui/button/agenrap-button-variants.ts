@@ -11,7 +11,13 @@ export const agenrapButtonVariants = cva(
                 brownLogoutrap: "text-black md:bg-(--agenrap-brown-400) bg-(--agenrap-brown-500)/15 outline-none md:hover:bg-(--agenrap-brown-500)/15 hover:text-black/50 md:rounded-md cursor-pointer font-figtree font-medium text-sm",
                 pictureHangerRap:"border-4 font-tree  border-(--agenrap-yellow-200)/85 rounded-xs bg-(--agenrap-pure-white)  justify-center flex flex-col gap-2 items-center",
                 minBrownRap:"w-full h-[100px] outline-none text-white  hover:opacity-90 cursor-pointer font-figtree font-medium text-2xl bg-(--agenrap-brown-500) border-l-4 border-(--agenrap-brown-200)/75",
-                rapblue:"bg-red-200"
+                rapblue:"bg-red-200",
+                linkBrownRap: [
+    "outline-none text-white hover:opacity-90 cursor-pointer font-figtree font-medium",
+    "bg-(--agenrap-brown-500) border-l-4 border-(--agenrap-brown-200)/75",
+    "md:w-fit md:rounded-none md:h-21.25 md:px-3 md:gap-x-1 md:items-center md:self-auto md:justify-center",
+    "items-center justify-start w-full flex self-end px-4 py-2 h-fit gap-x-2"
+].join(" ")
             },
             size: {
                 empty:"p-2",

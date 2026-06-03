@@ -226,35 +226,35 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
     });
   }
 
-      const handleManagerSaveAppointment = async (date:string,hour:string,customerId:number,CustomerName:string, onSucess:()=>void) => {
-      const svsById = searchParams.get("svs")
-  
-      startTransition(async () => {
+const handleManagerSaveAppointment = async (
+    date: string,
+    hour: string,
+    customerId: number | null,
+    guestCustomerId: number | null,
+    customerName: string,
+    onSuccess: () => void
+) => {
+    const svsById = searchParams.get("svs")
+    startTransition(async () => {
         try {
-  
-          var mountAppointmentBody :AppointmentReq ={
-            name:CustomerName,
-            date:date,
-            hour:hour
-          } 
-  
-          const targetBuinessWithServices = await saveAppointment(mountAppointmentBody,svsById!,customerId)
-  
-          if (targetBuinessWithServices.data == null) {
-            toast.error(targetBuinessWithServices.message || "Algo deu errado, tente mais tarde!")
-          }else{
-          toast.success(targetBuinessWithServices.message || "entrando em agenda")
-          onSucess()
-          }
+            const res = await saveAppointment(
+                { name: customerName, date, hour },
+                svsById!,
+                customerId,
+                guestCustomerId
+            )
+            if (res.data == null) {
+                toast.error(res.message || "Algo deu errado!")
+            } else {
+                toast.success(res.message || "Agendamento criado!")
+                onSuccess()
+            }
         } catch (e) {
-          if (isRedirectError(e)) throw e;
-          toast.error(e instanceof Error ? e.message : 'Erro ao tentar entrar em agenda');
-  
+            if (isRedirectError(e)) throw e
+            toast.error(e instanceof Error ? e.message : 'Erro ao agendar')
         }
-  
-  
-      })
-    }
+    })
+}
           const handleCompleteAllppointmentsAction = async (businessId:number,Ids:Set<number>, onSucess:()=>void) => {
   
       startTransition(async () => {

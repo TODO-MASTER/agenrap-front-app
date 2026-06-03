@@ -133,15 +133,6 @@ const visibleColumns = isCompleted
           </div>
         )}
       />
-      <div className="fixed w-full bg-(--agenrap-gray-200) px-2 py-4 bottom-0">
-
-                        <AgenrapPagination 
-                      page={page}
-                      totalPages={totalPages}
-                      hasNext={hasNextPage}
-                      hasPrev={hasPrevPage}
-                      />
-                      </div>
     </div>
   )
 }

@@ -30,7 +30,7 @@ export default function AppointmentDisplay({ appointments, onSelect }: Props) {
 
   return (
     <ScrollArea className="h-80 w-full px-1">
-      <ScrollBar primitiveThumbVar="rounded-full bg-(--agenrap-yellow-200)" />
+                         <ScrollBar className="[&>[data-slot=scroll-area-thumb]]:rounded-full [&>[data-slot=scroll-area-thumb]]:bg-(--agenrap-yellow-200)" />
       <div className="flex flex-col p-1">
         {appointments.data.map(ap => (
           <CardAppointment ap={ap} key={ap.appointmentId} onSelect={onSelect} />

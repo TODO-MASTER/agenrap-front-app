@@ -52,9 +52,9 @@ export default function QuickSchedulingSection({ existingAppointment }: Props) {
         setSelectedSlot(null)
     }, [date])
 
-    useEffect(() => {
+      useEffect(() => {
         handleMonthChange(new Date(), setFullDays)
-    }, [])
+      }, [date])
 
     if (!showBooking && !business?.isOwner && existingAppointment) {
         const apptDate = dateUtils.fromDateString(existingAppointment.appointmentDate)
@@ -109,8 +109,9 @@ export default function QuickSchedulingSection({ existingAppointment }: Props) {
                             onClick={() => handleCancelAppointmentAction(
                                 existingAppointment.appointmentId,
                                 existingAppointment.businessId,
-                                null,
-                                () => router.refresh()
+                                null,null,
+                                () =>{      handleMonthChange(new Date(), setFullDays) 
+                                     router.refresh()}
                             )}
                         >
                             {isStartCancelApptTransition

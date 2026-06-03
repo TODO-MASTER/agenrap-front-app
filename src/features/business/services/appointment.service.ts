@@ -6,7 +6,8 @@ import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 export type AppointmentFull = {
   appointmentId: number
   serviceId: number
-  userId: number
+  userId: number | null
+  customerId: number | null
   businessId: number
   firstName: string
   lastName: string
@@ -30,7 +31,7 @@ export async function getDashAppointmentsByRap(
     rap: string,
     filter: 'today' | 'completed' | null = null,
     page = 1,
-    pageSize = 10,
+    pageSize = 5,
 ) {
     return await serverFetch<PageableResponse<AppointmentFull[]>>(
         `appointment/paginated?page=${page}&pageSize=${pageSize}&atSign=${normalizePublicHandle(rap)}${filter ? `&filter=${filter}` : ''}`,

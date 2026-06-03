@@ -101,14 +101,15 @@ export function useCustomerActions() {
     setFullDays(bookedDays.data.days) 
         })
 }
-  const handleCancelAppointmentAction = async (appontmentId:number,businessId:number,customerId:number|null=null,onSucess:()=>void) => {
+  const handleCancelAppointmentAction = async (appontmentId:number,businessId:number,customerId:number|null=null,customerGuestId:number|null=null,onSucess:()=>void) => {
     if(!businessId){
               toast.error('Verifique o arroba rap e tente novamente! :/');
       return
     }
     startCancelApptTransition(async () => {
-    const res =await  handleCancelAppointment(businessId,appontmentId,customerId)
+
     try{
+          const res =await  handleCancelAppointment(businessId,appontmentId,customerId??null,customerGuestId??null)
       if(res.data){
         toast.success(res.message??"agendamento está cancelado!")
         onSucess()

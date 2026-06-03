@@ -63,13 +63,12 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
     }
   }, [open])
 
-  // Ao abrir, checar se o cliente já tem agendamento ativo
   useEffect(() => {
     if (!open || !customer || !business) return
     const check = async () => {
       setLoadingCheck(true)
       try {
-        const res = await GetNextAppointments(business.id, customer.id)
+        const res = await GetNextAppointments(business.id, customer.userId, customer.customerId)
         const active = res?.data?.[0] ?? null
         setActiveAppointment(active)
         setStep(active ? 'hasActive' : 'schedule')
@@ -83,7 +82,10 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
   useEffect(() => {
     if (step !== 'schedule') return
     handleMonthChange(new Date(), setFullDays)
-  }, [step])
+  }, [step,date])
+  useEffect(() => {
+    handleMonthChange(new Date(), setFullDays)
+  }, [selectedServiceId])
 
   useEffect(() => {
     if (!date || !selectedServiceId) return
@@ -118,8 +120,9 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
     handleCancelAppointmentAction(
       activeAppointment.appointmentId,
       activeAppointment.businessId,
-      customer!.id,
+      customer!.userId??null,customer!.customerId??null,
       () => {
+        router.refresh()
         setActiveAppointment(null)
         setStep('schedule')
       }
@@ -236,7 +239,6 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
           )
         })()}
 
-        {/* STEP: Formulário de agendamento */}
         {step === 'schedule' && (
           <>
             <div className="px-4 pt-4 shrink-0">
@@ -248,7 +250,7 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
             </div>
 
             <ScrollArea className="h-100 w-full">
-              <ScrollBar primitiveThumbVar={`rounded-full bg-(--agenrap-yellow-200) ${serviceNotSelected ? "opacity-40 pointer-events-none select-none" : "opacity-100"}`} />
+<ScrollBar className={`[&>[data-slot=scroll-area-thumb]]:rounded-full [&>[data-slot=scroll-area-thumb]]:bg-(--agenrap-yellow-200) ${serviceNotSelected ? "[&>[data-slot=scroll-area-thumb]]:opacity-40 [&>[data-slot=scroll-area-thumb]]:pointer-events-none" : ""}`} />
               <div className={`flex flex-col h-full md:flex-row gap-4 p-4 overflow-y-auto flex-1 transition-opacity duration-200 ${serviceNotSelected ? "opacity-40 pointer-events-none select-none" : "opacity-100"}`}>
                 <div className="md:w-[42%] w-full shrink-0">
                   <AgenrapCalendar
@@ -279,7 +281,7 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
                     ) : (
                       <div className="bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full flex-1">
                         <ScrollArea className="h-56 lg:h-full w-full">
-                          <ScrollBar primitiveThumbVar="rounded-full bg-(--agenrap-yellow-200)" />
+                                                   <ScrollBar className="[&>[data-slot=scroll-area-thumb]]:rounded-full [&>[data-slot=scroll-area-thumb]]:bg-(--agenrap-yellow-200)" />
                           <div className="grid grid-cols-[repeat(auto-fill,minmax(90px,1fr))] gap-1 p-2 pb-0">
                             {slots.data.slots.map((hrs, index) => (
                               <button
@@ -321,16 +323,17 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
               </button>
 
               <AgenrapButton
-                onClick={() => handleManagerSaveAppointment(
-                  dateUtils.toDateString(date!),
-                  selectedSlot!,
-                  customer!.id,
-                  customer!.initials,
-                  () => {
-                    setOpen(false)
-                    router.refresh()
-                  }
-                )}
+               onClick={() => handleManagerSaveAppointment(
+    dateUtils.toDateString(date!),
+    selectedSlot!,
+    customer!.userId ?? null,
+    customer!.customerId ?? null,
+    customer!.fullName,
+    () => {
+        setOpen(false)
+        router.refresh()
+    }
+)}
                 disabled={saveDisabled}
                 className={`flex-1 py-3 transition-all duration-200 ${saveDisabled ? "bg-(--agenrap-gray-800) border border-(--agenrap-purple-500)/20 cursor-not-allowed" : ""}`}
               >

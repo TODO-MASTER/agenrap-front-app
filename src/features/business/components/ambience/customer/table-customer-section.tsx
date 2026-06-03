@@ -20,22 +20,22 @@ const columns: ColumnDef<BusinessCustomer>[] = [
 {
   accessorKey: "fullName",
   header: "Cliente",
-  cell: ({ row }) => {
-    const initials = row.original.fullName
-      .split(" ")
-      .slice(0, 2)
-      .map((n: string) => n[0])
-      .join("")
-      .toUpperCase()
+ cell: ({ row }) => {
+    const initials = row.original.fullName.split(" ").slice(0, 2).map((n: string) => n[0]).join("").toUpperCase()
     return (
-      <div className="flex items-center gap-x-2.5">
-        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-(--agenrap-gray-800) text-(--agenrap-yellow-200) font-tree text-xs font-semibold shrink-0">
-          {initials}
-        </span>
-        <span className="font-tree">{row.original.fullName}</span>
-      </div>
+        <div className="flex items-center gap-x-2.5">
+            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-(--agenrap-gray-800) text-(--agenrap-yellow-200) font-tree text-xs font-semibold shrink-0">
+                {initials}
+            </span>
+            <div className="flex flex-col">
+                <span className="font-tree">{row.original.fullName}</span>
+                {!row.original.isRegistered && (
+                    <span className="text-[10px] font-tree text-(--agenrap-brown-500)/50">sem conta</span>
+                )}
+            </div>
+        </div>
     )
-  },
+}
 },
   {
     accessorKey: "telephone",
@@ -145,7 +145,7 @@ export default function TableCustomerSection({ customers,page,totalPages,hasNext
   const handleOpen=(bs: BusinessCtx,customer: BusinessCustomer)=> {
     setOpenAppointments(true)
     startTransition(async () => {
-      const res = await GetNextAppointments(bs.id,customer.id)
+           const res = await GetNextAppointments(bs.id, customer.userId??null, customer.customerId??null)
       setAppointments(res)
     })
   }

@@ -49,20 +49,25 @@ export const columns: ColumnDef<AppointmentFull>[] = [
       )
     },
   },
-  {
+{
     accessorKey: "fullName",
     header: "Cliente",
     cell: ({ row }) => (
-      <div className="flex items-center gap-x-2.5 max-w-[80%]">
-        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-(--agenrap-gray-800) text-(--agenrap-yellow-200) font-tree text-xs font-semibold shrink-0">
-          {row.original.initials}
-        </span>
-        <span className="font-tree truncate" title={row.original.fullName}>
-          {row.original.fullName}
-        </span>
-      </div>
+        <div className="flex items-center gap-x-2.5 max-w-[80%]">
+            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-(--agenrap-gray-800) text-(--agenrap-yellow-200) font-tree text-xs font-semibold shrink-0">
+                {row.original.initials}
+            </span>
+            <div className="flex flex-col">
+                <span className="font-tree truncate" title={row.original.fullName}>
+                    {row.original.fullName}
+                </span>
+                {row.original.userId == null && (
+                    <span className="text-[10px] font-tree text-(--agenrap-brown-500)/50">sem conta</span>
+                )}
+            </div>
+        </div>
     ),
-  },
+},
   {
     accessorKey: "telephone",
     header: "Telefone",

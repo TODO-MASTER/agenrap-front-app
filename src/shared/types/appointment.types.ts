@@ -14,11 +14,12 @@ export type AppointmentRes = ApiResponse<{
 }>
 
 export type AppointmentCancelRes = ApiResponse<{
-  userId:number
+  userId:number|null
+
   appointmentId: number
   serviceId: number
   businessId:number
-  customerId:number
+  customerId:number|null
   userName: string
   serviceName: string
   serviceDuration: string

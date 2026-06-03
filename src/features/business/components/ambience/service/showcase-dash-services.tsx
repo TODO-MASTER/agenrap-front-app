@@ -1,6 +1,7 @@
 'use client'
 
 import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-link-button"
+import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/button/agenrap-segment-button"
 import CardServiceFit from "@/src/shared/components/agenrap-ui/card/card-service-fit"
 import CardServiceMax from "@/src/shared/components/agenrap-ui/card/card-service-max"
 import DeleteServiceDialog from "@/src/shared/components/agenrap-ui/dialog/delete-service-dialog"
@@ -21,13 +22,11 @@ export default function ShowcaseDashServices() {
     return (
         <div className="flex flex-col gap-y-8 md:gap-y-16 px-6  items-center">
                     <div className="flex w-full  items-center justify-between gap-y-4 md:flex-nowrap flex-wrap">
-                                <h1 className="lg:text-4xl md:text-2xl text-2xl font-tree font-medium">Meus Serviços</h1>
-                                <div className="md:w-fit w-full justify-end flex ">
-            
-                                <AgenrapLinkButton variant={"minBrownRap"} hrefLink={`/dashboard/service/new?rap=${formatPublicHandle(business?.atSign)}`} className={`${linkButtonResponsive}`}   >
-                                    <BadgePlus color="#fff" size={25} />
-                                    <p className="font-tree md:text-2xl text-lg ">Adicionar</p></AgenrapLinkButton>
-                                </div>
+                                <h1 className="lg:text-4xl md:text-2xl text-2xl font-tree font-medium">Serviços</h1>
+<AgenrapSegmentedControl segments={[
+    { label: 'Adicionar', href: `/dashboard/service/new?rap=${formatPublicHandle(business?.atSign)}`, active: false },
+    { label: 'Ver Todos', href: `/dashboard/service/list?rap=${formatPublicHandle(business?.atSign)}`, active: true },
+]} />
             
                             </div>
        
