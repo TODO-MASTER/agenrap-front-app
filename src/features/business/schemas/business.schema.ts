@@ -9,7 +9,7 @@ atSign: z
   .max(30, "Máximo 30 caracteres")
   .regex(
     /^[a-z0-9]+(?:[._-]?[a-z0-9]+)*$/,
-    "Use apenas letras minúsculas, números, ponto, hífen ou underscore."
+    "Continue digitando — o arroba não pode terminar com hífen, ponto ou underscore."
   )
   }),
 });

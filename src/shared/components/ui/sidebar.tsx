@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { ArrowLeftSquareIcon, ArrowRightSquareIcon, PanelLeftIcon } from "lucide-react"
+import { ArrowLeftSquareIcon, ArrowRightSquareIcon, PaintbrushVertical, PanelLeftIcon, PanelLeftOpen, PanelRightClose } from "lucide-react"
 import { Slot } from "radix-ui"
 
 import { useIsMobile } from "@/src/shared/hooks/use-mobile"
@@ -272,7 +272,7 @@ function SidebarTrigger({
       }}
       {...props}
     >
-    {open?<ArrowLeftSquareIcon  className="[&_svg]:size-6"/>:<ArrowRightSquareIcon className="[&_svg]:size-6" />}  
+    {open?<PanelRightClose  className="[&_svg]:size-6"/>:<PanelLeftOpen className="[&_svg]:size-6" />}  
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

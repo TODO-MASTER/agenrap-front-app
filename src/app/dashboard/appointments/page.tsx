@@ -30,7 +30,7 @@ const resAppointments = await getDashAppointmentsByRap(
   return (
     <>
       <BusinessInitializer data={targetBuinessWithServices} />
-      <div className="flex flex-col mx-auto mt-8 mb-6 lg:w-[90%] w-[95%]">
+      <div className="flex flex-col mx-auto  mb-6 lg:w-[90%] w-[95%]">
         <div className="flex flex-col gap-1 mb-6">
           <h1 className="font-tree font-semibold lg:text-2xl text-xl">Agendamentos</h1>
           <p className="font-tree text-sm text-(--agenrap-brown-500)/60">

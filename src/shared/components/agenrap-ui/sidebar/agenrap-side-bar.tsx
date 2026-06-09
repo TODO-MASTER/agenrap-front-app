@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, UserCircle } from "lucide-react"
 import {
   Collapsible,
   CollapsibleContent,
@@ -24,6 +24,7 @@ import { SidebarItems } from "./side-bar-items"
 import Image from "next/image"
 import { miniIcon } from "@/src/assets/images"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useProfileDialogStore } from "@/src/shared/store/use-profile-dialog.store"
 
 export default function AgenrapSidebar(
   props: React.ComponentProps<typeof Sidebar>
@@ -31,6 +32,7 @@ export default function AgenrapSidebar(
 
   const { open, isMobile,setOpenMobile } = useSidebar()
   const pathname = usePathname()
+  const setOpen = useProfileDialogStore(s => s.setOpen)
   const searchParams = useSearchParams()
   const rap = searchParams.get("rap")
   const router = useRouter()
@@ -115,6 +117,17 @@ export default function AgenrapSidebar(
       </SidebarContent>
 
       {/* <SidebarRail /> */}
+   <div className="mt-auto px-2 pb-2">
+  <button
+    onClick={() => setOpen(true)}
+    className={`w-full flex items-center gap-2 p-2 rounded-md 
+      bg-(--agenrap-purple-500)/10 hover:bg-(--agenrap-purple-500)/20 transition-colors
+      ${!open ? "justify-center" : ""}`}
+  >
+    <UserCircle className="h-5 w-5 shrink-0 text-(--agenrap-purple-500)" />
+    {open && <span className="font-tree text-sm text-black">Meu perfil</span>}
+  </button>
+</div>
     </Sidebar>
   )
 }

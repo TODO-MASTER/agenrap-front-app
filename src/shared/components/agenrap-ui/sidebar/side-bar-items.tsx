@@ -33,6 +33,7 @@ export const SidebarItems = {
           url: "/dashboard/customers",
           icon: UsersRound,
           iconClass: "text-(--agenrap-purple-500) ",
+                    activeFor: ["/dashboard/customers", "/dashboard/customers/new"],
         },
         {
           title: "Jornada",

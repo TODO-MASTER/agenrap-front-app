@@ -1,5 +1,5 @@
 import { Button } from "@/src/shared/components/ui/button";
-import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from "@/src/shared/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/src/shared/components/ui/popover";
 export type TriggerPopoverProps = {
     children: React.ReactNode,
     gun: React.ReactNode

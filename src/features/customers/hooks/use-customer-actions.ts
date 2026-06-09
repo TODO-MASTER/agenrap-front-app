@@ -11,6 +11,7 @@ import { GetBusinessPerRap } from "@/src/shared/services/business.service";
 import { ContactSchema, PasswordSchema } from "@/src/features/customers/schemas/customer-profile.schema";
 import { ChangePasswordAction, UpdateProfileAction } from "@/src/shared/services/user.service";
 import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
+import { updateCustomerAsync } from "@/src/features/business/services/customer.service";
 
 
 export function useCustomerActions() {
@@ -24,6 +25,7 @@ export function useCustomerActions() {
   const router = useRouter();
    const useSearchParam = useSearchParams()
    const serviceId = useSearchParam.get("svs")
+   const searchRap = useSearchParam.get("rap")
 
   const handleSearchByRap = (atSign: string, setSearchBsn: Dispatch<SetStateAction<"not-init" | BusinessCtx | null>>) => {
 
@@ -122,12 +124,23 @@ export function useCustomerActions() {
 
         })
 }
-function handleUpdateProfile(values: ContactSchema, onSuccess: () => void) {
+function handleUpdateProfile(values: ContactSchema,customerId:number|null, onSuccess: () => void) {
     startPhoneTransition(async () => {
         try {
-            const response = await UpdateProfileAction(values)
+          let response = null
+          if(customerId&&searchRap){
+            const MountCustomerUptReq ={
+              firstName:values.firstName,
+              lastName:values.lastName,
+              telephone:values.telephone??null
+            }
+                response = await updateCustomerAsync(searchRap,customerId,MountCustomerUptReq)
+          }else{
+                    response = await UpdateProfileAction(values)
+          }
+     
             if (response.data) {
-                toast.success(response.message ?? 'Perfil atualizado com sucesso!')
+                toast.success(response.message ?? 'Perfilssss atualizado com sucesso!')
             } else {
                 toast.error(response.message ?? 'Erro ao atualizar perfil!')
             }
@@ -138,6 +151,8 @@ function handleUpdateProfile(values: ContactSchema, onSuccess: () => void) {
         }
     })
 }
+
+
  
     function handleChangePassword(
         values: PasswordSchema,

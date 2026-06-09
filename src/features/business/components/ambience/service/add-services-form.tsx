@@ -18,6 +18,7 @@ import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap
 import { ScrollArea, ScrollBar } from "@/src/shared/components/ui/scroll-area";
 import Link from "next/link";
 import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/button/agenrap-segment-button";
+import { HeaderSegmentInjector } from "@/src/shared/components/agenrap-ui/header/header-segment-injector";
 
 export default function AddServicesForm({ tgrap }: { tgrap: string }) {
     const { handleCreateANewServiceAction, isPending: serviceIsPending } = useBusinessActions()
@@ -48,13 +49,22 @@ export default function AddServicesForm({ tgrap }: { tgrap: string }) {
                 onSubmit={form.handleSubmit((values) => handleCreateANewServiceAction(values))}
                 className="flex flex-col gap-y-2 md:gap-y-4 items-center px-4 md:px-6"
             >
-<div className="flex w-full items-center justify-between mb-2">
-    <h1 className="lg:text-4xl md:text-2xl text-xl font-tree font-medium">Serviços</h1>
-<AgenrapSegmentedControl segments={[
-    { label: 'Adicionar', href: `/dashboard/service/new?rap=${tgrap}`, active: true },
-    { label: 'Ver Todos', href: `/dashboard/service/list?rap=${tgrap}`, active: false },
-]} />
-</div>
+                <div className="flex md:hidden">
+
+                    <HeaderSegmentInjector segments={[
+                        { label: 'Adicionar', href: `/dashboard/service/new?rap=${tgrap}`, active: true },
+                        { label: 'Ver Todos', href: `/dashboard/service/list?rap=${tgrap}`, active: false },
+                    ]} />
+                </div>
+                <div className="flex w-full items-center justify-between mb-2">
+                    <h1 className="lg:text-4xl md:text-2xl text-xl font-tree font-medium">Serviços</h1>
+                    <div className="hidden md:flex ">
+                        <AgenrapSegmentedControl segments={[
+                            { label: 'Adicionar', href: `/dashboard/service/new?rap=${tgrap}`, active: true },
+                            { label: 'Ver Todos', href: `/dashboard/service/list?rap=${tgrap}`, active: false },
+                        ]} />
+                    </div>
+                </div>
 
                 <div className="flex flex-col md:flex-row w-full h-full min-h-112 gap-y-2">
                     <div className="bg-(--agenrap-gray-800) lg:w-[35%] md:w-[50%] w-full p-8 pb-12 flex flex-col gap-y-4">
@@ -146,7 +156,7 @@ export default function AddServicesForm({ tgrap }: { tgrap: string }) {
                     </div>
                 </div>
 
-                <div className="md:hidden fixed bottom-0 left-0 right-0 z-20 px-4 py-3 bg-(--agenrap-brown-200) border-t border-(--agenrap-gray-800)/30">
+                <div className="md:hidden fixed bottom-10 left-0 right-0 z-20 px-4 py-3 bg-(--agenrap-brown-200) border-t border-(--agenrap-gray-800)/30">
                     <AgenrapButton
                         type="submit"
                         variant="purplerap"

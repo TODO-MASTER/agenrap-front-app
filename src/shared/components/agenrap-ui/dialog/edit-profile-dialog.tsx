@@ -1,36 +1,27 @@
 'use client'
 
+import { BusinessCustomer } from "@/src/features/business/types"
+import ContactTab from "@/src/features/customers/components/business-showcase/profile-form/profile-tabs/contact-tab"
 import ProfileTabs, { UserProfile } from "@/src/features/customers/components/business-showcase/profile-form/profile-tabs/profile-tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/shared/components/ui/dialog"
 import { UserAuthRes } from "@/src/shared/services/user.service"
 import { VisuallyHidden } from "radix-ui"
 
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
+export type EditProfileConditionally={
+  user?:UserAuthRes
+  userGuest?:BusinessCustomer
+  isManager?:boolean
+  open:boolean
+  setOpen:(open: boolean) => void
+}
 
-export default function EditProfileDialog({ user }: { user: UserAuthRes }) {
-  const [open, setOpen] = useState(false)
-  const missingPhone = !user.telephone
+
+export default function EditProfileDialog({ user,open,setOpen, userGuest }:EditProfileConditionally) {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        title="Meu perfil"
-        className="relative w-9 h-9 rounded-full flex items-center justify-center
-                   text-xs font-bold text-white cursor-pointer
-                   border-2 border-(--agenrap-brown-500) hover:border-(--agenrap-purple-500)
-                   hover:ring-2 hover:ring-(--agenrap-purple-500)/20 transition-all"
-        style={{ background: 'var(--agenrap-brown-500)' }}
-      >
-        {user.initials}
-        {missingPhone && (
-          <span
-            className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-(--agenrap-gray-200)"
-            style={{ background: 'var(--agenrap-yellow-500)' }}
-          />
-        )}
-      </button>
+
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
@@ -53,14 +44,14 @@ export default function EditProfileDialog({ user }: { user: UserAuthRes }) {
                 className="w-9 h-9 rounded-bl-xl  flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
                 style={{ background: 'var(--agenrap-brown-500)' }}
               >
-                {user.initials}
+                {userGuest?.initials?? user?.initials??""}
               </div>
               </div>
               <div className="min-w-0">
                 <p className="font-tree font-semibold text-sm text-white leading-tight truncate">
-                  {user.fullName}
+                  {userGuest?.fullName?? user?.fullName??""}
                 </p>
-                <p className="text-xs text-white/40 truncate">{user.email}</p>
+                <p className="text-xs text-white/40 truncate">{!userGuest?user?.email:""}</p>
               </div>
             </div>
             <button
@@ -73,8 +64,11 @@ export default function EditProfileDialog({ user }: { user: UserAuthRes }) {
           </DialogHeader>
 
           <div className="px-5 py-5">
+
+            {!userGuest?    <ProfileTabs user={user!} open={open} setOpen={setOpen} />
+            :<ContactTab user={userGuest} userGuest={userGuest} open={open} setOpen={setOpen}/>}
         
-            <ProfileTabs user={user} />
+        
           </div>
         </DialogContent>
       </Dialog>

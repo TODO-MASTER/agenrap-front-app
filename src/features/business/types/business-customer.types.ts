@@ -6,10 +6,12 @@ export type BusinessCustomer = {
     fullName: string
     initials: string
     telephone: string | null
+    email: string | null
     lastAppointment: string | null
     lastServiceName: string | null
     totalAppointments: number
     totalSpent: number
     isRegistered: boolean
+    possibleDuplicate?: boolean
+    mergeTargetCustomerIds: number[] 
 }
- 

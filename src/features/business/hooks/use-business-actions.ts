@@ -2,7 +2,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction, useTransition } from "react";
 import { InitialatSignSchema } from "../schemas/business.schema";
-import { createBusinessByUrlAction } from "../services/business.service";
+import { createBusinessByUrlAction, deleteCustomerAsync } from "../services/business.service";
 import { toast } from "sonner";
 import { EditBusinessWorkingPeriodSchema, InitialBusinessWeeksSchema } from "@/src/features/business/schemas/business-week.schema";
 import { CreatWorkingPeriod, DeleteWkpService, EditWorkingPeriodService, GetWorkingPeriodPerRap } from "../services/working-period.service";
@@ -282,8 +282,31 @@ const handleManagerSaveAppointment = async (
   
       })
     }
+
+      function handleDeleteCustomerAction(customerId: number|null, onSuccess: () => void) {
+    const atSign = searchParams.get("rap")
+    if(!customerId){
+      toast.error("cliente não detectado!")
+      return
+    }
+    startTransition(async () => {
+      try {
+        if (!atSign) {
+          toast.error("Erro desconhecido ocorreu!")
+          return
+        }
+        await deleteCustomerAsync(atSign, customerId)
+        toast.success("Cliente removido com sucesso!")
+        onSuccess()
+      } catch (e) {
+        if (isRedirectError(e)) throw e
+        toast.error(e instanceof Error ? e.message : 'Erro ao remover cliente')
+      }
+    })
+  }
+ 
   
 
   
-  return { handleCreateBusinessAction, handleCreateWkPeriodAction, handleCreateANewServiceAction, handleEditServiceAction,handleDeleteServiceAction,handleEditWorkingPeriodAction,handleDeleteWkpAction,handleManagerSaveAppointment,handleCompleteAllppointmentsAction, isPending };
+  return { handleCreateBusinessAction,handleDeleteCustomerAction, handleCreateWkPeriodAction, handleCreateANewServiceAction, handleEditServiceAction,handleDeleteServiceAction,handleEditWorkingPeriodAction,handleDeleteWkpAction,handleManagerSaveAppointment,handleCompleteAllppointmentsAction, isPending };
 }

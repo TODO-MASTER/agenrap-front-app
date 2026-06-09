@@ -1,6 +1,8 @@
 import AddWorkingPeriodForm from "@/src/features/business/components/ambience/working-period/add-working-period-form"
 import { GetWorkingPeriodPerRap } from "@/src/features/business/services/working-period.service"
 import { BusinessRes } from "@/src/features/business/types/business.types"
+import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/button/agenrap-segment-button"
+import { HeaderSegmentInjector } from "@/src/shared/components/agenrap-ui/header/header-segment-injector"
 import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 import { normalizeWeek } from "@/src/shared/utils/normalize-week.utils"
@@ -22,6 +24,12 @@ export default async function CreateWorkingPeriodPage({
 
     return(
         <div className="flex flex-col  ">
+                            <div className="flex md:hidden ">
+                                <HeaderSegmentInjector segments={[
+                                    { label: 'Adicionar', href: `/dashboard/journey/new?rap=${bsnEncoded}`, active: true },
+                                    { label: 'Ver Todos', href: `/dashboard/journey/list?rap=${bsnEncoded}`, active: false },
+                                ]} />
+                            </div>
             <AddWorkingPeriodForm weeks={allWeeks} tgrap={bsnEncoded}/>
         </div>
     )

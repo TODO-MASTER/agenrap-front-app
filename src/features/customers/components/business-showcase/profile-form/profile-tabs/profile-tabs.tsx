@@ -4,7 +4,7 @@ import ContactTab from "@/src/features/customers/components/business-showcase/pr
 import PasswordTab from "@/src/features/customers/components/business-showcase/profile-form/profile-tabs/password-tab"
 import { UserAuthRes } from "@/src/shared/services/user.service"
 import { FileWarning } from "lucide-react"
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 
 type ProfileTab = 'contact' | 'password'
 
@@ -16,7 +16,13 @@ export interface UserProfile {
   phone?: string | null
 }
 
-export default function ProfileTabs({ user }: { user: UserAuthRes }) {
+type ProfileTabsProps={
+  user: UserAuthRes
+    open:boolean
+    setOpen:(open: boolean) => void
+}
+
+export default function ProfileTabs({ user,open,setOpen }:ProfileTabsProps) {
   const [active, setActive] = useState<ProfileTab>('contact')
 
   return (
@@ -51,7 +57,7 @@ export default function ProfileTabs({ user }: { user: UserAuthRes }) {
       </div>
 
       <div>
-        {active === 'contact' && <ContactTab user={user} />}
+        {active === 'contact' && <ContactTab user={user} open={open} setOpen={setOpen}/>}
         {active === 'password' && <PasswordTab />}
       </div>
     </div>

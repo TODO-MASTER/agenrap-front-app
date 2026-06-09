@@ -1,3 +1,4 @@
+'use server'
 import AddServicesForm from "@/src/features/business/components/ambience/service/add-services-form"
 import { BusinessRes } from "@/src/features/business/types/business.types"
 

@@ -30,6 +30,7 @@ export async function UpdateProfileAction(values: ContactSchema) {
     })
 }
 
+
 export async function ChangePasswordAction(currentPassword: string, newPassword: string) {
     return await serverFetch<ApiResponse<boolean>>('user/change-password', {
         method: 'PUT',

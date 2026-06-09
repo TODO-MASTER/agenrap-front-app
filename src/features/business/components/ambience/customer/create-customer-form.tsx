@@ -10,7 +10,7 @@ import AgenrapInput from '@/src/shared/components/agenrap-ui/input/agenrap-input
 import AgenrapButton from '@/src/shared/components/agenrap-ui/button/agenrap-button'
 import { AgenrapSegmentedControl } from '@/src/shared/components/agenrap-ui/button/agenrap-segment-button'
 import { Badge } from '@/src/shared/components/ui/badge'
-import { Phone, LoaderCircle } from 'lucide-react'
+import { Phone, LoaderCircle, Mail } from 'lucide-react'
 import Image from 'next/image'
 import { macroLogo } from '@/src/assets/images'
 import { maskPhone } from '@/src/shared/utils/formatters.utils'
@@ -24,7 +24,7 @@ export default function CreateCustomerForm({ rap }: { rap: string }) {
 
     const form = useForm<CreateCustomerSchema>({
         resolver: zodResolver(createCustomerSchema),
-        defaultValues: { firstName: '', lastName: '', telephone: '' },
+        defaultValues: { firstName: '', lastName: '', telephone: '', email: '' },
         mode: 'onChange',
     })
 
@@ -51,7 +51,7 @@ export default function CreateCustomerForm({ rap }: { rap: string }) {
                         render={({ field }) => (
                             <FormItem className="flex-1">
                                 <FormControl>
-                                    <AgenrapInput id="firstName" label="Nome" variant="brownrap" autoComplete="off" {...field} />
+                                    <AgenrapInput id="firstName" removeFormMessage label="Nome" placeholder='Ex. Primeiro Nome' variant="brownrap" autoComplete="off" {...field} />
                                 </FormControl>
                                 {form.formState.errors.firstName && (
                                     <p className="text-xs text-red-400 font-tree mt-0.5">{form.formState.errors.firstName.message}</p>
@@ -65,7 +65,7 @@ export default function CreateCustomerForm({ rap }: { rap: string }) {
                         render={({ field }) => (
                             <FormItem className="flex-1">
                                 <FormControl>
-                                    <AgenrapInput id="lastName" label="Sobrenome" variant="brownrap" autoComplete="off" {...field} />
+                                    <AgenrapInput id="lastName" removeFormMessage placeholder='Ex. Ultimo Nome' label="Sobrenome" variant="brownrap" autoComplete="off" {...field} />
                                 </FormControl>
                                 {form.formState.errors.lastName && (
                                     <p className="text-xs text-red-400 font-tree mt-0.5">{form.formState.errors.lastName.message}</p>
@@ -74,6 +74,35 @@ export default function CreateCustomerForm({ rap }: { rap: string }) {
                         )}
                     />
                 </div>
+
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem className="flex-1">
+                            <FormControl>
+                                <AgenrapInput 
+                                id="email" 
+                                placeholder='example@gmail.com' 
+                                                                    labelIcon={
+                                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 leading-4">
+                                            opcional
+                                        </Badge>
+                                    }
+                                label="E-mail" 
+                                variant="brownrap" 
+                                autoComplete="off"
+                                removeFormMessage
+                                left
+                                icon={<Mail size={20} />}
+                                {...field} />
+                            </FormControl>
+                            {form.formState.errors.email && (
+                                <p className="text-xs text-red-400 font-tree mt-0.5">{form.formState.errors.email.message}</p>
+                            )}
+                        </FormItem>
+                    )}
+                />
 
                 <FormField
                     control={form.control}
@@ -117,8 +146,8 @@ export default function CreateCustomerForm({ rap }: { rap: string }) {
                 <AgenrapButton
                     type="submit"
                     variant="purplerap"
-                    disabled={isPending || !form.formState.isValid || !form.formState.isDirty}
-                    className={`w-full justify-center ${(!form.formState.isValid || !form.formState.isDirty) && 'cursor-not-allowed opacity-50'}`}
+                    disabled={isPending || !form.formState.isValid}
+                    className={`w-full justify-center ${(!form.formState.isValid) && 'cursor-not-allowed opacity-50'}`}
                 >
                     {isPending ? (
                         <div className="flex relative">

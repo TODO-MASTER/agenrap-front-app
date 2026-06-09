@@ -12,13 +12,25 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle, Phone } from "lucide-react"
 import { macroLogo } from "@/src/assets/images"
 import Image from "next/image"
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useCustomerActions } from "@/src/features/customers/hooks/use-customer-actions"
-import { UserAuthRes } from "@/src/shared/services/user.service"
+import { getOne, UserAuthRes } from "@/src/shared/services/user.service"
 import { useRouter } from "next/navigation"
+import { BusinessCustomer } from "@/src/features/business/types"
+import { useUserStore } from "@/src/shared/store/use-user-store"
  
-export default function ContactTab({ user }: { user: UserAuthRes }) {
+
+type OrchestredContactTabType={
+    user:UserAuthRes|BusinessCustomer
+    userGuest?:BusinessCustomer
+    open:boolean
+    setOpen:(open: boolean) => void
+
+}
+
+export default function ContactTab({user,userGuest,setOpen,open}:OrchestredContactTabType) {
+    const setUser = useUserStore(s => s.setUser)
     const { handleUpdateProfile, isPhonePending } = useCustomerActions()
     const router = useRouter()
     const [phoneDisplay, setPhoneDisplay] = useState(
@@ -36,13 +48,18 @@ export default function ContactTab({ user }: { user: UserAuthRes }) {
     })
 
     function onSubmit(values: ContactSchema) {
-        handleUpdateProfile(values, () => {
+        handleUpdateProfile(values,userGuest?.customerId??null, async() => {
+        if (!userGuest) {
+            const updated = await getOne()
+            if (updated) setUser(updated)
+        }
             router.refresh()
             form.reset({
                 firstName: values.firstName,
                 lastName: values.lastName,
                 telephone: values.telephone,
             })
+            setOpen(false)
         })
     }
 

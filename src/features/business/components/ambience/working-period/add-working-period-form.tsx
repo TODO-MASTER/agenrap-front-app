@@ -55,10 +55,12 @@ export default function AddWorkingPeriodForm({ tgrap, weeks }: ICtnCreateWkpProp
             >
                 <div className="flex w-full  items-center justify-between  gap-y-2 md:flex-nowrap flex-wrap">
                     <h1 className="lg:text-4xl md:text-3xl text-2xl font-tree font-medium">Expediente</h1>
+                    <div className="hidden md:flex ">
                     <AgenrapSegmentedControl segments={[
                         { label: 'Adicionar', href: `/dashboard/journey/new?rap=${tgrap}`, active: true },
                         { label: 'Ver Todos', href: `/dashboard/journey/list?rap=${tgrap}`, active: false },
                     ]} />
+                    </div>
 
                 </div>
 

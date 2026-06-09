@@ -32,10 +32,13 @@ export default function ShowWorkingPeriods({ tgrap, weeks }: RapWorkingPeriodPro
             >
                 <div className="flex w-full  items-center justify-between  gap-y-2 md:flex-nowrap flex-wrap">
                     <h1 className="lg:text-4xl md:text-3xl text-2xl font-tree font-medium">Expediente</h1>
-                    <AgenrapSegmentedControl segments={[
-                        { label: 'Adicionar', href: `/dashboard/journey/new?rap=${tgrap}`, active: false },
-                        { label: 'Ver Todos', href: `/dashboard/journey/list?rap=${tgrap}`, active: true },
-                    ]} />
+                                    <div className="hidden md:flex ">
+                                        <AgenrapSegmentedControl segments={[
+                                            { label: 'Adicionar', href: `/dashboard/journey/new?rap=${tgrap}`, active: false },
+                                            { label: 'Ver Todos', href: `/dashboard/journey/list?rap=${tgrap}`, active: true },
+                                        ]} />
+                                    </div>
+
 
 
                 </div>

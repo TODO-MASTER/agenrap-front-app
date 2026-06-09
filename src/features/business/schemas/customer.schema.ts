@@ -6,5 +6,9 @@ export const createCustomerSchema = z.object({
         .transform(v => v.replace(/\D/g, ''))
         .refine(v => v === '' || v.length === 10 || v.length === 11, { message: 'Telefone inválido' })
         .optional(),
+    email: z.union([
+        z.string().email({ message: "*Email inválido" }),
+        z.literal(''),
+    ]).optional(),
 })
 export type CreateCustomerSchema = z.infer<typeof createCustomerSchema>
