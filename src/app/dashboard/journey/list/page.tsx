@@ -29,6 +29,7 @@ export default async function ShowCaseWorkingPeriodPage({
             
                             <HeaderSegmentInjector segments={[
                                             { label: 'Adicionar', href: `/dashboard/journey/new?rap=${bsnEncoded}`, active: false },
+                                            { label: 'range', href: `/dashboard/journey/range-turn?rap=${bsnEncoded}`, active: false },
                                             { label: 'Ver Todos', href: `/dashboard/journey/list?rap=${bsnEncoded}`, active: true },
                             ]} />
                         </div>

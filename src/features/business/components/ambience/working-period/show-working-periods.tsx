@@ -35,6 +35,7 @@ export default function ShowWorkingPeriods({ tgrap, weeks }: RapWorkingPeriodPro
                                     <div className="hidden md:flex ">
                                         <AgenrapSegmentedControl segments={[
                                             { label: 'Adicionar', href: `/dashboard/journey/new?rap=${tgrap}`, active: false },
+                                            { label: 'range', href: `/dashboard/journey/range-turn?rap=${tgrap}`, active: false },
                                             { label: 'Ver Todos', href: `/dashboard/journey/list?rap=${tgrap}`, active: true },
                                         ]} />
                                     </div>
