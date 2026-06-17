@@ -14,40 +14,44 @@ import { startTransition, useState } from "react";
 
 export default function BusinessDisplay({ business }: { business: BusinessCtx[] }) {
 
-    const [openAppointments,setOpenAppointments] = useState<boolean>(false)
-const [appointments, setAppointments] = useState<AppointmentCancelRes | null>(null)
-function handleOpen(bs: BusinessCtx) {
-  setOpenAppointments(true)
-  startTransition(async () => {
-    const res = await GetNextAppointments(bs.id)
-    setAppointments(res)
-  })
-}
+    const [openAppointments, setOpenAppointments] = useState<boolean>(false)
+    const [appointments, setAppointments] = useState<AppointmentCancelRes | null>(null)
+    function handleOpen(bs: BusinessCtx) {
+        setOpenAppointments(true)
+        startTransition(async () => {
+            const res = await GetNextAppointments(bs.id)
+            setAppointments(res)
+        })
+    }
     return (
-        <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1  gap-8 ">
-            <ShowAppointmentsDialog appointments={appointments!} open={openAppointments} onClose={()=>{
+        <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-8">
+            <ShowAppointmentsDialog appointments={appointments!} open={openAppointments} onClose={() => {
                 setOpenAppointments(false)
             }} />
             {business!.map(bs => (
                 <div key={bs.id} className="flex flex-col relative">
-                    <div className="flex  justify-end w-full -mt-6 -mr-2 absolute z-10">
+                    <div className="flex justify-end w-full -mt-6 -mr-2 absolute z-10">
                         <div className="border-2 border-(--agenrap-purple-500) bg-(--agenrap-gray-800) rounded-md px-2 py-1 flex justify-end gap-x-2">
                             <button type="button" className="cursor-pointer" onClick={() => {
-                              handleOpen(bs)
+                                handleOpen(bs)
                             }}><ScrollText color="#FFE082" size={24} /></button>
-                            <button type="button" className="cursor-pointer"><DoorOpen color="red" size={24} onClick={() => {
+                            <button type="button" className="cursor-pointer"><DoorOpen color={bs.isOpenToday ? "red" : "#FFE082"} size={24} onClick={() => {
 
                             }} /></button>
                         </div>
                     </div>
-                    <div>
-                        <div className="flex flex-col" >
-                            <CardBusiness name={bs.mnrName!} init={bs.weeks[0]?.initial?.slice(0, 5) ?? ""} end={bs.weeks[0]?.end?.slice(0, 5) ?? ""} qtdService={bs.qtdServices!} />
-                            <AgenrapLinkButton hrefLink={`/${formatPublicHandle(bs.atSign)}`}>
-                                Ver serviços
-                            </AgenrapLinkButton>
-                        </div>
-                    </div>
+                    <CardBusiness
+                        name={bs.name!}
+                        atSign={formatPublicHandle(bs.atSign)}
+                        init={bs.weeks[0]?.initial?.slice(0, 5) ?? ""}
+                        end={bs.weeks[0]?.end?.slice(0, 5) ?? ""}
+                        qtdService={bs.qtdServices!}
+                        isOpenToday={bs.isOpenToday}
+                        statusMessage={bs.statusMessage}
+                    />
+                    <AgenrapLinkButton hrefLink={`/${formatPublicHandle(bs.atSign)}`}>
+                        {bs.isOpenToday ? "Ver serviços" : "Ver agenda"}
+                    </AgenrapLinkButton>
                 </div>
 
             ))

@@ -1,9 +1,6 @@
 'use client'
-import { useHeaderSegments } from '@/src/providers/header-segments-provider';
+import { useHeaderSegments, type Segment } from '@/src/providers/header-segments-provider'
 import { useEffect } from 'react'
-
-
-type Segment = { label: string; href: string; active: boolean }
 
 export function HeaderSegmentInjector({ segments }: { segments: Segment[] }) {
     const { setSegments } = useHeaderSegments()
@@ -11,7 +8,7 @@ export function HeaderSegmentInjector({ segments }: { segments: Segment[] }) {
     useEffect(() => {
         setSegments(segments)
         return () => setSegments([])
-    }, [])
+    }, [JSON.stringify(segments)])
 
     return null
 }

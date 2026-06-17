@@ -1,176 +1,239 @@
-'use client'
+"use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { DateRange } from "react-day-picker"
-import { CalendarClock, CalendarDays, CheckCircle2 } from "lucide-react"
-import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/button/agenrap-segment-button"
+import {
+    SaveDayOff,
+    SaveTimeBlock,
+    GetDayOffs,
+    GetTimeBlocks,
+    DeleteDayOff,
+    DeleteTimeBlock,
+} from "@/src/features/business/services/range-turn.service"
+import { dateUtils } from "@/src/shared/utils/date.utils"
+import { toast } from "sonner"
+import { isRedirectError } from "next/dist/client/components/redirect-error"
 
-import { BusinessRes } from "@/src/features/business/types/business.types"
-import { SaveDayOff } from "@/src/features/business/services/range-turn.service"
-import AgenrapCalendar from "@/src/shared/components/agenrap-ui/calendar/agenrap-calendar"
-import { useBusinessStore } from "@/src/shared/store/use-business.store"
+
+import RangeTurnList from "./range-turn-list/range-turn-list"
+import RangeTurnDetailsPanel from "@/src/features/business/components/ambience/range-turn/range-turn-details-panel"
+import RangeTurnTimeEditor from "@/src/features/business/components/ambience/range-turn/range-turn-time-editor"
+import RangeTurnDayEditor from "@/src/features/business/components/ambience/range-turn/range-turn-day-editor"
+import RangeTurnKindToggle from "@/src/features/business/components/ambience/range-turn/range-turn-kind-toggle"
+import RangeTurnHeader from "@/src/features/business/components/ambience/range-turn/range-turn-header"
+import { HeaderSegmentInjector } from "@/src/shared/components/agenrap-ui/header/header-segment-injector"
+
+import SubHeader from "@/src/shared/components/agenrap-ui/header/sub-header"
+import { timeBlockSchema } from "@/src/features/business/schemas"
 
 export type RangeTurnManagerProps = {
     tgrap: string
-
+    initialKind: "day" | "time"
+    initialMode: "new" | "list"
 }
+type BlockKind = "day" | "time"
+type ViewMode = "new" | "list"
+type DayOffListItem = { id: number; start: string; end: string; reason: string }
+type TimeBlockListItem = { id: number; start: string; end: string; reason: string }
 
-export default function RangeTurnManager({ tgrap }: RangeTurnManagerProps) {
-    // Estado para alternar o modo interno do calendário
-    const business = useBusinessStore(bsn=>bsn.business)
+export default function RangeTurnManager({ tgrap, initialKind, initialMode }: RangeTurnManagerProps) {
+    const router = useRouter()
+    const searchParams = useSearchParams()
+
+    const [viewMode, setViewModeState] = useState<ViewMode>(initialMode)
+    const [blockKind, setBlockKindState] = useState<BlockKind>(initialKind)
     const [selectionMode, setSelectionMode] = useState<"single" | "range">("range")
-    
-    // Estados para capturar os inputs do react-day-picker
+
     const [date, setDate] = useState<Date | undefined>(new Date())
-    const [range, setRange] = useState<DateRange | undefined>({
-        from: new Date(),
-        to: undefined
-    })
-    
-    // Estado para a justificativa da folga/bloqueio (DayOffReqDTO do C#)
-    const [reason, setReason] = useState<string>("")
-    const [loading, setLoading] = useState<boolean>(false)
+    const [range, setRange] = useState<DateRange | undefined>({ from: new Date(), to: undefined })
+    const [reason, setReason] = useState("")
+    const [timeStart, setTimeStart] = useState("12:00")
+    const [timeEnd, setTimeEnd] = useState("13:00")
+    const [loading, setLoading] = useState(false)
+
+    const [daysOffList, setDaysOffList] = useState<DayOffListItem[]>([])
+    const [timeBlocksList, setTimeBlocksList] = useState<TimeBlockListItem[]>([])
+const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({})
+
+
+    const updateQuery = (next: { kind?: BlockKind; mode?: ViewMode }) => {
+        const params = new URLSearchParams(searchParams.toString())
+        if (next.kind) params.set("kind", next.kind)
+        if (next.mode) params.set("mode", next.mode)
+        router.replace(`/dashboard/blocks?${params.toString()}`, { scroll: false })
+    }
+
+    const setViewMode = (mode: ViewMode) => {
+        setViewModeState(mode)
+        updateQuery({ mode })
+    }
+
+    const setBlockKind = (kind: BlockKind) => {
+        setBlockKindState(kind)
+            setTimeErrors({})
+        updateQuery({ kind })
+    }
+
+    useEffect(() => {
+        async function fetchInitialBlocks() {
+            try {
+                const [daysRes, timesRes] = await Promise.all([GetDayOffs(tgrap), GetTimeBlocks(tgrap)])
+                if (daysRes?.data) setDaysOffList(daysRes.data as unknown as DayOffListItem[])
+                if (timesRes?.data) setTimeBlocksList(timesRes.data as unknown as TimeBlockListItem[])
+            } catch {
+                toast.error("Erro ao carregar bloqueios.")
+            }
+        }
+        fetchInitialBlocks()
+    }, [tgrap])
+
+    const handleDeleteDayOff = async (id: number) => {
+        try {
+            await DeleteDayOff(tgrap, id)
+            setDaysOffList((prev) => prev.filter((i) => i.id !== id))
+            toast.success("Folga removida com sucesso!")
+        } catch {
+            toast.error("Erro ao remover folga.")
+        }
+    }
+
+    const handleDeleteTimeBlock = async (id: number) => {
+        try {
+            await DeleteTimeBlock(tgrap, id)
+            setTimeBlocksList((prev) => prev.filter((i) => i.id !== id))
+            toast.success("Bloqueio de horário removido!")
+        } catch {
+            toast.error("Erro ao remover bloqueio.")
+        }
+    }
 
     const handleConfirmBlock = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (loading) return
-
-        let startString = ""
-        let endString = ""
-
-        if (selectionMode === "single" && date) {
-            startString = date.toISOString().split('T')[0]
-            endString = startString // Início e fim iguais no modo a dedo
-        } else if (selectionMode === "range" && range?.from) {
-            startString = range.from.toISOString().split('T')[0]
-            endString = (range.to || range.from).toISOString().split('T')[0]
-        }
-
-        if (!startString || !endString) {
-            alert("Por favor, selecione os dias no calendário.")
-            return
-        }
-
         try {
             setLoading(true)
-            
-            // Dispara para a sua API Route / Server Action que consome o back em C#
-            await SaveDayOff(tgrap, {
-                start: startString,
-                end: endString,
-                reason: reason || "Bloqueio de Agenda"
-            })
 
-            alert("Folga/Bloqueio salvo com sucesso!")
-            
-            // Limpa o formulário
-            setReason("")
-            setRange({ from: new Date(), to: undefined })
-            setDate(new Date())
-        } catch (error) {
-            console.error(error)
-            alert("Erro ao salvar o bloqueio de turno.")
+            if (blockKind === "day") {
+                let startString = ""
+                let endString = ""
+
+                if (selectionMode === "single" && date) {
+                    startString = dateUtils.toDateString(date)
+                    endString = startString
+                } else if (selectionMode === "range" && range?.from) {
+                    startString = dateUtils.toDateString(range.from)
+                    endString = dateUtils.toDateString(range.to ?? range.from)
+                }
+
+                if (!startString || !endString) {
+                    toast.error("Por favor, selecione os dias no calendário.")
+                    return
+                }
+
+                const finalReason = reason || "Bloqueio de Agenda"
+                const response = await SaveDayOff(tgrap, { start: startString, end: endString, reason: finalReason })
+
+                toast.success(response.message)
+                setDaysOffList((prev) => [...prev, { id: Date.now(), start: startString, end: endString, reason: finalReason }])
+                setReason("")
+                setRange({ from: new Date(), to: undefined })
+                setDate(new Date())
+            } else {
+            const parsed = timeBlockSchema.safeParse({ start: timeStart, end: timeEnd, reason })
+            if (!parsed.success) {
+                const fieldErrors = parsed.error.flatten().fieldErrors
+                setTimeErrors({
+                    start: fieldErrors.start?.[0],
+                    end: fieldErrors.end?.[0],
+                })
+                return
+            }
+            setTimeErrors({})
+
+                const finalReason = reason || "Bloqueio de horário"
+                const response = await SaveTimeBlock(tgrap, { start: timeStart, end: timeEnd, reason: finalReason })
+
+                toast.success(response.message)
+                setTimeBlocksList((prev) => [...prev, { id: Date.now(), start: timeStart, end: timeEnd, reason: finalReason }])
+                setReason("")
+            }
+        } catch (e) {
+            if (isRedirectError(e)) throw e
+            toast.error(e instanceof Error ? e.message : "Erro desconhecido")
         } finally {
             setLoading(false)
         }
     }
 
+    const selectedStart =
+        blockKind === "day"
+            ? selectionMode === "range" ? range?.from?.toLocaleDateString("pt-BR") : date?.toLocaleDateString("pt-BR")
+            : timeStart
+
+    const selectedEnd =
+        blockKind === "day"
+            ? selectionMode === "range" ? (range?.to ?? range?.from)?.toLocaleDateString("pt-BR") : date?.toLocaleDateString("pt-BR")
+            : timeEnd
+
+    const activeCount = blockKind === "day" ? daysOffList.length : timeBlocksList.length
+    const baseQuery = `rap=${tgrap}&kind=${blockKind}`
+
+    const modes = [
+    { key: "new", label: blockKind === "day" ? "Bloquear Dias" : "Bloquear Horários" },
+    { key: "list", label: blockKind === "day" ? `Folgas (${activeCount})` : `Horários (${activeCount})` },
+]
+
     return (
-        <main className="flex flex-col gap-y-8 md:gap-y-12 lg:py-6 lg:px-8 md:py-4 px-2 items-center w-full">
-            {/* Header com os Segmented Controls de Abas padrão do seu app */}
-            <div className="flex w-full items-center justify-between gap-y-2 md:flex-nowrap flex-wrap border-b border-[#FFE082]/20 pb-4">
-                <div className="flex items-center gap-x-2">
-                    <CalendarClock className="text-(--agenrap-purple-500)" size={32} />
-                    <h1 className="lg:text-4xl md:text-3xl text-2xl font-tree font-medium text-white">Bloqueio de Turnos</h1>
-                </div>
-                
-                <div className="hidden md:flex">
-                    <AgenrapSegmentedControl segments={[
-                        { label: 'Adicionar', href: `/dashboard/journey/new?rap=${tgrap}`, active: false },
-                        { label: 'Ver Todos', href: `/dashboard/journey/list?rap=${tgrap}`, active: false },
-                        { label: 'Bloqueios/Faixa', href: `/dashboard/journey/range-turn?rap=${tgrap}`, active: true },
-                    ]} />
-                </div>
-            </div>
+        <main className="flex flex-col w-full h-full  overflow-hidden">
 
-            {/* Grid Principal da Tela */}
-            <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full mt-4">
-                
-                {/* Coluna Esquerda: O Calendário Dinâmico */}
-                <div className="lg:col-span-7 flex flex-col gap-y-4 bg-(--agenrap-gray-800)/40 p-4 rounded-xl border border-[#FFE082]/10">
-                    <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-tree text-zinc-400">Selecione o método de bloqueio:</span>
-                        
-                        {/* Mini-switchers internos da tela para ditar o comportamento do calendário */}
-                        <div className="bg-zinc-950 p-1 rounded-lg flex gap-x-1 border border-zinc-800">
-                            <button
-                                type="button"
-                                onClick={() => setSelectionMode("range")}
-                                className={`flex items-center gap-x-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${selectionMode === "range" ? "bg-(--agenrap-purple-500) text-black font-bold" : "text-zinc-400 hover:text-white"}`}
-                            >
-                                <CalendarDays size={14} /> Modo Faixa
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setSelectionMode("single")}
-                                className={`flex items-center gap-x-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${selectionMode === "single" ? "bg-(--agenrap-purple-500) text-black font-bold" : "text-zinc-400 hover:text-white"}`}
-                            >
-                                <CalendarClock size={14} /> A Dedo
-                            </button>
-                        </div>
-                    </div>
+<SubHeader title="Bloqueio de Turnos"     viewMode={viewMode}
+    modes={modes}
+    onModeChange={(key) => setViewMode(key as ViewMode)}/>
 
-                    {/* O seu componente de calendário já com as props opcionais e retrocompatíveis */}
-                    <AgenrapCalendar 
-                        business={business as any}
-                        className="w-full border-none shadow-xl"
-                        selectionMode={selectionMode}
-                        date={date}
-                        setDate={setDate}
-                        range={range}
-                        setRange={setRange}
-                        fullDays={[]}
-                        setFullDays={() => {}}
-                        isOwner={true} // Força a liberação dos dias não-úteis para o dono poder bloquear
+            <RangeTurnKindToggle blockKind={blockKind} onChange={setBlockKind} />
+
+            {viewMode === "new" ? (
+                <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full flex-1 min-h-0 py-4 lg:overflow-hidden ">
+                    {blockKind === "day" ? (
+                        <RangeTurnDayEditor
+                            selectionMode={selectionMode}
+                            onSelectionModeChange={setSelectionMode}
+                            date={date}
+                            setDate={setDate}
+                            range={range}
+                            setRange={setRange}
+                        />
+                    ) : (
+               <RangeTurnTimeEditor
+    timeStart={timeStart}
+    timeEnd={timeEnd}
+    setTimeStart={setTimeStart}
+    setTimeEnd={setTimeEnd}
+    errors={timeErrors}
+/>
+                    )}
+
+                    <RangeTurnDetailsPanel
+                        blockKind={blockKind}
+                        reason={reason}
+                        setReason={setReason}
+                        selectedStart={selectedStart}
+                        selectedEnd={selectedEnd}
+                        loading={loading}
+                        onConfirm={handleConfirmBlock}
+                            timeError={timeErrors.end}
                     />
-                </div>
-
-                {/* Coluna Direita: O Formulário de Confirmação do Bloqueio */}
-                <div className="lg:col-span-5 flex flex-col justify-between bg-(--agenrap-gray-800)/60 p-6 rounded-xl border border-[#FFE082]/20 shadow-2xl">
-                    <form onSubmit={handleConfirmBlock} className="flex flex-col gap-y-6 h-full justify-between">
-                        <div className="flex flex-col gap-y-4">
-                            <h2 className="text-xl font-tree font-semibold text-[#FFE082]">Detalhes da Folga</h2>
-                            <p className="text-sm text-zinc-400 leading-relaxed">
-                                Selecione os dias ao lado. O sistema irá suspender temporariamente novos agendamentos de clientes no período selecionado.
-                            </p>
-                            
-                            {/* Input do Motivo */}
-                            <div className="flex flex-col gap-y-2 mt-2">
-                                <label className="text-xs font-bold uppercase tracking-wider text-zinc-400">Motivo do Bloqueio / Nome da Folga</label>
-                                <input 
-                                    type="text"
-                                    value={reason}
-                                    onChange={(e) => setReason(e.target.value)}
-                                    placeholder="Ex: Recesso de Fim de Ano, Casamento, etc."
-                                    className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md p-3 text-sm focus:border-(--agenrap-purple-500) outline-none transition-colors"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        {/* Botão de Ação de Submit */}
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full mt-6 flex items-center justify-center gap-x-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 disabled:opacity-50 text-black font-tree font-bold py-3.5 px-4 rounded-md shadow-lg transition-all transform active:scale-[0.98]"
-                        >
-                            <CheckCircle2 size={20} />
-                            {loading ? "Salvando Folga..." : "Confirmar e Bloquear Agenda"}
-                        </button>
-                    </form>
-                </div>
-
-            </section>
+                </section>
+            ) : (
+                <RangeTurnList
+                    blockKind={blockKind}
+                    activeCount={activeCount}
+                    daysOffList={daysOffList}
+                    timeBlocksList={timeBlocksList}
+                    onDeleteDayOff={handleDeleteDayOff}
+                    onDeleteTimeBlock={handleDeleteTimeBlock}
+                />
+            )}
         </main>
     )
 }

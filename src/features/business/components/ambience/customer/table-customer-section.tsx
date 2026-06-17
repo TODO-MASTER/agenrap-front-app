@@ -204,6 +204,7 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
   const openScheduling = (customer: BusinessCustomer) => {
     setSchedulingCustomer(customer)
     setSchedulingOpen(true)
+    
   }
 
   const openMerge = (customer: BusinessCustomer) => {

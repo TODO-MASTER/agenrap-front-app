@@ -41,8 +41,16 @@ export const editBusinessWorkingPeriodSchema =
         }
     })
 
+export const timeBlockSchema = z.object({
+    start: z.string().min(1, "Horário de início obrigatório"),
+    end: z.string().min(1, "Horário de fim obrigatório"),
+    reason: z.string().optional(),
+}).superRefine((data, ctx) => {
+    if (data.start && data.end && data.end <= data.start) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Horário de fim deve ser posterior ao início", path: ["end"] })
+    }
+})
 
-
-
+export type TimeBlockSchema = z.infer<typeof timeBlockSchema>
 export type InitialBusinessWeeksSchema = z.infer<typeof initialBusinessWeeksSchema>
 export type EditBusinessWorkingPeriodSchema = z.infer<typeof editBusinessWorkingPeriodSchema>

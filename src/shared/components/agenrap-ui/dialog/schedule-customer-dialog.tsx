@@ -19,6 +19,7 @@ import AgenrapServiceSelect from "@/src/shared/components/agenrap-ui/select/Agen
 import { useBusinessActions } from "@/src/features/business/hooks/use-business-actions"
 import { GetNextAppointments } from "@/src/shared/services/appointment.service"
 import { AppointmentCancelRes } from "@/src/shared/types/appointment.types"
+import SlotButton from "@/src/shared/components/agenrap-ui/button/slot-button"
 
 const MONTHS = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
 type AppointmentItem = AppointmentCancelRes['data'][number]
@@ -79,13 +80,6 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
     check()
   }, [open, customer, business])
 
-  useEffect(() => {
-    if (step !== 'schedule') return
-    handleMonthChange(new Date(), setFullDays)
-  }, [step,date])
-  useEffect(() => {
-    handleMonthChange(new Date(), setFullDays)
-  }, [selectedServiceId])
 
   useEffect(() => {
     if (!date || !selectedServiceId) return
@@ -106,14 +100,15 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
     setSelectedSlot(null)
   }, [date, selectedServiceId])
 
-  const handleServiceSelect = (serviceId: number) => {
+const handleServiceSelect = (serviceId: number) => {
     setSelectedServiceId(serviceId)
     setSlots(null)
     setSelectedSlot(null)
     const params = new URLSearchParams(useSearchParam.toString())
     params.set("svs", String(serviceId))
     router.replace(`?${params.toString()}`, { scroll: false })
-  }
+    handleMonthChange(new Date(), setFullDays, serviceId)
+}
 
   const handleCancelAndProceed = () => {
     if (!activeAppointment || !business) return
@@ -283,20 +278,17 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
                         <ScrollArea className="h-56 lg:h-full w-full">
                                                    <ScrollBar className="[&>[data-slot=scroll-area-thumb]]:rounded-full [&>[data-slot=scroll-area-thumb]]:bg-(--agenrap-yellow-200)" />
                           <div className="grid grid-cols-[repeat(auto-fill,minmax(90px,1fr))] gap-1 p-2 pb-0">
-                            {slots.data.slots.map((hrs, index) => (
-                              <button
-                                key={index}
-                                type="button"
-                                onClick={() => setSelectedSlot(hrs)}
-                                className={`px-2 py-3 group bg-(--agenrap-brown-200) flex justify-center items-center cursor-pointer transition-colors
-                                  ${selectedSlot === hrs ? "bg-(--agenrap-purple-500) rounded-xs" : "hover:bg-(--agenrap-purple-500)"}`}
-                              >
-                                <p className={`text-center text-sm text-black transition-colors
-                                  ${selectedSlot === hrs ? "text-white" : "group-hover:text-white"}`}>
-                                  {hrs}
-                                </p>
-                              </button>
-                            ))}
+                            {slots?.data?.slots?.map((hrs, index) => (
+                                                                   <SlotButton
+                                   key={index}
+                                   time={hrs.time}
+                       
+                                   available={hrs.available !== false} 
+                                   blockReason={hrs.blockReason}
+                                   selected={selectedSlot === hrs.time}
+                                   onClick={() => setSelectedSlot(hrs.time)}
+                               />
+                                                               ))}
                           </div>
                         </ScrollArea>
                       </div>

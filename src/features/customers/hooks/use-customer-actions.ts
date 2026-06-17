@@ -96,12 +96,13 @@ export function useCustomerActions() {
 
     })
   }
-  const handleMonthChange = async (month: Date,setFullDays:Dispatch<SetStateAction<string[]>>) => {
-    if(serviceId==null)return
+const handleMonthChange = async (month: Date, setFullDays: Dispatch<SetStateAction<string[]>>, overrideServiceId?: number) => {
+    const id = overrideServiceId ?? serviceId
+    if (id == null) return
     startBookedDaysTransition(async () => {
-    const bookedDays = await GetFullDays(Number(serviceId), month.getMonth()+1, month.getFullYear())
-    setFullDays(bookedDays.data.days) 
-        })
+        const bookedDays = await GetFullDays(Number(id), month.getMonth() + 1, month.getFullYear())
+        setFullDays(bookedDays.data.days)
+    })
 }
   const handleCancelAppointmentAction = async (appontmentId:number,businessId:number,customerId:number|null=null,customerGuestId:number|null=null,onSucess:()=>void) => {
     if(!businessId){

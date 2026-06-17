@@ -12,6 +12,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCustomerActions } from "../../hooks/use-customer-actions";
 import { SlotRes } from "@/src/shared/types/slots.types";
+import SlotButton from "@/src/shared/components/agenrap-ui/button/slot-button";
 
 type AppointmentItem = AppointmentCancelRes['data'][number]
 
@@ -157,9 +158,15 @@ export default function QuickSchedulingSection({ existingAppointment }: Props) {
                                 : <div className="bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full h-full">
                                     <div className="grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] items-start gap-1 p-4 px-2 py-1 pb-2 pt-2 w-full">
                                         {slots?.data?.slots?.map((hrs, index) => (
-                                            <button type="button" key={index} className={`px-6 py-4 group bg-(--agenrap-brown-200) flex justify-center items-center cursor-pointer ${selectedSlot == hrs ? "bg-(--agenrap-purple-500) rounded-xs" : "hover:bg-(--agenrap-purple-500)"}`} onClick={() => setSelectedSlot(hrs)}>
-                                                <p className={`text-center text-lg text-black ${selectedSlot == hrs ? "text-white" : "group-hover:text-white"}`}>{hrs}</p>
-                                            </button>
+                                            <SlotButton
+            key={index}
+            time={hrs.time}
+
+            available={hrs.available !== false} 
+            blockReason={hrs.blockReason}
+            selected={selectedSlot === hrs.time}
+            onClick={() => setSelectedSlot(hrs.time)}
+        />
                                         ))}
                                     </div>
                                 </div>

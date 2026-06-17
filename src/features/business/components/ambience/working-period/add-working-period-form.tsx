@@ -22,10 +22,11 @@ import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/butt
 
 interface ICtnCreateWkpProps {
     tgrap: string,
-    weeks: NormalizedWeek[]
+    weeks: NormalizedWeek[],
+    onSuccess:()=>void
 }
 
-export default function AddWorkingPeriodForm({ tgrap, weeks }: ICtnCreateWkpProps) {
+export default function AddWorkingPeriodForm({ tgrap, weeks,onSuccess }: ICtnCreateWkpProps) {
     const { handleCreateWkPeriodAction, isPending } = useBusinessActions()
     const linkButtonResponsive = "md:w-fit  md:rounded-none md:h-21.25 md:px-3  md:gap-x-1 md:items-center md:self-auto  md:justify-center " +
         " items-center   justify-start  w-full  flex  w-fit self-end px-4 py-2 h-fit gap-x-2"
@@ -50,20 +51,9 @@ export default function AddWorkingPeriodForm({ tgrap, weeks }: ICtnCreateWkpProp
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit((values) => handleCreateWkPeriodAction(values))}
-                className="flex flex-col gap-y-4 md:gap-y-10 lg:py-6 lg:px-8 md:py-4 px-2 items-center"
+                onSubmit={form.handleSubmit((values) => handleCreateWkPeriodAction(values,onSuccess))}
+                className="flex flex-col gap-y-4 md:gap-y-10 items-center"
             >
-                <div className="flex w-full  items-center justify-between  gap-y-2 md:flex-nowrap flex-wrap">
-                    <h1 className="lg:text-4xl md:text-3xl text-2xl font-tree font-medium">Expediente</h1>
-                    <div className="hidden md:flex ">
-                    <AgenrapSegmentedControl segments={[
-                        { label: 'Adicionar', href: `/dashboard/journey/new?rap=${tgrap}`, active: true },
-                        { label: 'Ver Todos', href: `/dashboard/journey/list?rap=${tgrap}`, active: false },
-                    ]} />
-                    </div>
-
-                </div>
-
                 <section className="flex flex-col lg:w-[55%] md:w-[75%]">
                     <div className="bg-(--agenrap-brown-500)/15 flex justify-center w-full flex-nowrap md:py-2 py-1 my-2 items-center ">
 

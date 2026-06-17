@@ -17,7 +17,7 @@ import { maskPhone } from '@/src/shared/utils/formatters.utils'
 import { CreateCustomerSchema, createCustomerSchema } from '@/src/features/business/schemas/customer.schema'
 import { createCustomerAction } from '@/src/features/business/services/customer.service'
 
-export default function CreateCustomerForm({ rap }: { rap: string }) {
+export default function CreateCustomerForm({ rap,onSuccess }: { rap: string,onSuccess:()=>void }) {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
     const [phoneDisplay, setPhoneDisplay] = useState('')
@@ -33,7 +33,7 @@ export default function CreateCustomerForm({ rap }: { rap: string }) {
             try {
                 const res = await createCustomerAction(values, rap)
                 toast.success(res.message ?? 'Cliente cadastrado!')
-                router.push(`/dashboard/customers?rap=${rap}`)
+                onSuccess?.()
             } catch (e) {
                 if (isRedirectError(e)) throw e
                 toast.error(e instanceof Error ? e.message : 'Erro ao cadastrar cliente')

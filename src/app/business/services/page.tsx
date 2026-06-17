@@ -13,13 +13,13 @@ export default async function CreateServicePage({
     searchParams: Promise<{ rap: string }>
 }) {
     const { rap: bsnEncoded } = await searchParams
-    const res = await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(bsnEncoded)}`)
+   const res = !bsnEncoded ? null :  await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(bsnEncoded)}`)
 
     if (res && res.alreadyInitial) {
         redirect(`/dashboard?rap=${formatPublicHandle(bsnEncoded)}`);
     }
     else if (!res) {
-        const msg = Buffer.from('Primeiro selecione ou crie um negócio').toString('base64')
+        const msg = Buffer.from('Primeiro crie um negócio').toString('base64')
         redirect(`/business/booking-link?flash=${msg}`)
     }
 

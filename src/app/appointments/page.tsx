@@ -1,5 +1,6 @@
 import { miniIcon } from "@/src/assets/images";
 import BusinessDisplay from "@/src/features/customers/components/business-showcase/business-display";
+
 import { UserProfile } from "@/src/features/customers/components/business-showcase/profile-form/profile-tabs/profile-tabs";
 import TopBusinessShowcase from "@/src/features/customers/components/business-showcase/top-business-showcase";
 import ScheduleEntrance from "@/src/features/customers/components/search-rap/schedule-entrance";
@@ -58,6 +59,7 @@ export default async function ServiceSchedulePage({
         <div className="h-dvh rounded-md p-8 gap-y-8 pt-12 flex flex-col w-full">
 
           <TopBusinessShowcase user={user}/>
+
           <BusinessDisplay business={res} />
         </div>
       </div>

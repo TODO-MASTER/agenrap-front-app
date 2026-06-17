@@ -9,15 +9,16 @@ export type WkCtx={
     userId?:number
 }
 
-export type BusinessCtx= {
+export type BusinessCtx = {
     id: number,
-    atSign:string,
+    atSign: string,
     name: string,
-    services:Service[]
-    weeks:WkCtx[]
-    mnrName?:string
+    services: Service[]
+    weeks: WkCtx[]
+    mnrName?: string
     qtdServices?: number,
-    haveAct?:boolean,
-    isOwner?:boolean
-    
+    haveAct?: boolean,
+    isOwner?: boolean
+    isOpenToday?: boolean
+    statusMessage?: string
 }

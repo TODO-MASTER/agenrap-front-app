@@ -18,6 +18,7 @@ import { saveAppointment } from "@/src/shared/services/appointment.service";
 import { AppointmentReq } from "@/src/shared/types/appointment.types";
 import { completeAllAppointmentsAsync, CompleteAppointmentsReq } from "@/src/features/business/services/appointment.service";
 import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
+import { useSectionParams } from "@/src/shared/hooks/use-section-params";
 export function useBusinessActions() {
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition();
@@ -26,6 +27,7 @@ export function useBusinessActions() {
   const tgWkp = useBusinessStore(bs => bs.selectedWorkingPeriod)
   const setWeeks= useBusinessStore(bs=>bs.setWeeks)
   const usePathName = usePathname();
+  
   const setBusiness = useBusinessStore((state) => state.setBusiness)
 
 function handleCreateBusinessAction(values: InitialatSignSchema) {
@@ -42,7 +44,7 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
         }
     })
 }
-  function handleCreateWkPeriodAction(values: InitialBusinessWeeksSchema) {
+  function handleCreateWkPeriodAction(values: InitialBusinessWeeksSchema,onSuccess?:()=>void) {
     const atSign = searchParams.get("rap")
     let bodyMount = {
       weeks: values.business.weeks.map(wkp => {
@@ -65,8 +67,8 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
           if (!data.data.alreadyInitial) {
             router.push(`/business/services?rap=${formatPublicHandle(atSign)}`)
           }
-          else if (usePathName === '/dashboard/journey/new' && data.data.alreadyInitial) {
-    router.push(`/dashboard/journey/list?rap=${formatPublicHandle(atSign)}`)
+          else if (usePathName === '/dashboard/journey' && data.data.alreadyInitial) {
+            onSuccess?.()
 }
           else {
             router.push(`/dashboard?rap=${formatPublicHandle(atSign)}`)
@@ -77,7 +79,7 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
       }
     });
   }
-  function handleCreateANewServiceAction(values: InitialBusinessServiceSchema) {
+  function handleCreateANewServiceAction(values: InitialBusinessServiceSchema,onSuccess?:()=>void) {
     const atSign = searchParams.get("rap")
 
     let bodyServiceMount = {
@@ -99,8 +101,8 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
         } else {
           const data = await CreateANewService(bodyServiceMount, atSign);
           toast.success(data.message || 'serviços cadastrados!');
-          if (usePathName.startsWith("/dashboard/service/new")) {
-            router.push(`/dashboard/service/list?rap=${formatPublicHandle(atSign)}`)
+          if (usePathName.startsWith("/dashboard/service")) {
+              onSuccess?.()
           } else {
             if (!data.data.alreadyInitial) {
               router.push(`/business/hours?rap=${formatPublicHandle(atSign)}`)

@@ -11,38 +11,20 @@ import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/butt
 
 export type RapWorkingPeriodProps= {
     tgrap: string,
-    weeks: NormalizedWeek[]
 }
 
-export default function ShowWorkingPeriods({ tgrap, weeks }: RapWorkingPeriodProps) {
+export default function ShowWorkingPeriods({ tgrap }: RapWorkingPeriodProps) {
     const setSelectWorkingPeriod = useBusinessStore(bsCtx => bsCtx.setSelectedWorkingPeriod)
     const [editWkpOpen, setEditWkpOpen] = useState<boolean>(false)
     const [deleteWkpOpen, setDeleteWkpOpen] = useState<boolean>(false)
         const storeWeeks = useBusinessStore(bsCtx => bsCtx.weeks)
-    const setWeeks = useBusinessStore(bsCtx => bsCtx.setWeeks)
-    useEffect(() => {
-        setWeeks(weeks) 
-    }, [])
     return (
         <main>
             <EditWorkingPeriodDialog setOpen={setEditWkpOpen} open={editWkpOpen}/>
             <DeleteWorkingPeriodDialog setOpen={setDeleteWkpOpen} open={deleteWkpOpen}/>
             <div
-                className="flex flex-col gap-y-8 md:gap-y-16 lg:py-6 lg:px-8 md:py-4 px-2 items-center "
+                className="flex flex-col gap-y-8 md:gap-y-16 items-center "
             >
-                <div className="flex w-full  items-center justify-between  gap-y-2 md:flex-nowrap flex-wrap">
-                    <h1 className="lg:text-4xl md:text-3xl text-2xl font-tree font-medium">Expediente</h1>
-                                    <div className="hidden md:flex ">
-                                        <AgenrapSegmentedControl segments={[
-                                            { label: 'Adicionar', href: `/dashboard/journey/new?rap=${tgrap}`, active: false },
-                                            { label: 'range', href: `/dashboard/journey/range-turn?rap=${tgrap}`, active: false },
-                                            { label: 'Ver Todos', href: `/dashboard/journey/list?rap=${tgrap}`, active: true },
-                                        ]} />
-                                    </div>
-
-
-
-                </div>
 
                 <section className="flex flex-col w-full">
 

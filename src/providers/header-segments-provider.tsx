@@ -1,14 +1,20 @@
 'use client'
 import { createContext, useContext, useState, type Dispatch, type SetStateAction } from 'react'
 
-type Segment = { label: string; href: string; active: boolean }
+export type Segment = {
+    label: string
+    active: boolean
+} & ({ href: string; onClick?: never } | { onClick: () => void; href?: never })
 
 type HeaderSegmentsCtx = {
     segments: Segment[]
     setSegments: Dispatch<SetStateAction<Segment[]>>
 }
 
-const HeaderSegmentsContext = createContext<HeaderSegmentsCtx | null>(null)
+const HeaderSegmentsContext = createContext<HeaderSegmentsCtx>({
+    segments: [],
+    setSegments: () => {},
+})
 
 export function HeaderSegmentsProvider({ children }: { children: React.ReactNode }) {
     const [segments, setSegments] = useState<Segment[]>([])
@@ -20,6 +26,5 @@ export function HeaderSegmentsProvider({ children }: { children: React.ReactNode
 }
 
 export function useHeaderSegments() {
-    const ctx = useContext(HeaderSegmentsContext)
-    return ctx
+    return useContext(HeaderSegmentsContext)
 }

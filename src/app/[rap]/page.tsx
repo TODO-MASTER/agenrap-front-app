@@ -9,15 +9,14 @@ import { BusinessCtx } from "@/src/shared/types"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
+import ClosedTodayBanner from "@/src/features/customers/components/business-showcase/closed-today-banner"
 
 export const metadata: Metadata = {
   title: "Agenda - Agenrap",
   description: "Automatize sua agenda",
-        icons: {
-    icon: '/favicon.svg', 
-    
+  icons: {
+    icon: '/favicon.svg',
   },
-  
 };
 
 export default async function ServiceScheduleServicePage({ params }: { params: Promise<{ rap: string }> }) {
@@ -35,7 +34,7 @@ export default async function ServiceScheduleServicePage({ params }: { params: P
     const token = (await cookies()).get('token')?.value
     const isLoggedIn = !!token
 
-        if(targetBusinessWithServices.isOwner) redirect(`/dashboard?rap=${rap}`)
+    if (targetBusinessWithServices.isOwner) redirect(`/dashboard?rap=${rap}`)
 
     if (!isLoggedIn) {
         redirect(`/login?rap=${encodeURIComponent(rap)}`)
@@ -45,7 +44,11 @@ export default async function ServiceScheduleServicePage({ params }: { params: P
         <>
             <BusinessInitializer data={targetBusinessWithServices} />
             <ServiceShowcaseHeader />
+      
             <OnlineCalendarSection />
+                  {!targetBusinessWithServices.isOpenToday && (
+                <ClosedTodayBanner statusMessage={targetBusinessWithServices.statusMessage} />
+            )}
             <ShowcaseSection rap={rap}/>
         </>
     )

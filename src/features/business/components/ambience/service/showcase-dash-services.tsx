@@ -1,16 +1,13 @@
 'use client'
 
-import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-link-button"
-import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/button/agenrap-segment-button"
 import CardServiceFit from "@/src/shared/components/agenrap-ui/card/card-service-fit"
-import CardServiceMax from "@/src/shared/components/agenrap-ui/card/card-service-max"
+
 import DeleteServiceDialog from "@/src/shared/components/agenrap-ui/dialog/delete-service-dialog"
 import EditServiceDialog from "@/src/shared/components/agenrap-ui/dialog/edit-service-dialog"
-import { HeaderSegmentInjector } from "@/src/shared/components/agenrap-ui/header/header-segment-injector"
 import { useBusinessStore } from "@/src/shared/store/use-business.store"
 import { currencyUtils } from "@/src/shared/utils/currency.utils"
-import { formatPublicHandle } from "@/src/shared/utils/formatters.utils"
-import { BadgePlus, Pencil, Trash, X } from "lucide-react"
+
+import { Pencil, X } from "lucide-react"
 import { useState } from "react"
 
 export default function ShowcaseDashServices() {
@@ -18,28 +15,8 @@ export default function ShowcaseDashServices() {
     const setSelectService = useBusinessStore(bsCtx => bsCtx.setSelectedService)
     const [editServiceOpen, setEditServiceOpen] = useState<boolean>(false)
     const [deleteServiceOpen, setDeleteServiceOpen] = useState<boolean>(false)
-    const linkButtonResponsive = "md:w-fit  md:rounded-none md:h-21.25 md:px-3  md:gap-x-1 md:items-center md:self-auto  md:justify-center " +
-        " items-center   justify-start  w-full  flex  w-fit self-end px-4 py-2 h-fit gap-x-2"
     return (
-        <div className="flex flex-col gap-y-8 md:gap-y-16 px-6  items-center">
-              <div className="flex md:hidden">
-            
-                            <HeaderSegmentInjector segments={[
-                                { label: 'Adicionar', href: `/dashboard/service/new?rap=${formatPublicHandle(business?.atSign)}`, active: false },
-                                { label: 'Ver Todos', href: `/dashboard/service/list?rap=${formatPublicHandle(business?.atSign)}`, active: true },
-                            ]} />
-                        </div>
-            <div className="flex w-full  items-center justify-between gap-y-4 md:flex-nowrap flex-wrap">
-                <h1 className="lg:text-4xl md:text-2xl text-2xl font-tree font-medium">Serviços</h1>
-                <div className="hidden md:flex ">
-                    <AgenrapSegmentedControl segments={[
-                        { label: 'Adicionar', href: `/dashboard/service/new?rap=${formatPublicHandle(business?.atSign)}`, active: false },
-                        { label: 'Ver Todos', href: `/dashboard/service/list?rap=${formatPublicHandle(business?.atSign)}`, active: true },
-                    ]} />
-                </div>
-
-            </div>
-
+        <div className="flex flex-col gap-y-8 md:gap-y-16   items-center">
             <div className="grid w-full lg:grid-cols-4 md:grid-cols-2 relative grid-cols-1 gap-y-12 gap-x-10  z-0 ">
                 <DeleteServiceDialog open={deleteServiceOpen} setOpen={setDeleteServiceOpen} />
                 <EditServiceDialog open={editServiceOpen} setOpen={setEditServiceOpen} />
