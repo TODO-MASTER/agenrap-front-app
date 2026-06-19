@@ -170,4 +170,19 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+.recharts-wrapper,
+.recharts-surface,
+.recharts-sector,
+.recharts-bar-rectangle,
+.recharts-area-dot,
+.recharts-layer,
+.recharts-curve,
+.recharts-dot {
+    outline: none;
+}
+.recharts-wrapper svg,
+.recharts-wrapper *:focus {
+    outline: none;
+}
+
 
