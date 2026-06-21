@@ -13,6 +13,12 @@ export async function JoinScheduleByRapName(atSign:string){
     
       return res;
 }
+export async function leaveBusinessAction(atSign: string){
+    await serverFetch<ApiResponse<boolean>>(`business/leave?atSign=${normalizePublicHandle(atSign)}`, {
+         headers: { 'Content-Type': 'application/json' },
+        method: "DELETE",
+    })
+}
 
 
  
