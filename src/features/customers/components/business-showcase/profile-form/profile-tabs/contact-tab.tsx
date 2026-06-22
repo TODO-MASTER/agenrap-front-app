@@ -127,6 +127,7 @@ export default function ContactTab({user,userGuest,setOpen,open}:OrchestredConta
 
 
                 <div className="flex flex-col gap-1">
+                    {userGuest&&
                                         <FormField
                         control={form.control}
                         name="email"
@@ -152,6 +153,7 @@ export default function ContactTab({user,userGuest,setOpen,open}:OrchestredConta
                             </FormItem>
                         )}
                     />
+}
                     <FormField
                         control={form.control}
                         name="telephone"
