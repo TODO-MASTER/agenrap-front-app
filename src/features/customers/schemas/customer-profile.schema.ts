@@ -10,6 +10,10 @@ export const contactSchema = z.object({
       message: '* Telefone inválido',
     })
     .optional(),
+       email: z.union([
+            z.string().email({ message: "*Email inválido" }),
+            z.literal(''),
+        ]).optional(),
 })
 
  

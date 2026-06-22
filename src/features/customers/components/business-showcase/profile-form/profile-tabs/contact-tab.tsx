@@ -9,7 +9,7 @@ import { Badge } from "@/src/shared/components/ui/badge"
 import { Form, FormControl, FormField, FormItem } from "@/src/shared/components/ui/form"
 import { maskPhone } from "@/src/shared/utils/formatters.utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { LoaderCircle, Phone } from "lucide-react"
+import { LoaderCircle, Mail, Phone } from "lucide-react"
 import { macroLogo } from "@/src/assets/images"
 import Image from "next/image"
 import { Dispatch, SetStateAction, useState } from "react"
@@ -39,7 +39,12 @@ export default function ContactTab({user,userGuest,setOpen,open}:OrchestredConta
 
     const form = useForm<ContactSchema>({
         resolver: zodResolver(contactSchema),
-        defaultValues: {
+        defaultValues: userGuest? {
+            firstName: user.firstName ?? '',
+            lastName: user.lastName ?? '',
+            email:userGuest.email??'',
+            telephone: user.telephone ?? '',
+        }:{
             firstName: user.firstName ?? '',
             lastName: user.lastName ?? '',
             telephone: user.telephone ?? '',
@@ -54,7 +59,13 @@ export default function ContactTab({user,userGuest,setOpen,open}:OrchestredConta
             if (updated) setUser(updated)
         }
             router.refresh()
-            form.reset({
+            form.reset(userGuest? {
+     firstName: values.firstName,
+                lastName: values.lastName,
+                email:values.email,
+                telephone: values.telephone,
+
+            }:{
                 firstName: values.firstName,
                 lastName: values.lastName,
                 telephone: values.telephone,
@@ -114,7 +125,33 @@ export default function ContactTab({user,userGuest,setOpen,open}:OrchestredConta
                     />
                 </div>
 
+
                 <div className="flex flex-col gap-1">
+                                        <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem className="flex-1">
+                                <FormControl>
+                                    <AgenrapInput
+                                        id="email"
+                                        label="E-mail"
+                                        variant="cyberYellowRap"
+                                        removeFormMessage
+                                        placeholder="ex:teste@gmail.com"
+                                         icon={<Mail size={24} style={{ color: 'var(--agenrap-brown-200)' }} />}
+                                        autoComplete="off"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                {form.formState.errors.email && (
+                                    <p className="text-xs text-red-400 font-tree mt-0.5">
+                                        {form.formState.errors.email.message}
+                                    </p>
+                                )}
+                            </FormItem>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="telephone"

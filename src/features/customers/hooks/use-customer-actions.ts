@@ -133,6 +133,7 @@ function handleUpdateProfile(values: ContactSchema,customerId:number|null, onSuc
             const MountCustomerUptReq ={
               firstName:values.firstName,
               lastName:values.lastName,
+              email:values.email,
               telephone:values.telephone??null
             }
                 response = await updateCustomerAsync(searchRap,customerId,MountCustomerUptReq)
