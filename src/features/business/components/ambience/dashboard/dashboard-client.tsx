@@ -14,14 +14,17 @@ import { AppointmentStatusChart } from "@/src/features/business/components/ambie
 import { TopServicesChart } from "@/src/features/business/components/ambience/dashboard/top-services-chart"
 import { RatesPanel } from "@/src/features/business/components/ambience/dashboard/rates-panel"
 import { BG_ROOT, BG_CARD, BORDER, GOLD, PURPLE, BROWN, TEXT_MAIN, TEXT_MUTED, TEXT_SUB } from "@/src/features/business/types/dashboard-constants"
+import { SubscriptionStatusRes } from "@/src/features/business/services/subscription.service"
+import SubscriptionBanner from "@/src/features/business/components/ambience/dashboard/subscription-banner"
 
 
 type Props = {
     summary: DashboardSummary
     businessName: string
+     subscription: SubscriptionStatusRes | null
 }
 
-export default function DashboardClient({ summary, businessName }: Props) {
+export default function DashboardClient({ summary, businessName,subscription }: Props) {
     const {
         variation,
         monthLabel,
@@ -35,6 +38,7 @@ export default function DashboardClient({ summary, businessName }: Props) {
 
     return (
         <div className="flex flex-col gap-y-3 w-full" style={{ background: BG_ROOT }}>
+                <SubscriptionBanner subscription={subscription} />
 
             <div className="flex flex-col gap-y-0.5 border-b pb-3" style={{ borderColor: "#D9D0C8" }}>
                 <p className="font-tree text-xs uppercase tracking-widest" style={{ color: "#9A7B5A" }}>

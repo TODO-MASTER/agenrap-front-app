@@ -2,7 +2,7 @@
 import { Dispatch, SetStateAction, useEffect, useState, } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
 import AgenrapButton from "../button/agenrap-button";
-import { BadgePlus, CalendarClockIcon, LoaderCircle, X } from "lucide-react";
+import { BadgePlus, CalendarClockIcon, LoaderCircle, PencilLine, X } from "lucide-react";
 import { useBusinessStore } from "@/src/shared/store/use-business.store";
 import {useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -130,13 +130,13 @@ useEffect(() => {
                                         const valid = await form.trigger(["name", "price"])
                                         form.setValue("duration",timeService.toString())
                                         if (!valid) return
-                                    }} className={`flex gap-x-2 justify-center bg-(--agenrap-yellow-200) items-center  mb-2 ${timeService.length < 1 || stagingHasError || stagingEmpty ? "cursor-not-allowed opacity-70" : ""}`} >
+                                    }} className={`flex gap-x-2 justify-center bg-(--agenrap-purple-500) items-center  mb-2 ${timeService.length < 1 || stagingHasError || stagingEmpty ? "cursor-not-allowed opacity-70" : ""}`} >
                                      
                                         { serviceIsPending? <div className="flex relative" >
                                     <Image src={macroLogo} alt="" loading="eager" className="w-10 h-10 opacity-15 animate-pulse" />
                                     <LoaderCircle className="animate-spin absolute w-10 h-10" color="#F5E6CC" />
 
-                                </div>:<div className="flex gap-x-2 justify-center items-center p-2 ">   <BadgePlus width={30} height={30} color="#000" />    <p className="font-tree text-lg text-black">Adicionar</p></div>}
+                                </div>:<div className="flex gap-x-2 justify-center items-center p-2 ">   <PencilLine width={24} height={24} color="#FFF" />    <p className="font-tree text-xl font-medium text-white">Salvar</p></div>}
                                     
                                     </AgenrapButton>
                                 </div>

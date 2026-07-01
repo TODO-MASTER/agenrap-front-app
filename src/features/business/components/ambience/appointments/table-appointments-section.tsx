@@ -69,7 +69,7 @@ export default function TableAppointmentSection({ businessId, appointments, hasN
         <div className="flex items-center justify-between bg-(--agenrap-gray-800) rounded-xl px-5 py-3">
           <p className="font-tree text-white text-sm">
             <span className="font-semibold text-[#FFE082]">{selectedIds.size}</span>
-            {' '}selecionado{selectedIds.size !== 1 ? 's' : ''}
+            {' '}serviço{selectedIds.size !== 1 ? 's' : ''} selecionado{selectedIds.size !== 1 ? 's' : ''}
           </p>
           <div className="flex items-center gap-x-3">
             <button
@@ -84,7 +84,7 @@ export default function TableAppointmentSection({ businessId, appointments, hasN
               ) : (
                 <div className="flex items-center justify-center gap-x-1.5">
                   <CheckCircle2 size={14} color="#BB77EE" />
-                  Completar
+                  Completar serviços
                 </div>
               )}
             </button>

@@ -26,6 +26,7 @@ import { HeaderSegmentInjector } from "@/src/shared/components/agenrap-ui/header
 
 import SubHeader from "@/src/shared/components/agenrap-ui/header/sub-header"
 import { timeBlockSchema } from "@/src/features/business/schemas"
+import { handleActionError } from "@/src/shared/lib/handle-action-error"
 
 export type RangeTurnManagerProps = {
     tgrap: string
@@ -86,15 +87,15 @@ const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({
             }
         }
         fetchInitialBlocks()
-    }, [tgrap])
+    }, [tgrap,blockKind])
 
     const handleDeleteDayOff = async (id: number) => {
         try {
-            await DeleteDayOff(tgrap, id)
+           const response = await DeleteDayOff(tgrap, id)
             setDaysOffList((prev) => prev.filter((i) => i.id !== id))
-            toast.success("Folga removida com sucesso!")
-        } catch {
-            toast.error("Erro ao remover folga.")
+            toast.success(response.message??"Folga removida com sucesso!")
+        } catch(e) {
+                  handleActionError(e, router, tgrap, 'Erro ao tentar remover folga.')
         }
     }
 
@@ -103,8 +104,8 @@ const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({
             await DeleteTimeBlock(tgrap, id)
             setTimeBlocksList((prev) => prev.filter((i) => i.id !== id))
             toast.success("Bloqueio de horário removido!")
-        } catch {
-            toast.error("Erro ao remover bloqueio.")
+        } catch(e) {
+            handleActionError(e, router, tgrap, 'Erro ao tentar remover folga.')
         }
     }
 
@@ -134,7 +135,7 @@ const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({
                 const response = await SaveDayOff(tgrap, { start: startString, end: endString, reason: finalReason })
 
                 toast.success(response.message)
-                setDaysOffList((prev) => [...prev, { id: Date.now(), start: startString, end: endString, reason: finalReason }])
+                setDaysOffList((prev) => [...prev, { id: response.data.id, start: startString, end: endString, reason: finalReason }])
                 setReason("")
                 setRange({ from: new Date(), to: undefined })
                 setDate(new Date())
@@ -154,12 +155,11 @@ const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({
                 const response = await SaveTimeBlock(tgrap, { start: timeStart, end: timeEnd, reason: finalReason })
 
                 toast.success(response.message)
-                setTimeBlocksList((prev) => [...prev, { id: Date.now(), start: timeStart, end: timeEnd, reason: finalReason }])
+                setTimeBlocksList((prev) => [...prev, { id: response.data.id, start: timeStart, end: timeEnd, reason: finalReason }])
                 setReason("")
             }
         } catch (e) {
-            if (isRedirectError(e)) throw e
-            toast.error(e instanceof Error ? e.message : "Erro desconhecido")
+            handleActionError(e, router, tgrap, 'Erro ao tentar remover folga.')
         } finally {
             setLoading(false)
         }

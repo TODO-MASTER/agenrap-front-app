@@ -5,6 +5,7 @@ import { BusinessRes } from "@/src/features/business/types/business.types"
 import { DashboardSummary } from "@/src/features/business/types/dashboard.types"
 import DashboardClient from "@/src/features/business/components/ambience/dashboard/dashboard-client"
 import { ApiResponse } from "@/src/shared/types"
+import { SubscriptionStatusRes } from "@/src/features/business/services/subscription.service"
 
  
 export default async function DashboardPage({
@@ -26,6 +27,10 @@ export default async function DashboardPage({
         `dashboard/summary?atSign=${normalizePublicHandle(bsnEncoded)}`
     )
     const summary = raw.data
+
+        const subscription = await serverFetch<ApiResponse<SubscriptionStatusRes>>(
+        `subscription/status?atSign=${normalizePublicHandle(bsnEncoded)}`
+    ).catch(() => null)
  
-    return <DashboardClient summary={summary!} businessName={res.name ?? res.atSign} />
+    return <DashboardClient summary={summary!} businessName={res.name ?? res.atSign}         subscription={subscription?.data!}/>
 }

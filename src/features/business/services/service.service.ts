@@ -15,8 +15,8 @@ export async function CreateANewService(values:CreateServiceReq,atSign:string){
     return res
 
 }
-export async function EditServiceService(values:Omit<Service,'id'>,rap:string,svsId:number) {
-  const res = await serverFetch<EditServiceRes>(`service/edit?atSign=${normalizePublicHandle(rap)}&svsId=${svsId}`, {
+export async function EditServiceService(values:Omit<Service,'id'>,svsId:number) {
+  const res = await serverFetch<EditServiceRes>(`service/edit?svsId=${svsId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(values),

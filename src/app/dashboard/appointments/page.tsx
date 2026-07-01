@@ -35,8 +35,8 @@ const resAppointments = await getDashAppointmentsByRap(
           <h1 className="font-tree font-semibold lg:text-2xl text-xl">Agendamentos</h1>
           <p className="font-tree text-sm text-(--agenrap-brown-500)/60">
             {resAppointments.totalCount > 0
-              ? `${resAppointments.totalCount} agendamento${resAppointments.totalCount !== 1 ? "s" : ""} pendente${resAppointments.totalCount !== 1 ? "s" : ""}`
-              : "Nenhum agendamento pendente"}
+              ? `${resAppointments.totalCount} serviço${resAppointments.totalCount !== 1 ? "s" : ""} pendente${resAppointments.totalCount !== 1 ? "s" : ""}`
+              : "Nenhum serviço pendente"}
           </p>
         </div>
         <TableAppointmentSection filter={filter} hasNextPage={resAppointments.hasNextPage} hasPrevPage={resAppointments.hasPreviousPage} totalPages={resAppointments.totalPages} page={resAppointments.page} businessId={targetBuinessWithServices.id} appointments={resAppointments.data} />

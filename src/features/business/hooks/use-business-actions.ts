@@ -19,6 +19,8 @@ import { AppointmentReq } from "@/src/shared/types/appointment.types";
 import { completeAllAppointmentsAsync, CompleteAppointmentsReq } from "@/src/features/business/services/appointment.service";
 import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
 import { useSectionParams } from "@/src/shared/hooks/use-section-params";
+import { SubscriptionRequiredError } from "@/src/shared/utils/errors";
+import { handleActionError } from "@/src/shared/lib/handle-action-error";
 export function useBusinessActions() {
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition();
@@ -112,8 +114,8 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
           }
         }
       } catch (e) {
-        toast.error(e instanceof Error ? e.message : 'Erro ao tentar criar serviços');
-      }
+      handleActionError(e, router, atSign, 'Erro ao tentar criar serviços')
+}
     });
   }
   function handleEditServiceAction(values: EditBusinessServiceSchema, setOpenEdit: Dispatch<SetStateAction<boolean>>) {
@@ -136,7 +138,7 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
           setOpenEdit(false)
           return
         } else {
-          const data = await EditServiceService(bodyServiceMount, atSign, tgService.id);
+          const data = await EditServiceService(bodyServiceMount, tgService.id);
           toast.success(data.message || 'Serviço foi editado!');
 
           const resService = await GetBusinessPerRap(atSign)
