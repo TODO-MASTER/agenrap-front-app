@@ -22,6 +22,7 @@ export async function serverFetch<T = unknown>(path: string, options: Options = 
     ...options,
     headers,
     cache: 'no-store',
+    signal: AbortSignal.timeout(10000),
   });
 
   if (res.status === 401 || res.status === 403) {

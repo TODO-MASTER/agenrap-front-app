@@ -5,14 +5,14 @@ import { redirect } from "next/navigation"
 import RangeTurnManager from "@/src/features/business/components/ambience/range-turn/range-turn-section"
 import { BusinessCtx } from "@/src/shared/types"
 import { BusinessInitializer } from "@/src/shared/components/agenrap-ui/initializers/business-initializer"
-
+export const dynamic = 'force-dynamic'
 export default async function BlocksPage({
     searchParams
 }: {
     searchParams: Promise<{ rap: string; kind?: string; mode?: string }>
 }) {
     const { rap, kind, mode } = await searchParams
-
+if (!rap) redirect('/login') 
     const res = await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(rap)}`)
 
     if (!res || !res.alreadyInitial) {

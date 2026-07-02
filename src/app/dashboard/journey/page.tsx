@@ -10,13 +10,14 @@ import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 import { normalizeWeek } from "@/src/shared/utils/normalize-week.utils"
 import { redirect } from "next/navigation"
-
+export const dynamic = 'force-dynamic'
 export default async function WorkingPeriodPage({
     searchParams
 }: {
     searchParams: Promise<{ rap: string,mode?:string }>
 }) {
     const { rap: bsnEncoded,mode:mode } = await searchParams
+    if (!bsnEncoded) redirect('/login') 
     const res = await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(bsnEncoded)}`)
     if (!res || !res.alreadyInitial) {
         const msg = Buffer.from('Primeiro selecione um negócio').toString('base64')

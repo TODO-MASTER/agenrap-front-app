@@ -8,11 +8,12 @@ import { BusinessCtx } from "@/src/shared/types"
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 import { redirect } from "next/navigation"
 import { Suspense } from "react"
-
+export const dynamic = 'force-dynamic'
 interface SearchParams { page?: string; rap?: string ;  filter?: "today" | "completed"}
 
 export default async function DashAppointmentPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { page, rap,filter } = await searchParams
+     if (!rap) redirect('/login') 
   const pageNumber = Number(page) || 1
 
   const res = await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(rap)}`)

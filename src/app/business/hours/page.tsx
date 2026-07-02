@@ -8,13 +8,14 @@ import { serverFetch } from "@/src/shared/lib/server-fetch.lib";
 import { formatPublicHandle, normalizePublicHandle } from "@/src/shared/utils/formatters.utils";
 import { redirect } from "next/navigation";
 
-
+export const dynamic = 'force-dynamic'
 export default async function BusinessInitialConfigPage({
     searchParams
 }: {
     searchParams: Promise<{ rap: string }>
 }) {
     const { rap: bsn } = await searchParams
+     if (!bsn) redirect('/login')
     const res = !bsn ? null : await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(bsn)}`)
     if (res && res.alreadyInitial) {
         redirect(`/dashboard?rap=${bsn}`);

@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 
-
+ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: "Cadastro | Agenrap",
   description: "Automatize sua agenda"

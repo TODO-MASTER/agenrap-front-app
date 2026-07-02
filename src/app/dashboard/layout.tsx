@@ -9,7 +9,7 @@ import ProfileDialogRoot from "@/src/shared/components/agenrap-ui/wrappers/profi
 import UserHydration from "@/src/shared/components/agenrap-ui/wrappers/user-hydration";
 import { SidebarInset } from "@/src/shared/components/ui/sidebar";
 import { Suspense } from "react";
-
+export const dynamic = 'force-dynamic'
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
 
