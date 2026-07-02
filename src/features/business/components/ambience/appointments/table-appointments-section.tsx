@@ -94,11 +94,11 @@ export default function TableAppointmentSection({ businessId, appointments, hasN
           </div>
         </div>
       </div>
- <Suspense fallback={null}>
+ 
 
 
       <AppointmentFilters page={page} hasNext={hasNextPage} hasPrev={hasPrevPage} totalPages={totalPages} />
-  </Suspense>
+ 
       <div className="hidden lg:block">
         <AgenrapTable
           columns={visibleColumns}

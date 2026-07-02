@@ -1,5 +1,6 @@
 import { AgenrapFilters, FilterItem } from "@/src/shared/components/agenrap-ui/agenrap-filters/agenrap-filters"
 import { CalendarDays, CheckCircle2 } from "lucide-react"
+import { Suspense } from "react"
 
 type AppointmentFilterType = "all" | "today" | "completed"
 
@@ -20,10 +21,14 @@ const appointmentFilters: FilterItem<AppointmentFilterType>[] = [
  
 export function AppointmentFilters(props: TablePaginationProps) {
     return (
+        <Suspense fallback={null}>
+
+      
         <AgenrapFilters
             filters={appointmentFilters}
             defaultFilter="all"
             {...props}
         />
+          </Suspense>
     )
 }
