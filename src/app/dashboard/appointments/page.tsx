@@ -7,6 +7,7 @@ import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
 import { BusinessCtx } from "@/src/shared/types"
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 import { redirect } from "next/navigation"
+import { Suspense } from "react"
 
 interface SearchParams { page?: string; rap?: string ;  filter?: "today" | "completed"}
 
@@ -39,7 +40,13 @@ const resAppointments = await getDashAppointmentsByRap(
               : "Nenhum serviço pendente"}
           </p>
         </div>
+        <Suspense fallback={
+          <div className="py-12 text-center text-(--agenrap-brown-500)">
+            Carregando filtros e agendamentos...
+          </div>
+        }>
         <TableAppointmentSection filter={filter} hasNextPage={resAppointments.hasNextPage} hasPrevPage={resAppointments.hasPreviousPage} totalPages={resAppointments.totalPages} page={resAppointments.page} businessId={targetBuinessWithServices.id} appointments={resAppointments.data} />
+        </Suspense>
       </div>
     </>
   )

@@ -6,6 +6,7 @@ import { DashboardSummary } from "@/src/features/business/types/dashboard.types"
 import DashboardClient from "@/src/features/business/components/ambience/dashboard/dashboard-client"
 import { ApiResponse } from "@/src/shared/types"
 import { SubscriptionStatusRes } from "@/src/features/business/services/subscription.service"
+import { Suspense } from "react"
 
  
 export default async function DashboardPage({
@@ -32,5 +33,9 @@ export default async function DashboardPage({
         `subscription/status?atSign=${normalizePublicHandle(bsnEncoded)}`
     ).catch(() => null)
  
-    return <DashboardClient summary={summary!} businessName={res.name ?? res.atSign}         subscription={subscription?.data!}/>
+    return( 
+                 <Suspense fallback={<div className="p-8">Carregando dashboard...</div>}>
+    <DashboardClient summary={summary!} businessName={res.name ?? res.atSign}         subscription={subscription?.data!}/>
+    </Suspense>
+    )
 }

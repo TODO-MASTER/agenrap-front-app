@@ -12,7 +12,7 @@ import { formatDate, formatHour, formatPhone } from "@/src/shared/utils/formatte
 import { CalendarDays, CheckCircle2, Clock, LoaderCircle, Scissors, X } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { Suspense, useState } from "react"
+import { useState } from "react"
  
 type ShowAppointmentsProps = {
   businessId: number
@@ -95,8 +95,6 @@ export default function TableAppointmentSection({ businessId, appointments, hasN
         </div>
       </div>
  
-
-
       <AppointmentFilters page={page} hasNext={hasNextPage} hasPrev={hasPrevPage} totalPages={totalPages} />
  
       <div className="hidden lg:block">
