@@ -15,7 +15,6 @@ export default async function DashboardPage({
     searchParams: Promise<{ rap: string }>
 }) {
     const { rap: bsnEncoded } = await searchParams
-         if (!bsnEncoded) redirect('/login') 
     const res = await serverFetch<BusinessRes>(
         `business/search-by-user?atSign=${normalizePublicHandle(bsnEncoded)}`
     )

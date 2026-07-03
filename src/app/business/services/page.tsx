@@ -13,7 +13,6 @@ export default async function CreateServicePage({
     searchParams: Promise<{ rap: string }>
 }) {
     const { rap: bsnEncoded } = await searchParams
-         if (!bsnEncoded) redirect('/login')
    const res = !bsnEncoded ? null :  await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(bsnEncoded)}`)
 
     if (res && res.alreadyInitial) {

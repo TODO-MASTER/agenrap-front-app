@@ -18,7 +18,6 @@ export default async function CreateBusinessPage({
 }) {
 
     const { flash: encoded } = await searchParams
-      if (!encoded) redirect('/login')
     const flash = encoded ? Buffer.from(encoded, 'base64').toString() : null
     const res = await serverFetch<BusinessRes[]>(`business/search-all-business`)
 

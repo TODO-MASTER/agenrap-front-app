@@ -21,7 +21,6 @@ export default async function CustomersPage({
     searchParams: Promise<{ rap?: string; mode?: string; page?: string; filter?: string }>
 }) {
     const { rap, mode, page, filter } = await searchParams
-    if (!rap) redirect('/login')
     const pageNumber = Number(page) || 1
 
     const res = await serverFetch<BusinessRes>(`business/search-by-user?atSign=${normalizePublicHandle(rap)}`)
