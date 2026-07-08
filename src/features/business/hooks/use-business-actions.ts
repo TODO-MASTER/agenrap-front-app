@@ -77,7 +77,7 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
           }
         }
       } catch (e) {
-        toast.error(e instanceof Error ? e.message : 'Erro ao criar tarefa');
+            handleActionError(e, router, atSign, 'Erro ao tentar criar horario')
       }
     });
   }
