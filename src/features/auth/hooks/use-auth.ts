@@ -25,7 +25,11 @@ export function useAuth() {
             const data = await response.json()
             if (searchParams.get('rap')) {
                 setPendingRap(searchParams.get('rap')!)
+                if(data.emailVerified){
+                      router.push('/login')
+                }else{
                 router.push('/verify-pending-email')
+                }
             }
 
             else if (data.error || data.message == "email já cadastrado!") {
@@ -33,7 +37,11 @@ export function useAuth() {
                 toast.error(data.message ?? "Erro desconhecido");
             } else {
                 toast.success(data.message ?? "Erro desconhecido");
+                 if(data.emailVerified){
+                      router.push('/login')
+                }else{
                 router.push('/verify-pending-email')
+                }
             }
             return data;
         } catch (error) {
