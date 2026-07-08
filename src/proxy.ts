@@ -36,14 +36,20 @@ export function proxy(request: NextRequest) {
     return response;
   }
 
-  if (isPublic) {
-    const pendingRap = request.cookies.get('pendingRap')?.value
-    if (pendingRap) return NextResponse.next()
+ if (isPublic) {
+    const pendingRap = request.cookies.get('pendingRap')?.value;
+    const justLoggedIn = request.cookies.get('just_logged_in')?.value;
+
+    if (pendingRap || justLoggedIn) {
+        const response = NextResponse.next();
+        if (justLoggedIn) response.cookies.delete('just_logged_in');
+        return response;
+    }
+
     const response = NextResponse.next();
     response.cookies.delete('token');
-
     return response;
-  }
+}
 
   return NextResponse.next();
 }

@@ -33,6 +33,14 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 7,
     });
 
+        cookieStore.set('just_logged_in', '1', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 30,
+    });
+
     return NextResponse.json({ data:data });
 
   } catch (err) {
