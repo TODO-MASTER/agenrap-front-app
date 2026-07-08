@@ -1,5 +1,11 @@
-// import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+export function proxy(request: NextRequest) {
+    return NextResponse.next();
+}
 
+export const config = {
+    matcher: ['/((?!_next|favicon.ico|api).*)'],
+};
 // const PUBLIC_ROUTES = ['/login', '/register','/welcome','/verify-email','/verify-pending-email'];
 // const PROTECTED_ROUTES = ['/dashboard', '/business', '/appointments', '/schedule'];
 
