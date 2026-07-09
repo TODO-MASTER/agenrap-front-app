@@ -22,16 +22,15 @@ export function proxy(request: NextRequest) {
   const isProtected = PROTECTED_ROUTES.some(r => pathname.startsWith(r));
   const isPublic = PUBLIC_ROUTES.some(r => pathname.startsWith(r));
 
-  // Protegidas
   if (isProtected && !tokenValido) {
     const res = NextResponse.redirect(new URL('/login', request.url));
     if (token) res.cookies.delete('token');
     return res;
   }
 
-  // Públicas
   if (isPublic) {
     const pendingRap = request.cookies.get('pendingRap')?.value;
+
     const isPrefetch = 
       request.headers.get('Next-Router-Prefetch') === '1' || 
       request.headers.get('Purpose') === 'prefetch' ||
@@ -48,7 +47,6 @@ export function proxy(request: NextRequest) {
     return response;
   }
 
-  // Todas as outras rotas (incluindo /business/*)
   return NextResponse.next();
 }
 
