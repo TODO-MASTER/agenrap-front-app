@@ -60,7 +60,7 @@ export default async function CreateBusinessPage({
                 </div>
             }
             <div className="md:hidden block  absolute bottom-0 right-0 -rotate-180">
-                <Link href={"/login"} className="">
+                <Link href={"/login"} className="" prefetch={false}>
                     <AgenrapButton variant={"brownLogoutrap"} >
                         <LucideLogOut color="#000" width={20} height={20} />
                     </AgenrapButton>
