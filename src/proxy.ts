@@ -10,6 +10,8 @@ export function proxy(request: NextRequest) {
 
     const isProtected = PROTECTED_ROUTES.some(r => pathname.startsWith(r));
     const isPublic = PUBLIC_ROUTES.some(r => pathname.startsWith(r));
+    console.log(`//////////////////////////////////////////////////DEBUGGING///////////////////////////////////////////////////////////// `);
+    console.log(`[proxy] ${request.method} ${pathname} | token=${tokenExiste} | isProtected=${isProtected} | isPublic=${isPublic}`);
 
     if (isProtected && !tokenExiste) {
         if (request.method === 'POST') return NextResponse.next();
