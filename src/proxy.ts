@@ -23,28 +23,14 @@ export function proxy(request: NextRequest) {
   const isPublic = PUBLIC_ROUTES.some(r => pathname.startsWith(r));
 
   if (isProtected && !tokenValido) {
-    const res = NextResponse.redirect(new URL('/login', request.url));
-    if (token) res.cookies.delete('token');
-    return res;
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (isPublic) {
-    const pendingRap = request.cookies.get('pendingRap')?.value;
-
-    const isPrefetch = 
-      request.headers.get('Next-Router-Prefetch') === '1' || 
-      request.headers.get('Purpose') === 'prefetch' ||
-      request.headers.get('X-Next-Router-Prefetch') === '1';
-
-    if (pendingRap || isPrefetch) {
+  if (isPublic && tokenValido) {
+    if (pathname.includes('verify')) {
       return NextResponse.next();
     }
-
-    const response = NextResponse.next();
-    if (tokenValido) {
-      response.cookies.delete('token');
-    }
-    return response;
+    return NextResponse.redirect(new URL('/business/booking-link', request.url));
   }
 
   return NextResponse.next();
