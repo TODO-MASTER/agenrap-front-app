@@ -25,9 +25,14 @@ export function proxy(request: NextRequest) {
         return response;
     }
 
-  if (isPublic) {
+if (isPublic) {
     const pendingRap = request.cookies.get('pendingRap')?.value;
     if (pendingRap) return NextResponse.next();
+
+    // não limpa token se for prefetch do Next.js
+    const isPrefetch = request.headers.get('Next-Router-Prefetch') === '1'
+        || request.headers.get('Purpose') === 'prefetch';
+    if (isPrefetch) return NextResponse.next();
 
     const response = NextResponse.next();
     response.cookies.delete('token');
