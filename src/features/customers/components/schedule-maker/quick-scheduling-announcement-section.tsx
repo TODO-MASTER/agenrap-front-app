@@ -1,10 +1,14 @@
 'use client'
+
 import { Service } from "@/src/features/business/types";
 import CardServiceFit from "@/src/shared/components/agenrap-ui/card/card-service-fit";
 import AgenrapDialogJoinSchedule from "@/src/shared/components/agenrap-ui/dialog/agenrap-dialog-join-schedule";
 import { BusinessCtx } from "@/src/shared/types";
 import { currencyUtils } from "@/src/shared/utils/currency.utils";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Calendar, User, ClipboardList, Scissors } from "lucide-react";
+import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
 
 type ITargetBusinessTServices = {
     businessTarget: BusinessCtx,
@@ -22,22 +26,43 @@ export default function QuickSchedulingAnnouncementSection({ businessTarget, ser
         }
     }, [businessTarget, open])
 
-
-
     return (
         <section>
             <AgenrapDialogJoinSchedule business={businessTarget!} open={open} setOpen={setOpen} />
-            <p className="font-tree font-bold text-4xl md:py-8 py-4">{businessTarget.mnrName} - <span className="text-3xl font-semibold">Agendamento</span> </p>
-            <div className="flex w-full md:bg-(--agenrap-purple-500) bg-(--agenrap-brown-500)/40 relative z-0 md:mb-8 mb-4  md:h-55 h-fit">
-                <div className="md:bg-(--agenrap-brown-500)/85 bg-(--agenrap-brown-500)/40 p-4 lg:pl-14 lg:pr-8 md:px-8 md:py-5  rounded-bl-[99px] flex justify-between w-full h-full">
-                    <div className=" hidden md:flex gap-2 lg:h-full md:h-[85%] ">
-                        <span className="flex w-1.5 h-full  bg-(--agenrap-yellow-200)"></span>
+            
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:py-8 py-4 border-b border-(--agenrap-brown-500)/10 mb-4">
+                <p className="font-tree font-bold text-3xl md:text-4xl text-black">
+                    {businessTarget.mnrName} - <span className="text-2xl md:text-3xl font-semibold opacity-85">Agendamento</span>
+                </p>
+
+                <nav className="flex items-center gap-x-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none -mx-4 px-4 md:mx-0 md:px-0">
+                    <Link 
+                        href={`/appointments`} 
+                        className="flex items-center gap-2 px-4 py-2 rounded-full text-xs md:text-sm font-medium bg-white text-(--agenrap-brown-500) transition-all"
+                    >
+                        <Calendar size={15} />
+                        Agendas
+                    </Link>
+                    <Link 
+                        href={`/${formatPublicHandle(businessTarget.atSign)}`} 
+                        className="flex items-center gap-2 px-4 py-2 rounded-full text-xs md:text-sm font-medium bg-white text-(--agenrap-brown-500) hover:bg-(--agenrap-brown-500)/5 border border-(--agenrap-brown-500)/15 shrink-0 transition-all"
+                    >
+                        <Scissors size={15} />
+                        Serviços
+                    </Link>
+                </nav>
+            </div>
+
+            <div className="flex w-full md:bg-(--agenrap-purple-500) bg-(--agenrap-brown-500)/40 relative z-0 md:mb-8 mb-4 md:h-55 h-fit">
+                <div className="md:bg-(--agenrap-brown-500)/85 bg-(--agenrap-brown-500)/40 p-4 lg:pl-14 lg:pr-8 md:px-8 md:py-5 rounded-bl-[99px] flex justify-between w-full h-full">
+                    <div className="hidden md:flex gap-2 lg:h-full md:h-[85%]">
+                        <span className="flex w-1.5 h-full bg-(--agenrap-yellow-200)"></span>
                         <div className="flex flex-col gap-y-1">
-                            <p className="text-white font-tree font-bold md:text-3xl text-lg  ">Agendar</p>
+                            <p className="text-white font-tree font-bold md:text-3xl text-lg">Agendar</p>
                             <p className="text-white font-tree font-bold md:text-3xl text-lg mb-2">Rapidamente</p>
-                            <p className="text-white font-tree font-medium  lg:text-lg  text-sm ">Ótima escolha de serviço, restam</p>
+                            <p className="text-white font-tree font-medium lg:text-lg text-sm">Ótima escolha de serviço, restam</p>
                             <p className="text-white font-tree font-medium lg:text-lg text-sm">apenas 3 etapas para finalizar seu</p>
-                            <p className="text-yellow-200  font-tree font-bold  lg:text-lg text-sm">agendamento</p>
+                            <p className="text-yellow-200 font-tree font-bold lg:text-lg text-sm">agendamento</p>
                         </div>
                     </div>
                     <div className="flex md:w-[50%] w-full">

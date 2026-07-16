@@ -1,45 +1,68 @@
 import { cookies } from 'next/headers';
-import { environments } from '@/src/environments/environments';
 import { redirect } from 'next/navigation';
 import { SubscriptionRequiredError } from '@/src/shared/utils/errors';
+import { environments } from '@/src/environments/environments';
 
-type Options = RequestInit & { auth?: boolean };
+type Options = RequestInit & { auth?: boolean; _isRetry?: boolean; _freshToken?: string };
 
+export async function serverFetch<T = unknown>(path: string, options: Options = {}): Promise<T> {
+    const apiUrl = environments.apiUrl;
+    if (!apiUrl) throw new Error('API_URL não definida');
 
+    const cookieStore = await cookies();
+    const headers = new Headers(options.headers);
 
-export async function serverFetch<T = unknown>(path: string, options: Options = {}) {
-  const apiUrl = environments.apiUrl;
-  if (!apiUrl) throw new Error('API_URL não definida');
+    if (options.auth !== false) {
+        const token = options._freshToken ?? cookieStore.get('token')?.value;
+        if (token) headers.set('Authorization', `Bearer ${token}`);
+    }
 
-  const headers = new Headers(options.headers);
+    const res = await fetch(`${apiUrl}${path}`, {
+        ...options,
+        headers,
+        cache: 'no-store',
+        signal: options.signal ?? AbortSignal.timeout(15000),
+    });
 
-  if (options.auth !== false) {
-    const token = (await cookies()).get('token')?.value;
-    if (token) headers.set('Authorization', `Bearer ${token}`);
-  }
+    if (res.status === 401 && !options._isRetry) {
+        const refreshToken = cookieStore.get('refreshToken')?.value;
 
-  const res = await fetch(`${apiUrl}${path}`, {
-    ...options,
-    headers,
-    cache: 'no-store',
-    signal: AbortSignal.timeout(10000),
-  });
+        if (refreshToken) {
+            const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? '';
+            const refreshRes = await fetch(`${appUrl}/api/refresh`, {
+                method: 'POST',
+                headers: { Cookie: `refreshToken=${refreshToken}` },
+            });
 
-  if (res.status === 401 || res.status === 403) {
-    redirect('/login');
-  }
-if (res.status === 402) {
-    const body = await res.json().catch(() => null)
-    throw new SubscriptionRequiredError(body?.message)
-}
+            if (refreshRes.ok) {
+                const refreshData = await refreshRes.json();
+                return serverFetch<T>(path, {
+                    ...options,
+                    _isRetry: true,
+                    _freshToken: refreshData.token,
+                });
+            }
+        }
 
+        redirect('/login');
+    }
 
-  const text = await res.text();
-  const data = text ? JSON.parse(text) as T : null as T;
-  if (!res.ok) {
-    const errorMessage = (data as { message?: string })?.message || 'Erro na requisição';
-    throw new Error(errorMessage);
-}
+    if (res.status === 403) {
+        redirect('/login');
+    }
 
-  return data;
+    if (res.status === 402) {
+        const body = await res.json().catch(() => null);
+        throw new SubscriptionRequiredError(body?.message);
+    }
+
+    const text = await res.text();
+    const data = text ? (JSON.parse(text) as T) : (null as T);
+
+    if (!res.ok) {
+        const errorMessage = (data as { message?: string })?.message || 'Erro na requisição';
+        throw new Error(errorMessage);
+    }
+
+    return data;
 }

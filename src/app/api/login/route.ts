@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const response = await fetch(
-    environments.apiUrl + 'user/login',
+      environments.apiUrl + 'user/login',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -25,15 +25,28 @@ export async function POST(request: NextRequest) {
     const data = await response.json();
 
     const cookieStore = await cookies();
-    cookieStore.set('token', data.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV=='production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-    });
+    const isProd = process.env.NODE_ENV === 'production';
 
-    return NextResponse.json({ data:data });
+    if (data.token) {
+      cookieStore.set('token', data.token, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 15,
+      });
+    }
+
+    if (data.refreshToken) {
+      cookieStore.set('refreshToken', data.refreshToken, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7,
+      });
+    }
+    return NextResponse.json({ data: data });
 
   } catch (err) {
     return NextResponse.json(

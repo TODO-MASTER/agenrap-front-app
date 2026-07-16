@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Cinzel, Figtree} from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { useInactivityLogout } from "@/src/shared/hooks/use-inactivity-logout";
+import { InactivityGuard } from "@/src/shared/components/agenrap-ui/inactivity-guard";
 
 const geistCinzel = Cinzel({
   subsets:["latin"],
@@ -36,6 +38,7 @@ export default function RootLayout({
       <body
         className={`${geistCinzel.variable} ${geistFigtree.variable} antialiased`}
       >
+              <InactivityGuard />
                 <Toaster position="top-center" theme="dark" closeButton></Toaster>
         {children}
       </body>

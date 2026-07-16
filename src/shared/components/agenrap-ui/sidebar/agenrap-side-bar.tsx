@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronRight, UserCircle } from "lucide-react"
+import { ChevronRight, DoorOpen, UserCircle } from "lucide-react"
 import {
   Collapsible,
   CollapsibleContent,
@@ -31,6 +31,7 @@ import Image from "next/image"
 import { miniIcon } from "@/src/assets/images"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useProfileDialogStore } from "@/src/shared/store/use-profile-dialog.store"
+import { LogoutButton } from "@/src/shared/components/agenrap-ui/button/logout-button"
 
 export default function AgenrapSideBar(
   props: React.ComponentProps<typeof Sidebar>
@@ -226,11 +227,15 @@ export default function AgenrapSideBar(
         >
           <UserCircle className="h-5 w-5 shrink-0 text-(--agenrap-purple-500)" />
           {showExpanded
-            ? <span className="font-tree text-sm text-black/70">Meu perfil</span>
-            : <span className="text-[9px] font-tree font-medium text-black/50 text-center">Perfil</span>
+            && <span className="font-tree text-sm text-black/70">Meu perfil</span>
+
           }
         </button>
       </div>
+      <div className="w-full px-3 pb-3">
+      <LogoutButton showExpanded={showExpanded}/>
+      </div>
+      
     </Sidebar>
   )
 }

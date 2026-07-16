@@ -147,6 +147,7 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
 
         }
       } catch (e) {
+              if (isRedirectError(e)) throw e
         toast.error(e instanceof Error ? e.message : 'Erro ao tentar criar serviços');
       }
     });
@@ -172,6 +173,7 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
 
         }
       } catch (e) {
+              if (isRedirectError(e)) throw e
         toast.error(e instanceof Error ? e.message : 'Erro ao tentar criar serviços');
       }
     });
@@ -202,6 +204,7 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
 
         }
       } catch (e) {
+              if (isRedirectError(e)) throw e
         toast.error(e instanceof Error ? e.message : 'Erro ao tentar criar serviços');
       }
     });
@@ -225,6 +228,7 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
 
         }
       } catch (e) {
+              if (isRedirectError(e)) throw e
         toast.error(e instanceof Error ? e.message : 'Erro ao tentar criar serviços');
       }
     });
