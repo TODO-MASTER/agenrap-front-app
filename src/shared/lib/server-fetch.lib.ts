@@ -2,8 +2,29 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { SubscriptionRequiredError } from '@/src/shared/utils/errors';
 import { environments } from '@/src/environments/environments';
+import { cache } from 'react';
 
 type Options = RequestInit & { auth?: boolean; _isRetry?: boolean; _freshToken?: string };
+
+const refreshAccessToken = cache(async (): Promise<string | null> => {
+    const cookieStore = await cookies();
+    const refreshToken = cookieStore.get('refreshToken')?.value;
+    if (!refreshToken) return null;
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? '';
+    const refreshRes = await fetch(`${appUrl}/api/refresh`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Cookie': `refreshToken=${refreshToken}`
+        },
+    });
+
+    if (!refreshRes.ok) return null;
+
+    const data = await refreshRes.json();
+    return data.token ?? null;
+});
 
 export async function serverFetch<T = unknown>(path: string, options: Options = {}): Promise<T> {
     const apiUrl = environments.apiUrl;
@@ -25,26 +46,14 @@ export async function serverFetch<T = unknown>(path: string, options: Options = 
     });
 
     if (res.status === 401 && !options._isRetry) {
-        const refreshToken = cookieStore.get('refreshToken')?.value;
+        const newToken = await refreshAccessToken();
 
-        if (refreshToken) {
-            const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? '';
-            const refreshRes = await fetch(`${appUrl}/api/refresh`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': `refreshToken=${refreshToken}`
-                },
+        if (newToken) {
+            return serverFetch<T>(path, {
+                ...options,
+                _isRetry: true,
+                _freshToken: newToken,
             });
-
-            if (refreshRes.ok) {
-                const refreshData = await refreshRes.json();
-                return serverFetch<T>(path, {
-                    ...options,
-                    _isRetry: true,
-                    _freshToken: refreshData.token,
-                });
-            }
         }
 
         redirect('/login');
