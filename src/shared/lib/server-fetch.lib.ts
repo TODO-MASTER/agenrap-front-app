@@ -1,80 +1,45 @@
 import { cookies } from 'next/headers';
+import { environments } from '@/src/environments/environments';
 import { redirect } from 'next/navigation';
 import { SubscriptionRequiredError } from '@/src/shared/utils/errors';
-import { environments } from '@/src/environments/environments';
-import { cache } from 'react';
 
-type Options = RequestInit & { auth?: boolean; _isRetry?: boolean; _freshToken?: string };
+type Options = RequestInit & { auth?: boolean };
 
-const refreshAccessToken = cache(async (): Promise<string | null> => {
-    const cookieStore = await cookies();
-    const refreshToken = cookieStore.get('refreshToken')?.value;
-    if (!refreshToken) return null;
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? '';
-    const refreshRes = await fetch(`${appUrl}/api/refresh`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Cookie': `refreshToken=${refreshToken}`
-        },
-    });
 
-    if (!refreshRes.ok) return null;
+export async function serverFetch<T = unknown>(path: string, options: Options = {}) {
+  const apiUrl = environments.apiUrl;
+  if (!apiUrl) throw new Error('API_URL não definida');
 
-    const data = await refreshRes.json();
-    return data.token ?? null;
-});
+  const headers = new Headers(options.headers);
 
-export async function serverFetch<T = unknown>(path: string, options: Options = {}): Promise<T> {
-    const apiUrl = environments.apiUrl;
-    if (!apiUrl) throw new Error('API_URL não definida');
+  if (options.auth !== false) {
+    const token = (await cookies()).get('token')?.value;
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+  }
 
-    const cookieStore = await cookies();
-    const headers = new Headers(options.headers);
+  const res = await fetch(`${apiUrl}${path}`, {
+    ...options,
+    headers,
+    cache: 'no-store',
+    signal: options.signal ?? AbortSignal.timeout(35000),
+  });
 
-    if (options.auth !== false) {
-        const token = options._freshToken ?? cookieStore.get('token')?.value;
-        if (token) headers.set('Authorization', `Bearer ${token}`);
-    }
+  if (res.status === 401 || res.status === 403) {
+    redirect('/login');
+  }
+if (res.status === 402) {
+    const body = await res.json().catch(() => null)
+    throw new SubscriptionRequiredError(body?.message)
+}
 
-    const res = await fetch(`${apiUrl}${path}`, {
-        ...options,
-        headers,
-        cache: 'no-store',
-        signal: options.signal ?? AbortSignal.timeout(15000),
-    });
 
-    if (res.status === 401 && !options._isRetry) {
-        const newToken = await refreshAccessToken();
+  const text = await res.text();
+  const data = text ? JSON.parse(text) as T : null as T;
+  if (!res.ok) {
+    const errorMessage = (data as { message?: string })?.message || 'Erro na requisição';
+    throw new Error(errorMessage);
+}
 
-        if (newToken) {
-            return serverFetch<T>(path, {
-                ...options,
-                _isRetry: true,
-                _freshToken: newToken,
-            });
-        }
-
-        redirect('/login');
-    }
-
-    if (res.status === 403) {
-        redirect('/login');
-    }
-
-    if (res.status === 402) {
-        const body = await res.json().catch(() => null);
-        throw new SubscriptionRequiredError(body?.message);
-    }
-
-    const text = await res.text();
-    const data = text ? (JSON.parse(text) as T) : (null as T);
-
-    if (!res.ok) {
-        const errorMessage = (data as { message?: string })?.message || 'Erro na requisição';
-        throw new Error(errorMessage);
-    }
-
-    return data;
+  return data;
 }
