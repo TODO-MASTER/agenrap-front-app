@@ -24,46 +24,31 @@ export async function serverFetch<T = unknown>(path: string, options: Options = 
         signal: options.signal ?? AbortSignal.timeout(15000),
     });
 
-if (res.status === 401 && !options._isRetry) {
-    const refreshToken = cookieStore.get('refreshToken')?.value;
+    if (res.status === 401 && !options._isRetry) {
+        const refreshToken = cookieStore.get('refreshToken')?.value;
 
-    if (refreshToken) {
-        const refreshRes = await fetch(environments.apiUrl + 'user/refresh-token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ refreshToken }),
-        });
-
-        if (refreshRes.ok) {
-            const refreshData = await refreshRes.json();
-            const isProd = process.env.NODE_ENV === 'production';
-
-            cookieStore.set('token', refreshData.token, {
-                httpOnly: true,
-                secure: isProd,
-                sameSite: 'lax',
-                path: '/',
-                maxAge: 60 * 15,
+        if (refreshToken) {
+            const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? '';
+            const refreshRes = await fetch(`${appUrl}/api/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cookie': `refreshToken=${refreshToken}`
+                },
             });
 
-            cookieStore.set('refreshToken', refreshData.refreshToken, {
-                httpOnly: true,
-                secure: isProd,
-                sameSite: 'lax',
-                path: '/',
-                maxAge: 60 * 60 * 24 * 7,
-            });
-
-            return serverFetch<T>(path, {
-                ...options,
-                _isRetry: true,
-                _freshToken: refreshData.token,
-            });
+            if (refreshRes.ok) {
+                const refreshData = await refreshRes.json();
+                return serverFetch<T>(path, {
+                    ...options,
+                    _isRetry: true,
+                    _freshToken: refreshData.token,
+                });
+            }
         }
-    }
 
-    redirect('/login');
-}
+        redirect('/login');
+    }
 
     if (res.status === 403) {
         redirect('/login');
