@@ -1,6 +1,6 @@
 'use server'
 import { DayOffReq, DayOffRes, TimeBlockReq, TimeBlockRes } from '@/src/features/business/types'
-import { serverFetch } from '@/src/shared/lib/server-fetch.lib'
+import { serverAction, serverFetch } from '@/src/shared/lib/server-fetch.lib'
 import { ApiResponse } from '@/src/shared/types'
 import { normalizePublicHandle } from '@/src/shared/utils/formatters.utils'
 
@@ -26,7 +26,7 @@ export async function GetTimeBlocks(rap: string): Promise<ApiResponse<TimeBlockR
 }
 
 export async function SaveDayOff(rap: string, dto: DayOffReq) {
-  return serverFetch<ApiResponse<DayOffRes>>(`turn/day-create?rap=${normalizePublicHandle(rap)}`, {
+  return serverAction<DayOffRes>(`turn/day-create?rap=${normalizePublicHandle(rap)}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),
@@ -34,7 +34,7 @@ export async function SaveDayOff(rap: string, dto: DayOffReq) {
 }
 
 export async function SaveTimeBlock(rap: string, dto: TimeBlockReq) {
-  return serverFetch<ApiResponse<TimeBlockRes>>(`turn/time-block?rap=${normalizePublicHandle(rap)}`, {
+  return serverAction<TimeBlockRes>(`turn/time-block?rap=${normalizePublicHandle(rap)}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),

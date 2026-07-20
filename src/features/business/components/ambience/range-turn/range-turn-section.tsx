@@ -133,9 +133,12 @@ const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({
 
                 const finalReason = reason || "Bloqueio de Agenda"
                 const response = await SaveDayOff(tgrap, { start: startString, end: endString, reason: finalReason })
-
+if (response.data==null) {
+    toast.error(response.message)
+    return
+}
                 toast.success(response.message)
-                setDaysOffList((prev) => [...prev, { id: response.data.id, start: startString, end: endString, reason: finalReason }])
+                setDaysOffList((prev) => [...prev, { id: response.data!.id, start: startString, end: endString, reason: finalReason }])
                 setReason("")
                 setRange({ from: new Date(), to: undefined })
                 setDate(new Date())
@@ -153,9 +156,12 @@ const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({
 
                 const finalReason = reason || "Bloqueio de horário"
                 const response = await SaveTimeBlock(tgrap, { start: timeStart, end: timeEnd, reason: finalReason })
-
+if (response.data==null) {
+    toast.error(response.message)
+    return
+}
                 toast.success(response.message)
-                setTimeBlocksList((prev) => [...prev, { id: response.data.id, start: timeStart, end: timeEnd, reason: finalReason }])
+                setTimeBlocksList((prev) => [...prev, { id: response.data!.id, start: timeStart, end: timeEnd, reason: finalReason }])
                 setReason("")
             }
         } catch (e) {
