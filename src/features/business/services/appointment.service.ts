@@ -1,5 +1,5 @@
 'use server'
-import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
+import { serverAction, serverFetch } from "@/src/shared/lib/server-fetch.lib"
 import { ApiResponse, PageableResponse } from "@/src/shared/types"
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 
@@ -40,7 +40,7 @@ export async function getDashAppointmentsByRap(
 }
 
 export async function completeAllAppointmentsAsync(values:CompleteAppointmentsReq){
-  return await serverFetch<ApiResponse<boolean>>(
+  return await serverAction<boolean>(
     `appointment/complete`,{
       method:'PATCH',
       headers:{'Content-Type':'application/json'},

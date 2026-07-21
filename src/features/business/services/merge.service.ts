@@ -1,6 +1,5 @@
 'use server'
-import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
-import { ApiResponse } from "@/src/shared/types"
+import { serverAction, serverFetch } from "@/src/shared/lib/server-fetch.lib"
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
  
 export type MergePreviewCustomer = {
@@ -47,7 +46,7 @@ export async function getMergePreview(rap: string, customerIds: number[], userId
 }
  
 export async function mergeCustomerAsync(rap: string, request: MergeCustomerRequest) {
-    return await serverFetch<ApiResponse<boolean>>(
+    return await serverAction<boolean>(
         `merge?atSign=${normalizePublicHandle(rap)}`,
         { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) }
     )
@@ -61,7 +60,7 @@ export async function getMergeHistoryAsync(rap: string, userId: number) {
 }
  
 export async function revertMergeAsync(rap: string, customerId: number) {
-    return await serverFetch<ApiResponse<boolean>>(
+    return await serverAction<boolean>(
         `merge/revert?atSign=${normalizePublicHandle(rap)}&customerId=${customerId}`,
         { method: 'DELETE', headers: { 'Content-Type': 'application/json' } }
     )

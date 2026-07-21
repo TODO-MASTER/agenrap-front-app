@@ -269,7 +269,7 @@ const handleServiceSelect = (serviceId: number) => {
                       <LoaderCircle className="animate-spin absolute w-16 h-16" color="#F5E6CC" />
                     </div>
                   ) : slots ? (
-                    slots.data.slots.length === 0 ? (
+                    slots.data!.slots.length === 0 ? (
                       <div className="flex justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full flex-1 p-4">
                         <p className="font-tree text-white text-center text-base">Ops, agenda lotada neste dia</p>
                       </div>

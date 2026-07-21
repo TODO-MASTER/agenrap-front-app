@@ -18,7 +18,7 @@ export function useSubscription() {
         startTransition(async () => {
             try {
                 const res = await createCheckoutAction(atSign)
-                window.open(res.data.checkoutUrl, '_blank')
+                window.open(res.data!.checkoutUrl, '_blank')
             } catch (e) {
                 if (e instanceof SubscriptionRequiredError) return
                 toast.error(e instanceof Error ? e.message : 'Erro ao gerar link de pagamento')

@@ -1,5 +1,5 @@
 'use server'
-import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
+import { serverAction, serverFetch } from "@/src/shared/lib/server-fetch.lib"
 import { ApiResponse } from "@/src/shared/types"
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 
@@ -20,7 +20,7 @@ export async function getSubscriptionStatusAction(atSign: string) {
 }
 
 export async function createCheckoutAction(atSign: string) {
-    return await serverFetch<ApiResponse<{ checkoutUrl: string }>>(
+    return await serverAction<{ checkoutUrl: string }>(
         `subscription/checkout?atSign=${normalizePublicHandle(atSign)}`,
         { method: 'POST' }
     )

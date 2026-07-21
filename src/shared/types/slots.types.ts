@@ -5,4 +5,4 @@ export type SlotItem ={
     blockReason?:string
 }
 export type SlotRes = ApiResponse<{      slots:SlotItem[]
-        bookedSlots?: string[]}>
+        bookedSlots?: string[]}|null>

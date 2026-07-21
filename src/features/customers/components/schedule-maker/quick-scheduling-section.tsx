@@ -151,7 +151,7 @@ export default function QuickSchedulingSection({ existingAppointment }: Props) {
                             <LoaderCircle className="animate-spin absolute md:w-[80%] md:h-[80%] w-[50%] h-[50%]" color="#F5E6CC" />
                         </div>
                         : slots
-                            ? slots.data.slots.length == 0
+                            ? slots.data!.slots.length == 0
                                 ? <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
                                     <p className="font-tree text-white text-center md:text-2xl text-lg">Ops, Agenda lotada, neste dia</p>
                                 </div>

@@ -1,13 +1,13 @@
 'use server'
 
 
-import { CreateWorkingPeriodReq, CreateWorkingPeriodRes, DeleteWorkingPeriodRes, EditWorkingPeriodRes, WorkingPeriod } from "@/src/features/business/types";
-import { serverFetch } from "@/src/shared/lib/server-fetch.lib";
+import { CreateWorkingPeriodReq, DeleteWorkingPeriodRes, EditWorkingPeriodRes, WorkingPeriod } from "@/src/features/business/types";
+import { serverAction, serverFetch } from "@/src/shared/lib/server-fetch.lib";
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils";
 
 
 export async function CreatWorkingPeriod(values:CreateWorkingPeriodReq,atSign:string){
-    const res = await serverFetch<CreateWorkingPeriodRes>(`working-period/create?atSign=${normalizePublicHandle(atSign)}`,{
+    const res = await serverAction<{ alreadyInitial: boolean, weeks: WorkingPeriod[] }>(`working-period/create?atSign=${normalizePublicHandle(atSign)}`,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(values.weeks)
@@ -27,7 +27,7 @@ export async function GetWorkingPeriodPerRap(rap:string) {
   return res;
 }
 export async function EditWorkingPeriodService(values:Omit<WorkingPeriod,'id'>,rap:string,wkpId:number) {
-  const res = await serverFetch<EditWorkingPeriodRes>(`working-period/edit?atSign=${normalizePublicHandle(rap)}&wkpId=${wkpId}`, {
+  const res = await serverAction<{ alreadyInitial: boolean, week: WorkingPeriod }>(`working-period/edit?atSign=${normalizePublicHandle(rap)}&wkpId=${wkpId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(values),
@@ -35,7 +35,7 @@ export async function EditWorkingPeriodService(values:Omit<WorkingPeriod,'id'>,r
   return res;
 }
 export async function DeleteWkpService(rap:string,wkpId:number) {
-  const res = await serverFetch<DeleteWorkingPeriodRes>(`working-period/delete?atSign=${normalizePublicHandle(rap)}&wkpId=${wkpId}`, {
+  const res = await serverAction<{ alreadyInitial: boolean }>(`working-period/delete?atSign=${normalizePublicHandle(rap)}&wkpId=${wkpId}`, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
   });

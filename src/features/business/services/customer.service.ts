@@ -1,6 +1,6 @@
 'use server'
-import { serverFetch } from '@/src/shared/lib/server-fetch.lib'
-import { ApiResponse } from '@/src/shared/types'
+import { serverAction } from '@/src/shared/lib/server-fetch.lib'
+
 import { CreateCustomerSchema } from '@/src/features/business/schemas/customer.schema'
 import { normalizePublicHandle } from '@/src/shared/utils/formatters.utils'
 
@@ -21,7 +21,7 @@ export type CustomerRequest = {
 }
 
 export async function createCustomerAction(values: CreateCustomerSchema, rap: string) {
-    return serverFetch<ApiResponse<CustomerRes>>(`customer/create?atSign=${normalizePublicHandle(rap)}`, {
+    return serverAction<CustomerRes>(`customer/create?atSign=${normalizePublicHandle(rap)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
@@ -29,7 +29,7 @@ export async function createCustomerAction(values: CreateCustomerSchema, rap: st
 }
 
 export async function updateCustomerAsync(rap: string, customerId: number, dto: CustomerRequest) {
-    const res = await serverFetch<ApiResponse<CustomerRes>>(
+    const res = await serverAction<CustomerRes>(
         `customer/${customerId}?atSign=${normalizePublicHandle(rap)}`,
         { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dto) }
     )

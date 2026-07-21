@@ -2,15 +2,14 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { serverFetch } from '@/src/shared/lib/server-fetch.lib';
-import { BusinessRes, CreateBusinessReq, CreateBusinessRes } from '@/src/features/business/types/business.types';
-import { ApiResponse } from '@/src/shared/types';
+import { serverAction } from '@/src/shared/lib/server-fetch.lib';
+import { BusinessRes, CreateBusinessReq } from '@/src/features/business/types/business.types';
 import { normalizePublicHandle } from '@/src/shared/utils/formatters.utils';
 
 
 
 export async function createBusinessByUrlAction(values: CreateBusinessReq) {
-  const res = await serverFetch<CreateBusinessRes>('business/create', {
+  const res = await serverAction<BusinessRes>('business/create', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(values),
@@ -23,7 +22,7 @@ export async function createBusinessByUrlAction(values: CreateBusinessReq) {
 }
 
 export async function deleteCustomerAsync(rap: string, customerId: number) {
-    const res = await serverFetch<ApiResponse<boolean>>(
+    const res = await serverAction<boolean>(
         `customer/${customerId}?atSign=${normalizePublicHandle(rap)}`,
         { method: 'DELETE', headers: { 'Content-Type': 'application/json' } }
     )

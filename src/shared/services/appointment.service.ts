@@ -1,7 +1,7 @@
 'use server'
 
 import { AppointmentCancelRes, AppointmentReq, AppointmentRes, BookedDaysRes } from "@/src/shared/types/appointment.types";
-import { serverFetch } from "../lib/server-fetch.lib";
+import { serverAction, serverFetch } from "../lib/server-fetch.lib";
 import { ApiResponse } from "@/src/shared/types";
 
 export async function saveAppointment(
@@ -14,7 +14,12 @@ export async function saveAppointment(
     if (guestCustomerId != null) path = `appointment/save/guest/${guestCustomerId}`
     else if (customerId != null) path = `appointment/save/customer/${customerId}`
 
-    return await serverFetch<AppointmentRes>(`${path}?serviceId=${serviceId}`, {
+    return await serverAction<{
+  id: number
+  name: string
+  date: string
+  hour: string
+}>(`${path}?serviceId=${serviceId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values)
@@ -52,7 +57,7 @@ export async function handleCancelAppointment(
     let path = 'appointment/cancel/'
     if (userId != null) path = `appointment/cancel/`
     else if (customerGuestId != null) path = `appointment/cancel/guest/`
-    const res = await serverFetch<ApiResponse<boolean>>(`${path}${businessId}?${params}`, {
+    const res = await serverAction<boolean>(`${path}${businessId}?${params}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
     });

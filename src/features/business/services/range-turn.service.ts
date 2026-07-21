@@ -41,16 +41,16 @@ export async function SaveTimeBlock(rap: string, dto: TimeBlockReq) {
   })
 }
 
-export async function DeleteDayOff(rap: string, id: number): Promise<ApiResponse<boolean>> {
-  return serverFetch<ApiResponse<boolean>>(`turn/day-off/${id}?rap=${normalizePublicHandle(rap)}`,
+export async function DeleteDayOff(rap: string, id: number) {
+  return serverAction<boolean>(`turn/day-off/${id}?rap=${normalizePublicHandle(rap)}`,
   
   { method: 'DELETE',
  headers: { 'Content-Type': 'application/json' },
    })
 }
 
-export async function DeleteTimeBlock(rap: string, id: number): Promise<ApiResponse<boolean>> {
-  return serverFetch<ApiResponse<boolean>>(`turn/time-block/${id}?rap=${normalizePublicHandle(rap)}`, { method: 'DELETE',
+export async function DeleteTimeBlock(rap: string, id: number) {
+  return await serverAction<boolean>(`turn/time-block/${id}?rap=${normalizePublicHandle(rap)}`, { method: 'DELETE',
 
      headers: { 'Content-Type': 'application/json' },
    })

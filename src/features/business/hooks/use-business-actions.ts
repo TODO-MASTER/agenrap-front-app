@@ -66,10 +66,10 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
           toast.success(data.message || 'Periodo cadastrado!');
           //  
 
-          if (!data.data.alreadyInitial) {
+          if (!data.data!.alreadyInitial) {
             router.push(`/business/services?rap=${formatPublicHandle(atSign)}`)
           }
-          else if (usePathName === '/dashboard/journey' && data.data.alreadyInitial) {
+          else if (usePathName === '/dashboard/journey' && data.data!.alreadyInitial) {
             onSuccess?.()
 }
           else {
@@ -106,7 +106,7 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
           if (usePathName.startsWith("/dashboard/service")) {
               onSuccess?.()
           } else {
-            if (!data.data.alreadyInitial) {
+            if (!data.data!.alreadyInitial) {
               router.push(`/business/hours?rap=${formatPublicHandle(atSign)}`)
             } else {
               router.push(`/dashboard?rap=${formatPublicHandle(atSign)}`)
