@@ -1,5 +1,6 @@
 'use client'
 import { miniIcon } from "@/src/assets/images";
+import { ScrollHint } from "@/src/features/customers/components/service-showcase/showcase-section/scroll-hint";
 import AgenrapDialogJoinSchedule from "@/src/shared/components/agenrap-ui/dialog/agenrap-dialog-join-schedule";
 import { useBusinessStore } from "@/src/shared/store/use-business.store";
 import Image from "next/image";
@@ -27,6 +28,7 @@ export default function OnlineCalendarSection() {
             <div className=" bg-(--agenrap-gray-800)  w-fit  flex" >
                 <p className="font-tree lg:text-xl text-sm  p-2 font-bold text-white">Disponibilizado por <span className="text-(--agenrap-yellow-200)">agenrap</span></p>
             </div>
+                 
         </section>
     )
 }

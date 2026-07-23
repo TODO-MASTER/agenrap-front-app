@@ -32,6 +32,7 @@ import { miniIcon } from "@/src/assets/images"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useProfileDialogStore } from "@/src/shared/store/use-profile-dialog.store"
 import { LogoutButton } from "@/src/shared/components/agenrap-ui/button/logout-button"
+import Link from "next/link"
 
 export default function AgenrapSideBar(
   props: React.ComponentProps<typeof Sidebar>
@@ -118,7 +119,8 @@ export default function AgenrapSideBar(
                 return (
                   <SidebarMenuItem key={item.title}>
                     
-                    <a  href={`${item.url}?rap=${rap}`}
+                    <Link   href={`${item.url}?rap=${rap}`}
+                    prefetch={true}
                       onClick={() => { if (isMobile) setOpenMobile(false) }}
                       className={standaloneLink(active)}
                     >
@@ -126,7 +128,7 @@ export default function AgenrapSideBar(
                         <item.icon className={`h-4 w-4 shrink-0 ${item.iconClass ?? (active ? "text-(--agenrap-purple-500)" : "text-black/30")}`} />
                       )}
                       <span className="font-tree">{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuItem>
                 )
               })}
@@ -155,7 +157,7 @@ export default function AgenrapSideBar(
                             // SidebarMenuSubItem = <li>
                             <SidebarMenuSubItem key={item.title}>
                               
-                              <a  href={`${item.url}?rap=${rap}`}
+                              <Link  href={`${item.url}?rap=${rap}`}
                                 onClick={() => { if (isMobile) setOpenMobile(false) }}
                                 className={groupedLink(active)}
                               >
@@ -163,7 +165,7 @@ export default function AgenrapSideBar(
                                   <item.icon className={`h-4 w-4 shrink-0 ${item.iconClass ?? (active ? "text-(--agenrap-purple-500)" : "text-black/30")}`} />
                                 )}
                                 <span>{item.title}</span>
-                              </a>
+                              </Link>
                             </SidebarMenuSubItem>
                           )
                         })}

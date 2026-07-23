@@ -14,7 +14,7 @@ interface SearchParams {
     rap?: string
     filter?: "all" | "merged"
 }
-export const dynamic = 'force-dynamic'
+
 export default async function CustomersPage({
     searchParams
 }: {

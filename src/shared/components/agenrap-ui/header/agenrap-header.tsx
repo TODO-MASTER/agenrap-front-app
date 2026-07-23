@@ -10,6 +10,7 @@ import { HeaderSettings } from "@/src/shared/components/agenrap-ui/header/header
 
 import { AgenrapSegmentedControl } from "../button/agenrap-segment-button"
 import { useHeaderSegments } from "@/src/providers/header-segments-provider"
+import { LogoutButton } from "@/src/shared/components/agenrap-ui/button/logout-button"
 interface AgenrapHeaderProps extends HeaderSettings {
     isScrolled?: boolean
 }
@@ -26,11 +27,10 @@ const segments = isDefault ? [] : context?.segments??[]
                         {children}
                     </AgenrapMenuBar>
                 </div>
-                <Link href="/login" className="md:block hidden">
-                    <AgenrapButton variant="brownLogoutrap">
-                        <LucideLogOut color="#000" width={20} height={20} />
-                    </AgenrapButton>
-                </Link>
+                <div>
+
+            <LogoutButton  />
+                </div>
             </div>
         </header>
         :
@@ -48,11 +48,10 @@ const segments = isDefault ? [] : context?.segments??[]
                         <p className="font-cinzel font-bold">Agenrap</p>
                         <SidebarTrigger />
                     </div>
-                    <Link href="/login">
-                        <button className="p-2 rounded-md hover:bg-black/5 active:bg-black/10 transition-colors">
-                            <LucideLogOut color="#000" width={20} height={20} />
-                        </button>
-                    </Link>
+                    <div className="">
+
+       <LogoutButton showExpanded={false} />
+                    </div>
                 </div>
             </div>
 

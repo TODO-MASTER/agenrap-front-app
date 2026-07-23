@@ -9,7 +9,7 @@ export function InactivityGuard() {
     const isPublic = ['/login', '/register', '/welcome', '/verify-email', '/verify-pending-email']
         .some(r => pathname.startsWith(r))
 
-    useInactivityLogout(isPublic ? null : 20)
+    useInactivityLogout(isPublic ? null : 1)
     
     return null
 }

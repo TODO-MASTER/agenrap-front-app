@@ -7,6 +7,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { useCustomerActions } from "../../hooks/use-customer-actions"
 import { BusinessCtx } from "@/src/shared/types"
+import { LogoutButton } from "@/src/shared/components/agenrap-ui/button/logout-button"
 
 function getError(value: string): string | null {
     const raw = value.replace(/^@/, "")
@@ -58,6 +59,13 @@ onChange={(e) => {
 
                 </div> : <p className="font-tree">{searchBsn?"Ingressar":"Não Encontrado"}</p>}
             </AgenrapButton> : searchBsn == null && <p className="w-full p-2 rounded-md text-black font-tree bg-(--agenrap-blue-500)/50">Não encontrado</p>}
+                  <div className="
+                               flex
+                              fixed bottom-6 left-6 z-50
+                            ">
+                                <LogoutButton  />
+                              
+                            </div>
         </div>
     )
 }

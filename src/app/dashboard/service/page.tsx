@@ -9,7 +9,6 @@ import { GetBusinessPerRap } from "@/src/shared/services/business.service"
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 
 import { redirect } from "next/navigation"
-export const dynamic = 'force-dynamic'
 export default async function ShowServicePage({
     searchParams
 }: {

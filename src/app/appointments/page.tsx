@@ -13,7 +13,7 @@ import { List, Search } from "lucide-react";
 import Image from "next/image";
 type PageMode = 'search' | 'list'
 
-export const dynamic = 'force-dynamic'
+// export const dynamic = 'force-dynamic'
 
 export default async function ServiceSchedulePage({
   searchParams,

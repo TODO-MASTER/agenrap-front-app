@@ -1,6 +1,7 @@
 'use client'
 import { miniIcon } from "@/src/assets/images";
 import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-link-button";
+import { LogoutButton } from "@/src/shared/components/agenrap-ui/button/logout-button";
 import EditProfileDialog from "@/src/shared/components/agenrap-ui/dialog/edit-profile-dialog";
 import { UserAuthRes } from "@/src/shared/services/user.service";
 import { Search } from "lucide-react";
@@ -19,8 +20,15 @@ export default function TopBusinessShowcase({user}:{user:UserAuthRes}){
               <h3 className="font-tree lg:text-4xl md:text-2xl text-xl font-medium">
                 Minhas agendas
               </h3>
+           
             </div>
-
+    <div className="
+                  hidden md:flex
+                  fixed bottom-6 left-6 z-50
+                ">
+                    <LogoutButton  />
+                  
+                </div>
             <div className="flex items-center gap-x-3 md:w-fit justify-end">
               <EditProfileDialog setOpen={setOpen} open={open} user={user} />
               
@@ -59,8 +67,17 @@ export default function TopBusinessShowcase({user}:{user:UserAuthRes}){
                     <Search size={24} color="#fff" />
                     <span className="hidden md:inline">Adicionar</span>
                   </AgenrapLinkButton>
+                  
+                </div>
+                  <div className="
+                  md:hidden flex
+                  fixed bottom-6 left-6 z-50
+                ">
+                    <LogoutButton  />
+                  
                 </div>
               </div>
+             
             </div>
         </div>
       )

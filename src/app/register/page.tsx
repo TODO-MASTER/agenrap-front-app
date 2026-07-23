@@ -1,15 +1,10 @@
 import { Metadata } from "next";
-import AgenrapSidebar from "../../shared/components/agenrap-ui/sidebar/agenrap-side-bar";
-import { SidebarInset, SidebarProvider } from "../../shared/components/ui/sidebar";
-import AgenrapHeader from "../../shared/components/agenrap-ui/header/agenrap-header";
 import RapAuthForm from "../../features/auth/components/rap-auth-form";
 import Image from "next/image";
 import { macroLogo } from "../../assets/images";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
 
 
- export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: "Cadastro | Agenrap",
   description: "Automatize sua agenda"
@@ -35,9 +30,9 @@ export default async function RegisterPage({
       </div>
         <div className="w-fit gap-10 flex flex-col">
           <h1 className="md:text-4xl text-2xl  font-cinzel text-center font-bold"><span className="font-tree font-semibold ">Cadastro com</span> Agenrap</h1>
-                             <Suspense fallback={<div className="p-8">Carregando...</div>}>
+              
           <RapAuthForm isLogin={false} />
-          </Suspense>
+  
         </div>
       </div>
       <div className="w-[50%]  hidden lg:flex flex-col p-32 pl-7 bg-(--agenrap-brown-500)/75  ">

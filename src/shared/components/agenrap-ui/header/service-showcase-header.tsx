@@ -1,6 +1,8 @@
 'use client'
 
+import { ScrollHint } from "@/src/features/customers/components/service-showcase/showcase-section/scroll-hint"
 import AgenrapButton from "@/src/shared/components/agenrap-ui/button/agenrap-button"
+import { LogoutButton } from "@/src/shared/components/agenrap-ui/button/logout-button"
 import { ArrowLeft, Scissors } from "lucide-react"
 import { useRouter } from "next/navigation"
 
@@ -40,13 +42,25 @@ export default function ServiceShowcaseHeader({ name }: { name: string }) {
                 <div className="max-w-6xl mx-auto flex items-center">
                     <AgenrapButton
                         variant="brownLogoutrap"
-                        onClick={() => router.back()}
+                        onClick={() => router.push("/appointments")}
                         className="flex items-center gap-2.5 text-sm md:text-base text-(--agenrap-brown-200) hover:text-(--agenrap-pure-white) transition-all duration-200 font-medium py-1.5 px-4 rounded-lg bg-white/5 hover:bg-white/10 backdrop-blur-md"
                     >
                         <ArrowLeft size={18} className="stroke-[2.5]" />
-                        <span>Voltar</span>
+                        <span>Voltar para agendas</span>
                     </AgenrapButton>
                 </div>
+             
+
+            </div>
+                              <div className="
+                                           flex
+                                          fixed bottom-6 left-6 z-50
+                                        ">
+                                            <LogoutButton  />
+                                          
+                                        </div>
+                                              <div className="pt-2 pb-2 fixed z-40 right-[5%] top-[40%] md:top-[50%]  ">
+                <ScrollHint targetId="meus-servicos" />
             </div>
         </header>
     )

@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Calendar, User, ClipboardList, Scissors } from "lucide-react";
 import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
+import { LogoutButton } from "@/src/shared/components/agenrap-ui/button/logout-button";
 
 type ITargetBusinessTServices = {
     businessTarget: BusinessCtx,
@@ -29,22 +30,22 @@ export default function QuickSchedulingAnnouncementSection({ businessTarget, ser
     return (
         <section>
             <AgenrapDialogJoinSchedule business={businessTarget!} open={open} setOpen={setOpen} />
-            
+
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:py-8 py-4 border-b border-(--agenrap-brown-500)/10 mb-4">
                 <p className="font-tree font-bold text-3xl md:text-4xl text-black">
                     {businessTarget.mnrName} - <span className="text-2xl md:text-3xl font-semibold opacity-85">Agendamento</span>
                 </p>
 
                 <nav className="flex items-center gap-x-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none -mx-4 px-4 md:mx-0 md:px-0">
-                    <Link 
-                        href={`/appointments`} 
+                    <Link
+                        href={`/appointments`}
                         className="flex items-center gap-2 px-4 py-2 rounded-full text-xs md:text-sm font-medium bg-white text-(--agenrap-brown-500) transition-all"
                     >
                         <Calendar size={15} />
                         Agendas
                     </Link>
-                    <Link 
-                        href={`/${formatPublicHandle(businessTarget.atSign)}`} 
+                    <Link
+                        href={`/${formatPublicHandle(businessTarget.atSign)}`}
                         className="flex items-center gap-2 px-4 py-2 rounded-full text-xs md:text-sm font-medium bg-white text-(--agenrap-brown-500) hover:bg-(--agenrap-brown-500)/5 border border-(--agenrap-brown-500)/15 shrink-0 transition-all"
                     >
                         <Scissors size={15} />
@@ -69,6 +70,13 @@ export default function QuickSchedulingAnnouncementSection({ businessTarget, ser
                         <CardServiceFit name={serviceTarget.name} duration={serviceTarget.duration} value={currencyUtils.fromCents(serviceTarget.value, "BRL")} />
                     </div>
                 </div>
+            </div>
+            <div className="
+                        flex
+                        fixed bottom-6 left-6 z-50
+                        ">
+                <LogoutButton showExpanded={false} />
+
             </div>
         </section>
     )

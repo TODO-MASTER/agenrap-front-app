@@ -10,7 +10,6 @@ import { serverFetch } from "@/src/shared/lib/server-fetch.lib"
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 import { normalizeWeek } from "@/src/shared/utils/normalize-week.utils"
 import { redirect } from "next/navigation"
-export const dynamic = 'force-dynamic'
 export default async function WorkingPeriodPage({
     searchParams
 }: {

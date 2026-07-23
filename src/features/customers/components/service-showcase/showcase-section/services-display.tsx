@@ -4,12 +4,11 @@ import CardServiceMax from "@/src/shared/components/agenrap-ui/card/card-service
 import { currencyUtils } from "@/src/shared/utils/currency.utils";
 import { useBusinessStore } from "@/src/shared/store/use-business.store";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-link-button";
 
 export default function ServicesDisplay({ rap }: { rap: string }) {
     const business = useBusinessStore(bsnCtx => bsnCtx.business)
-    const handleSetService = (id: number) => {  
-         redirect(`/${rap}/schedule?svs=${id}`);
-    }
     return (
         <>
             
@@ -18,9 +17,9 @@ export default function ServicesDisplay({ rap }: { rap: string }) {
                 {business?.services.map((oc, index) => (
                     <div key={index} className="flex flex-col ">
                         <CardServiceMax name={oc.name} duration={oc.duration} value={currencyUtils.fromCents(oc.value, "BRL")} />
-                        <AgenrapButton onClick={() => handleSetService(oc.id??0)}>
+                        <AgenrapLinkButton hrefLink={`/${rap}/schedule?svs=${oc.id}`}>
                             Agendamento
-                        </AgenrapButton>
+                        </AgenrapLinkButton>
                     </div>
                 ))
 

@@ -6,24 +6,24 @@ import { useState } from "react"
 interface LogoutButtonProps {
     showExpanded?: boolean
 }
-
-export function LogoutButton({ showExpanded = true }: LogoutButtonProps) {
-    const router = useRouter()
-    const [isPending, setIsPending] = useState(false)
-
-    async function handleLogout() {
+ export const  handleLogout=async(setIsPending:any,router:any)=> {
         setIsPending(true)
         await fetch('/api/logout', { method: 'POST' })
         router.push('/login')
     }
+export function LogoutButton({ showExpanded = true }: LogoutButtonProps) {
+    const router = useRouter()
+    const [isPending, setIsPending] = useState(false)
+
+   
 
     return (
         <button
-            onClick={handleLogout}
+            onClick={()=>handleLogout(setIsPending,router)}
             disabled={isPending}
             className={[
                 "w-full flex items-center gap-2 px-3 py-2 rounded-md transition-all select-none",
-                "text-red-500/70 hover:text-red-600 hover:bg-red-500/10 active:bg-red-500/15",
+                "bg-red-500 text-white hover:opacity-65",
                 !showExpanded ? "justify-center" : "",
                 isPending ? "opacity-50 cursor-not-allowed" : "",
             ].join(" ")}
