@@ -28,7 +28,7 @@ export default function CopyLinkButton({ link }: Props) {
             }}
         >
             {copied ? <Check size={15} /> : <Copy size={15} />}
-            <span className="truncate max-w-[380px] md:max-w-none">{copied ? "Copiado!" : link}</span>
+            <span className="truncate max-w-[150px] md:max-w-none">{copied ? "Copiado!" : link}</span>
         </button>
     )
 }
