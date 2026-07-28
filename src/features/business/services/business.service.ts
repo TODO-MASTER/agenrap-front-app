@@ -20,6 +20,17 @@ export async function createBusinessByUrlAction(values: CreateBusinessReq) {
   revalidatePath('/business/booking-link');
   return res;
 }
+export async function getSuggestions(name:string) {
+  const res = await serverAction<string[]>(`business/suggest-at-sign?name=${encodeURIComponent(name)}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  
+
+  revalidatePath('/business/booking-link');
+  return res;
+}
 
 export async function deleteCustomerAsync(rap: string, customerId: number) {
     const res = await serverAction<boolean>(
@@ -27,5 +38,20 @@ export async function deleteCustomerAsync(rap: string, customerId: number) {
         { method: 'DELETE', headers: { 'Content-Type': 'application/json' } }
     )
     revalidatePath(`/dashboard/customers`)
+    return res
+}
+
+
+
+export async function updateBusinessNameAction(atSign: string, name: string) {
+    const res = await serverAction<BusinessRes>(
+        `business/update-name?atSign=${normalizePublicHandle(atSign)}`,
+        {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name }),
+        }
+    )
+    revalidatePath('/dashboard')
     return res
 }

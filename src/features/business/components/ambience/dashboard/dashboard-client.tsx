@@ -4,6 +4,7 @@ import {
     CalendarCheck2,
     CircleDollarSign,
     Clock3,
+    Pencil,
     Users,
 } from "lucide-react"
 import { DashboardSummary } from "@/src/features/business/types/dashboard.types"
@@ -16,15 +17,21 @@ import { RatesPanel } from "@/src/features/business/components/ambience/dashboar
 import { BG_ROOT, BG_CARD, BORDER, GOLD, PURPLE, BROWN, TEXT_MAIN, TEXT_MUTED, TEXT_SUB } from "@/src/features/business/types/dashboard-constants"
 import { SubscriptionStatusRes } from "@/src/features/business/services/subscription.service"
 import SubscriptionBanner from "@/src/features/business/components/ambience/dashboard/subscription-banner"
+import { formatPublicHandle } from "@/src/shared/utils/formatters.utils"
+import { useState } from "react"
+import CopyLinkButton from "@/src/shared/components/agenrap-ui/button/copy-link-button"
+import EditBusinessNameDialog from "@/src/shared/components/agenrap-ui/dialog/edit-business-dialog"
 
 
 type Props = {
     summary: DashboardSummary
     businessName: string
-     subscription: SubscriptionStatusRes | null
+    atSign: string
+    subscription: SubscriptionStatusRes | null
 }
 
-export default function DashboardClient({ summary, businessName,subscription }: Props) {
+export default function DashboardClient({ summary, businessName, atSign, subscription }: Props) {
+    const [editNameOpen, setEditNameOpen] = useState(false)
     const {
         variation,
         monthLabel,
@@ -36,17 +43,35 @@ export default function DashboardClient({ summary, businessName,subscription }: 
         barData,
     } = useDashboardDerivedData(summary)
 
-    return (
-        <div className="flex flex-col gap-y-3 w-full" style={{ background: BG_ROOT }}>
-                <SubscriptionBanner subscription={subscription} />
+    const publicLink = `${process.env.NEXT_PUBLIC_APP_URL}/${formatPublicHandle(atSign)}`
 
-            <div className="flex flex-col gap-y-0.5 border-b pb-3" style={{ borderColor: "#D9D0C8" }}>
+    return (
+        <div className="flex flex-col gap-y-3 my-12 w-full" style={{ background: BG_ROOT }}>
+            <SubscriptionBanner subscription={subscription} />
+
+            <div className="flex flex-col gap-y-2 border-b pb-3" style={{ borderColor: "#D9D0C8" }}>
                 <p className="font-tree text-xs uppercase tracking-widest" style={{ color: "#9A7B5A" }}>
                     {greeting}
                 </p>
-                <h1 className="font-tree font-bold text-2xl" style={{ color: "#1C0F00" }}>
-                    {businessName}
-                </h1>
+
+                <div className="flex flex-col md:flex-row md:items-center flex-wrap md:justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <h1 className="font-tree font-bold text-2xl truncate" style={{ color: "#1C0F00" }}>
+                            {businessName}
+                        </h1>
+                        <button
+                            type="button"
+                            onClick={() => setEditNameOpen(true)}
+                            className="flex items-center justify-center w-7 h-7 rounded-lg border flex-shrink-0 transition-colors  bg-linear-to-bl from-(--agenrap-yellow-200) to-(--agenrap-brown-200) cursor-pointer hover:opacity-50"
+                            style={{ borderColor: BORDER }}
+                        >
+                            <Pencil size={13} style={{ color: TEXT_MUTED }} />
+                        </button>
+                    </div>
+
+                    <CopyLinkButton link={publicLink} />
+                </div>
+
                 <p className="font-tree text-xs" style={{ color: "#9A7B5A" }}>
                     Visão geral · {monthLabel}
                 </p>
@@ -145,6 +170,12 @@ export default function DashboardClient({ summary, businessName,subscription }: 
                     cancellationRate={cancellationRate}
                 />
             </div>
+
+            <EditBusinessNameDialog
+                currentName={businessName}
+                open={editNameOpen}
+                setOpen={setEditNameOpen}
+            />
         </div>
     )
 }

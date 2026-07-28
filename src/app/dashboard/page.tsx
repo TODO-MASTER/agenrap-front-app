@@ -33,7 +33,7 @@ export default async function DashboardPage({
  
     return( 
 
-    <DashboardClient summary={summary!} businessName={res.name ?? res.atSign}         subscription={subscription?.data!}/>
+    <DashboardClient summary={summary!} businessName={res.name ?? res.atSign}    atSign={res.atSign}      subscription={subscription?.data!}/>
 
     )
 }

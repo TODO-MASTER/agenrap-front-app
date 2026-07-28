@@ -1,11 +1,15 @@
+import { environments } from "@/src/environments/environments";
+import { useAtSignSuggestions } from "@/src/features/business/hooks/use-atsign-sugestions";
 import AgenrapInput from "@/src/shared/components/agenrap-ui/input/agenrap-input";
 import { FormControl, FormField, FormItem} from "@/src/shared/components/ui/form";
 import { formatPublicHandle, normalizePublicHandle } from "@/src/shared/utils/formatters.utils";
-import { BriefcaseBusinessIcon } from "lucide-react";
+import { BriefcaseBusinessIcon, Sparkle } from "lucide-react";
 
 
-export default function MountUrlName({ control, watch }: { control: any, watch: any }) {
-    const atSign = watch('business.atSign')
+export default function MountUrlName({ control, watch, setValue }: { control: any, watch: any, setValue: any }) {
+    const name = watch('business.name')
+    const selectedAtSign = watch('business.atSign')
+    const { suggestions, isLoading } = useAtSignSuggestions(name)
 
     return (
         <div className="flex flex-col lg:w-[35%] md:w-[55%] w-[90%] my-2">
@@ -17,11 +21,9 @@ export default function MountUrlName({ control, watch }: { control: any, watch: 
                     <p className="font-tree font-medium md:text-xl text-lg">1. Fornecer o nome do local</p>
                     <div className="flex gap-1 mt-2 h-full w-full">
                         <span className="flex min-h-max w-1.5 bg-(--agenrap-yellow-500)"></span>
-                        <div className="flex flex-col">
-                            <p className="font-tree md:text-sm text-xs">
-                                O arroba será o link público do seu negócio. O nome será exibido para seus clientes.
-                            </p>
-                        </div>
+                        <p className="font-tree md:text-sm text-xs">
+                            O sistema vai gerar seu link público automaticamente.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -48,47 +50,42 @@ export default function MountUrlName({ control, watch }: { control: any, watch: 
                     )}
                 />
 
-<FormField
-  control={control}
-  name="business.atSign"
-  render={({ field }) => (
-    <FormItem>
-      <FormControl>
-        <AgenrapInput
-          {...field}
-          id="business-at-sign"
-          label="Arroba (link público)"
-          variant="brownrap"
-          autoComplete="off"
-          placeholder="ex: salao-agenrap"
-          icon={
-            <BriefcaseBusinessIcon size={25} />
-          }
-          left
-          value={normalizePublicHandle(
-            field.value
-          )}
-          onChange={(e) => {
-            field.onChange(
-              normalizePublicHandle(
-                e.target.value
-              )
-            )
-          }}
-        />
-      </FormControl>
-    </FormItem>
-  )}
-/>
+                {name?.trim().length >= 2 && (
+                    <div className="flex flex-col gap-2">
+                        <p className="font-tree text-sm">Escolha seu link:</p>
+                        {isLoading ? (
+                            <p className="font-tree text-xs opacity-60">Gerando sugestões...</p>
+                        ) : (
+                            <div className="flex flex-col gap-1.5">
+                                {suggestions.map((s) => (
+                                    <button
+                                        key={s}
+                                        type="button"
+                                        onClick={() => setValue('business.atSign', s, { shouldValidate: true })}
+                                        className={`text-left px-3 py-2 rounded border font-tree text-sm transition-colors ${
+                                            selectedAtSign === s
+                                                ? "border-(--agenrap-purple-500) bg-(--agenrap-purple-500)/10"
+                                                : "border-black border bg-(--agenrap-yellow-200)/25"
+                                        }`}
+                                    >
+                                      <div className="w-full flex items-center  justify-between">
+                                        <p>{formatPublicHandle(s)}</p>
+                                        <Sparkle size={15}/>
+                                      </div>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             <div className="flex gap-1 py-1 h-full items-center min-w-0">
                 <span className="flex h-2.5 w-2.5 rounded-full bg-(--agenrap-blue-500)"></span>
                 <p className="font-tree font-semi-bold text-sm shrink-0">Link</p>
-<p className="font-tree font-semi-bold text-sm truncate min-w-0">
-  http://localhost:8080/
-  {formatPublicHandle(atSign)}
-</p>
+                <p className="font-tree font-semi-bold text-sm truncate min-w-0">
+                    {process.env.NEXT_PUBLIC_APP_URL}/{formatPublicHandle(selectedAtSign || suggestions[0] || "")}
+                </p>
             </div>
         </div>
     )

@@ -1,8 +1,8 @@
 'use client'
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction, useTransition } from "react";
-import { InitialatSignSchema } from "../schemas/business.schema";
-import { createBusinessByUrlAction, deleteCustomerAsync } from "../services/business.service";
+import { EditBusinessNameSchema, InitialatSignSchema } from "../schemas/business.schema";
+import { createBusinessByUrlAction, deleteCustomerAsync, updateBusinessNameAction } from "../services/business.service";
 import { toast } from "sonner";
 import { EditBusinessWorkingPeriodSchema, InitialBusinessWeeksSchema } from "@/src/features/business/schemas/business-week.schema";
 import { CreatWorkingPeriod, DeleteWkpService, EditWorkingPeriodService, GetWorkingPeriodPerRap } from "../services/working-period.service";
@@ -37,12 +37,30 @@ function handleCreateBusinessAction(values: InitialatSignSchema) {
         try {
             const data = await createBusinessByUrlAction({
                 name: values.business.name,
-                atSign: values.business.atSign,
+                atSign: values.business.atSign??null,
             })
             toast.success(data.message || 'Negócio cadastrado!')
         } catch (e) {
             if (isRedirectError(e)) throw e
             toast.error(e instanceof Error ? e.message : 'Erro ao tentar cadastrar negócio')
+        }
+    })
+}
+function handleUpdateBusinessNameAction(values: EditBusinessNameSchema, onSuccess?: () => void) {
+    const atSign = searchParams.get("rap")
+    startTransition(async () => {
+        try {
+            if (!atSign) {
+                router.push("/login")
+                return
+            }
+            const data = await updateBusinessNameAction(atSign, values.name)
+            toast.success(data.message || 'Nome atualizado!')
+            router.refresh()
+            onSuccess?.()
+        } catch (e) {
+            if (isRedirectError(e)) throw e
+            toast.error(e instanceof Error ? e.message : 'Erro ao atualizar nome')
         }
     })
 }
@@ -316,5 +334,5 @@ const handleManagerSaveAppointment = async (
   
 
   
-  return { handleCreateBusinessAction,handleDeleteCustomerAction, handleCreateWkPeriodAction, handleCreateANewServiceAction, handleEditServiceAction,handleDeleteServiceAction,handleEditWorkingPeriodAction,handleDeleteWkpAction,handleManagerSaveAppointment,handleCompleteAllppointmentsAction, isPending };
+  return { handleCreateBusinessAction,handleDeleteCustomerAction,handleUpdateBusinessNameAction, handleCreateWkPeriodAction, handleCreateANewServiceAction, handleEditServiceAction,handleDeleteServiceAction,handleEditWorkingPeriodAction,handleDeleteWkpAction,handleManagerSaveAppointment,handleCompleteAllppointmentsAction, isPending };
 }

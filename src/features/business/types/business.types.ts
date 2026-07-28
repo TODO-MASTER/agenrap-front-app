@@ -2,7 +2,7 @@ import { ApiResponse } from "@/src/shared/types"
 
 export type CreateBusinessReq = {
   name: string
-  atSign:string
+  atSign:string|null
 }
 
 export type BusinessRes = {

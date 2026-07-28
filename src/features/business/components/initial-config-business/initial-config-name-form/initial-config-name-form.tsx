@@ -35,7 +35,7 @@ export default function InitialConfigNameForm() {
                 className="flex flex-col gap-y-2    items-center  "
             >
                 <div className="w-full h-full flex flex-col items-center">
-                    <MountUrlName control={form.control} watch={form.watch}/>
+                    <MountUrlName control={form.control} watch={form.watch} setValue={form.setValue}/>
                 </div>
                 <div className="flex flex-col items-start lg:w-[35%] md:w-[55%] w-[90%] ">
                     <AgenrapButton type="submit" variant={"purplerap"} disabled={!form.formState.isValid} className={`${!form.formState.isValid ? `cursor-not-allowed opacity-50 hover:opacity-40` : ""} flex justify-center w-full items-center`}>

@@ -15,10 +15,11 @@ import Image from "next/image";
 import { macroLogo } from "@/src/assets/images";
 import { useBusinessActions } from "../../../hooks/use-business-actions";
 import { initialBusinessServiceSchema, InitialBusinessServiceSchema } from "@/src/features/business/schemas";
+import DurationPicker from "@/src/features/business/components/initial-config-business/create-occupation-form/duration-picker";
 
 export default function CreateOccupationForm() {
     const { handleCreateANewServiceAction, isPending: serviceIsPending } = useBusinessActions()
-    const [timeService, setTimeService] = useState([(3600 / 60) * 30])
+    const [timeService, setTimeService] = useState((3600 / 60) * 30)
 
     const form = useForm<InitialBusinessServiceSchema>({
         resolver: zodResolver(initialBusinessServiceSchema),
@@ -38,7 +39,7 @@ export default function CreateOccupationForm() {
 
     const stagingHasError = !!errors.business?.staging?.name || !!errors.business?.staging?.price
     const stagingEmpty = !form.watch("business.staging.name") || !form.watch("business.staging.price")
-    const canAdd = timeService.length >= 1 && !stagingHasError && !stagingEmpty
+    const canAdd = timeService >= 1 && !stagingHasError && !stagingEmpty
 
     return (
         <Form {...form}>
@@ -64,22 +65,7 @@ export default function CreateOccupationForm() {
                             )}
                         />
 
-                        <div className="flex flex-col gap-1">
-                            <p className="font-tree text-[11px] font-semibold text-(--agenrap-brown-500)/50 uppercase tracking-widest">
-                                Duração
-                            </p>
-                            <p className="font-tree font-semibold text-lg">
-                                {timeUtils.toHourString(timeService[0])}
-                            </p>
-                            <Slider
-                                value={timeService}
-                                onValueChange={setTimeService}
-                                className="bg-(--agenrap-purple-500)"
-                                step={(3600 / 60) * 30}
-                                min={(3600 / 60) * 30}
-                                max={86400}
-                            />
-                        </div>
+                        <DurationPicker value={timeService} onChange={setTimeService} />
 
                         <FormField
                             control={form.control}
@@ -113,7 +99,7 @@ export default function CreateOccupationForm() {
                         const staging = form.getValues("business.staging")
                         append({ name: staging!.name, duration: timeService.toString(), price: staging!.price })
                         form.resetField("business.staging")
-                        setTimeService([(3600 / 60) * 30])
+                        setTimeService((3600 / 60) * 30)
                     }}
                     className={`flex gap-x-2 justify-center items-center p-2 ${!canAdd ? "cursor-not-allowed opacity-70" : ""}`}
                 >
