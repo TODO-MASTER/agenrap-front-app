@@ -8,7 +8,7 @@ import { AgenrapPagination } from "@/src/shared/components/agenrap-ui/pagination
 import AgenrapTable from "@/src/shared/components/agenrap-ui/table/agenrap-table"
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/src/shared/components/ui/drawer"
 import { currencyUtils } from "@/src/shared/utils/currency.utils"
-import { formatDate, formatHour, formatPhone } from "@/src/shared/utils/formatters.utils"
+import { formatDate, formatHour, formatPhone, maskPhone } from "@/src/shared/utils/formatters.utils"
 import { CalendarDays, CheckCircle2, Clock, LoaderCircle, Scissors, X } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -113,7 +113,7 @@ export default function TableAppointmentSection({ businessId, appointments, hasN
                     </span>
                     <DrawerTitle className="text-black font-tree text-center text-base">{row.fullName}</DrawerTitle>
                     <p className={`text-xs font-tree ${row.telephone?.trim() ? 'text-[#33333380]' : 'text-[#33333350] italic'}`}>
-                      {formatPhone(row.telephone)}
+                      {maskPhone(row.telephone??formatPhone(null))}
                     </p>
                   </DrawerHeader>
                   <span className="w-full h-0.5 rounded-full bg-[#33333318] my-4 block" />
@@ -216,7 +216,7 @@ export default function TableAppointmentSection({ businessId, appointments, hasN
                           {appointment.fullName}
                         </span>
                         <span className={`text-[10px] font-tree ${appointment.telephone?.trim() ? 'text-(--agenrap-brown-500)/50' : 'text-(--agenrap-brown-500)/30 italic'}`}>
-                          {formatPhone(appointment.telephone)}
+                          {maskPhone(appointment.telephone??formatPhone(null))}
                         </span>
                       </div>
                     </div>
@@ -279,7 +279,7 @@ export default function TableAppointmentSection({ businessId, appointments, hasN
                 {selectedAppointment.fullName}
               </DrawerTitle>
               <p className={`text-xs font-tree ${selectedAppointment.telephone?.trim() ? 'text-[#33333380]' : 'text-[#33333350] italic'}`}>
-                {formatPhone(selectedAppointment.telephone)}
+                {maskPhone(selectedAppointment.telephone??formatPhone(null))}
               </p>
             </DrawerHeader>
  

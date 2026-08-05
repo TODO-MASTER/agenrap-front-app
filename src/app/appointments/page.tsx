@@ -36,25 +36,19 @@ export default async function ServiceSchedulePage({
 
 
 
-  if (mode === 'search') {
-    return (
-      <div className="h-dvh flex bg-(--agenrap-gray-200) gap-y-3 flex-col items-center justify-center w-fit mx-auto">
-        <header className="flex flex-col gap-1 items-center justify-center ">
-          <Image src={miniIcon} alt="" loading="eager" className="w-50  " />
-          <p className="font-cinzel font-bold md:text-3xl text-xl text-center"><span className="font-tree font-semibold">Buscando serviço com</span> Agenrap</p>
-        </header>
-        <div className="flex flex-col w-full gap-y-2 items-end">
-          <ScheduleEntrance />
-          {res.length > 0 &&
-            <AgenrapLinkButton hrefLink="/appointments?mode=list" className="flex items-center rounded-md  justify-center  w-fit self-end px-4 py-2 h-fit gap-x-2"   >
-              <List size={25} color="#fff" />
-              Agendas</AgenrapLinkButton>
-          }
-
-        </div>
+if (mode === 'search') {
+  return (
+    <div className="h-dvh flex bg-(--agenrap-gray-200) p-8 pt-12 flex-col items-center">
+      <div className="w-full flex flex-col items-center">
+    <TopBusinessShowcase user={user} title="Buscar estabelecimento" searching bsnSize={res.length} />
       </div>
-    )
-  } else {
+      <div className="flex flex-col w-full items-center gap-y-4 mt-16">
+        <ScheduleEntrance />
+     
+      </div>
+    </div>
+  )
+}else {
     return (
 
       <div className="h-dvh flex bg-(--agenrap-gray-200) flex-col">

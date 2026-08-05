@@ -23,9 +23,9 @@ export default async function ShowServicePage({
     const resService = await GetBusinessPerRap(bsnEncoded)
     return (
         <div className="">  
-        <BusinessInitializer data={resService}/>
+ 
   
-        <ServiceEditorOrchestre tgrap={res.atSign} initialMode={mode=="new"?"new":"list"}/>
+        <ServiceEditorOrchestre tgrap={res.atSign} resService={resService} initialMode={mode=="new"?"new":"list"}/>
         </div>
     )
 }

@@ -3,14 +3,16 @@ import AddServicesForm from "@/src/features/business/components/ambience/service
 import ShowcaseDashServices from "@/src/features/business/components/ambience/service/showcase-dash-services";
 import SubHeader from "@/src/shared/components/agenrap-ui/header/sub-header"
 import { useSectionParams } from "@/src/shared/hooks/use-section-params";
+import { BusinessCtx } from "@/src/shared/types";
 import { useState } from "react";
 export type ServiceEditorOrchestreProps = {
     tgrap: string
     initialMode: "new" | "list"
+    resService:BusinessCtx
 }
 type ViewMode = "new" | "list"
 
-  export default function ServiceEditorOrchestre({initialMode,tgrap}:ServiceEditorOrchestreProps){
+  export default function ServiceEditorOrchestre({initialMode,tgrap, resService}:ServiceEditorOrchestreProps){
     const {setParam} =useSectionParams("/dashboard/service");
         const [viewMode, setViewModeState] = useState<ViewMode>(initialMode);
   const modes = [
@@ -29,7 +31,7 @@ return(
 <SubHeader title="Serviços"     viewMode={viewMode}
     modes={modes}
     onModeChange={(key) => setViewMode(key as ViewMode)}/>
-    {viewMode=="list"?    <ShowcaseDashServices />:       <AddServicesForm tgrap={tgrap} onSuccess={() => setViewMode("list")} />}
+    {viewMode=="list"?    <ShowcaseDashServices resService={resService} />:       <AddServicesForm tgrap={tgrap} onSuccess={() => setViewMode("list")} />}
 
       
           </main>

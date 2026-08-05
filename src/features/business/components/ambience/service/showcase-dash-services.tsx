@@ -5,13 +5,14 @@ import CardServiceFit from "@/src/shared/components/agenrap-ui/card/card-service
 import DeleteServiceDialog from "@/src/shared/components/agenrap-ui/dialog/delete-service-dialog"
 import EditServiceDialog from "@/src/shared/components/agenrap-ui/dialog/edit-service-dialog"
 import { useBusinessStore } from "@/src/shared/store/use-business.store"
+import { BusinessCtx } from "@/src/shared/types"
 import { currencyUtils } from "@/src/shared/utils/currency.utils"
 
 import { Pencil, X } from "lucide-react"
 import { useState } from "react"
 
-export default function ShowcaseDashServices() {
-    const business = useBusinessStore(bsCtx => bsCtx.business)
+export default function ShowcaseDashServices(resService:{resService:BusinessCtx}) {
+    // const business = useBusinessStore(bsCtx => bsCtx.business)
     const setSelectService = useBusinessStore(bsCtx => bsCtx.setSelectedService)
     const [editServiceOpen, setEditServiceOpen] = useState<boolean>(false)
     const [deleteServiceOpen, setDeleteServiceOpen] = useState<boolean>(false)
@@ -21,7 +22,7 @@ export default function ShowcaseDashServices() {
                 <DeleteServiceDialog open={deleteServiceOpen} setOpen={setDeleteServiceOpen} />
                 <EditServiceDialog open={editServiceOpen} setOpen={setEditServiceOpen} />
 
-                {business?.services?.map(svs => (
+                {resService.resService?.services?.map(svs => (
                     <div key={svs.id} className="flex flex-col relative">
                         <div className="flex  justify-end w-full -mt-6 -mr-2 absolute z-10">
                             <div className="border-2 border-(--agenrap-purple-500) bg-(--agenrap-gray-800) rounded-md px-2 py-1 flex justify-end gap-x-2">

@@ -1,6 +1,6 @@
 import { AppointmentFull } from "@/src/features/business/services/appointment.service"
 import { currencyUtils } from "@/src/shared/utils/currency.utils"
-import { formatDate, formatHour, formatPhone } from "@/src/shared/utils/formatters.utils"
+import { formatDate, formatHour, formatPhone, maskPhone } from "@/src/shared/utils/formatters.utils"
 import { ColumnDef } from "@tanstack/react-table"
 import { Check } from "lucide-react"
 
@@ -73,7 +73,7 @@ export const columns: ColumnDef<AppointmentFull>[] = [
     header: "Telefone",
     cell: ({ row }) => (
       <span className={`font-tree text-sm ${!row.original.telephone?.trim() ? 'text-(--agenrap-brown-500)/40 italic' : ''}`}>
-        {formatPhone(row.original.telephone)}
+        {maskPhone(row.original.telephone??formatPhone(null))}
       </span>
     ),
   },
