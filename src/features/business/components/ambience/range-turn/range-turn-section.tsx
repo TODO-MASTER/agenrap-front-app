@@ -26,7 +26,7 @@ import { HeaderSegmentInjector } from "@/src/shared/components/agenrap-ui/header
 
 import SubHeader from "@/src/shared/components/agenrap-ui/header/sub-header"
 import { timeBlockSchema } from "@/src/features/business/schemas"
-import { handleActionError } from "@/src/shared/lib/handle-action-error"
+import { checkSubscriptionRequired, handleActionError } from "@/src/shared/lib/handle-action-error"
 
 export type RangeTurnManagerProps = {
     tgrap: string
@@ -55,7 +55,7 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
 
     const [daysOffList, setDaysOffList] = useState<DayOffListItem[]>([])
     const [timeBlocksList, setTimeBlocksList] = useState<TimeBlockListItem[]>([])
-const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({})
+    const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({})
 
 
     const updateQuery = (next: { kind?: BlockKind; mode?: ViewMode }) => {
@@ -72,7 +72,7 @@ const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({
 
     const setBlockKind = (kind: BlockKind) => {
         setBlockKindState(kind)
-            setTimeErrors({})
+        setTimeErrors({})
         updateQuery({ kind })
     }
 
@@ -87,15 +87,15 @@ const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({
             }
         }
         fetchInitialBlocks()
-    }, [tgrap,blockKind])
+    }, [tgrap, blockKind])
 
     const handleDeleteDayOff = async (id: number) => {
         try {
-           const response = await DeleteDayOff(tgrap, id)
+            const response = await DeleteDayOff(tgrap, id)
             setDaysOffList((prev) => prev.filter((i) => i.id !== id))
-            toast.success(response.message??"Folga removida com sucesso!")
-        } catch(e) {
-                  handleActionError(e, router, tgrap, 'Erro ao tentar remover folga.')
+            toast.success(response.message ?? "Folga removida com sucesso!")
+        } catch (e) {
+            handleActionError(e, router, tgrap, 'Erro ao tentar remover folga.')
         }
     }
 
@@ -104,7 +104,7 @@ const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({
             await DeleteTimeBlock(tgrap, id)
             setTimeBlocksList((prev) => prev.filter((i) => i.id !== id))
             toast.success("Bloqueio de horário removido!")
-        } catch(e) {
+        } catch (e) {
             handleActionError(e, router, tgrap, 'Erro ao tentar remover folga.')
         }
     }
@@ -133,33 +133,39 @@ const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({
 
                 const finalReason = reason || "Bloqueio de Agenda"
                 const response = await SaveDayOff(tgrap, { start: startString, end: endString, reason: finalReason })
-if (response.data==null) {
-    toast.error(response.message)
-    return
-}
+
+                if (checkSubscriptionRequired(response, router, tgrap)) return
+
+                if (response.data == null) {
+                    toast.error(response.message)
+                    return
+                }
                 toast.success(response.message)
                 setDaysOffList((prev) => [...prev, { id: response.data!.id, start: startString, end: endString, reason: finalReason }])
                 setReason("")
                 setRange({ from: new Date(), to: undefined })
                 setDate(new Date())
             } else {
-            const parsed = timeBlockSchema.safeParse({ start: timeStart, end: timeEnd, reason })
-            if (!parsed.success) {
-                const fieldErrors = parsed.error.flatten().fieldErrors
-                setTimeErrors({
-                    start: fieldErrors.start?.[0],
-                    end: fieldErrors.end?.[0],
-                })
-                return
-            }
-            setTimeErrors({})
+                const parsed = timeBlockSchema.safeParse({ start: timeStart, end: timeEnd, reason })
+                if (!parsed.success) {
+                    const fieldErrors = parsed.error.flatten().fieldErrors
+                    setTimeErrors({
+                        start: fieldErrors.start?.[0],
+                        end: fieldErrors.end?.[0],
+                    })
+                    return
+                }
+                setTimeErrors({})
 
                 const finalReason = reason || "Bloqueio de horário"
                 const response = await SaveTimeBlock(tgrap, { start: timeStart, end: timeEnd, reason: finalReason })
-if (response.data==null) {
-    toast.error(response.message)
-    return
-}
+
+                if (checkSubscriptionRequired(response, router, tgrap)) return
+
+                if (response.data == null) {
+                    toast.error(response.message)
+                    return
+                }
                 toast.success(response.message)
                 setTimeBlocksList((prev) => [...prev, { id: response.data!.id, start: timeStart, end: timeEnd, reason: finalReason }])
                 setReason("")
@@ -185,16 +191,16 @@ if (response.data==null) {
     const baseQuery = `rap=${tgrap}&kind=${blockKind}`
 
     const modes = [
-    { key: "new", label: blockKind === "day" ? "Bloquear Dias" : "Bloquear Horários" },
-    { key: "list", label: blockKind === "day" ? `Folgas (${activeCount})` : `Horários (${activeCount})` },
-]
+        { key: "new", label: blockKind === "day" ? "Bloquear Dias" : "Bloquear Horários" },
+        { key: "list", label: blockKind === "day" ? `Folgas (${activeCount})` : `Horários (${activeCount})` },
+    ]
 
     return (
         <main className="flex flex-col w-full h-full  overflow-hidden">
 
-<SubHeader title="Bloqueio de Turnos"     viewMode={viewMode}
-    modes={modes}
-    onModeChange={(key) => setViewMode(key as ViewMode)}/>
+            <SubHeader title="Bloqueio de Turnos" viewMode={viewMode}
+                modes={modes}
+                onModeChange={(key) => setViewMode(key as ViewMode)} />
 
             <RangeTurnKindToggle blockKind={blockKind} onChange={setBlockKind} />
 
@@ -210,13 +216,13 @@ if (response.data==null) {
                             setRange={setRange}
                         />
                     ) : (
-               <RangeTurnTimeEditor
-    timeStart={timeStart}
-    timeEnd={timeEnd}
-    setTimeStart={setTimeStart}
-    setTimeEnd={setTimeEnd}
-    errors={timeErrors}
-/>
+                        <RangeTurnTimeEditor
+                            timeStart={timeStart}
+                            timeEnd={timeEnd}
+                            setTimeStart={setTimeStart}
+                            setTimeEnd={setTimeEnd}
+                            errors={timeErrors}
+                        />
                     )}
 
                     <RangeTurnDetailsPanel
@@ -227,7 +233,7 @@ if (response.data==null) {
                         selectedEnd={selectedEnd}
                         loading={loading}
                         onConfirm={handleConfirmBlock}
-                            timeError={timeErrors.end}
+                        timeError={timeErrors.end}
                     />
                 </section>
             ) : (

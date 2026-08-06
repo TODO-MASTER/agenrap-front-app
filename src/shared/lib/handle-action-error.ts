@@ -1,10 +1,9 @@
-import { SubscriptionRequiredError } from "@/src/shared/utils/errors"
 import { isRedirectError } from "next/dist/client/components/redirect-error"
 import { toast } from "sonner"
 
  
 type RouterLike = { push: (href: string) => void }
- 
+
 export function handleActionError(
     e: unknown,
     router: RouterLike,
@@ -12,16 +11,16 @@ export function handleActionError(
     fallbackMessage: string
 ) {
     if (isRedirectError(e)) throw e
- 
-     const isSubscriptionError =
-        e instanceof SubscriptionRequiredError ||
-        (e instanceof Error && e.name === 'SubscriptionRequiredError')
-
-    if (isSubscriptionError) {
-        toast.error(e instanceof Error ? e.message : 'Plano necessário para continuar.')
-        router.push(`/dashboard?rap=${atSign ?? ''}`)
-        return
-    }
-
     toast.error(e instanceof Error ? e.message : fallbackMessage)
+}
+
+export function checkSubscriptionRequired(
+    data: { subscriptionRequired?: boolean, message: string },
+    router: RouterLike,
+    atSign: string | null
+): boolean {
+    if (!data.subscriptionRequired) return false
+    toast.error(data.message || 'Plano necessário para continuar.')
+    router.push(`/dashboard?rap=${atSign ?? ''}`)
+    return true
 }

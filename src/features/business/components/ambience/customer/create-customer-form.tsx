@@ -2,7 +2,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTransition, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { Form, FormControl, FormField, FormItem } from '@/src/shared/components/ui/form'
@@ -16,9 +16,11 @@ import { macroLogo } from '@/src/assets/images'
 import { maskPhone } from '@/src/shared/utils/formatters.utils'
 import { CreateCustomerSchema, createCustomerSchema } from '@/src/features/business/schemas/customer.schema'
 import { createCustomerAction } from '@/src/features/business/services/customer.service'
+import { checkSubscriptionRequired, handleActionError } from '@/src/shared/lib/handle-action-error'
 
 export default function CreateCustomerForm({ rap,onSuccess }: { rap: string,onSuccess:()=>void }) {
-    const router = useRouter()
+       const router = useRouter()
+    const searchParams = useSearchParams()
     const [isPending, startTransition] = useTransition()
     const [phoneDisplay, setPhoneDisplay] = useState('')
 
@@ -29,14 +31,15 @@ export default function CreateCustomerForm({ rap,onSuccess }: { rap: string,onSu
     })
 
     function onSubmit(values: CreateCustomerSchema) {
+        const atSign = searchParams.get("rap")
         startTransition(async () => {
             try {
                 const res = await createCustomerAction(values, rap)
+                if (checkSubscriptionRequired(res, router, atSign)) return
                 toast.success(res.message ?? 'Cliente cadastrado!')
                 onSuccess?.()
             } catch (e) {
-                if (isRedirectError(e)) throw e
-                toast.error(e instanceof Error ? e.message : 'Erro ao cadastrar cliente')
+                handleActionError(e, router, atSign, 'Erro ao cadastrar cliente')
             }
         })
     }

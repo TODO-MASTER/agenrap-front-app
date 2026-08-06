@@ -53,7 +53,9 @@ export async function serverAction<T = unknown>(path: string, options: Options =
         return data;
     } catch (e) {
         if (isRedirectError(e)) throw e;
-        if (e instanceof SubscriptionRequiredError) throw e;
+        if (e instanceof SubscriptionRequiredError) {
+            return { data: null, message: e.message, subscriptionRequired: true };
+        }
         return { data: null, message: e instanceof Error ? e.message : 'Erro na requisição' };
     }
 }

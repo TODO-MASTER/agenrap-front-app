@@ -12,8 +12,8 @@ export async function CreatWorkingPeriod(values:CreateWorkingPeriodReq,atSign:st
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(values.weeks)
     })
-    const data = await res;
-    return data
+    
+    return res
 
 }
 

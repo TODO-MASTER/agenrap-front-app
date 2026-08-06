@@ -20,11 +20,12 @@ import Link from "next/link";
 import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/button/agenrap-segment-button";
 import { HeaderSegmentInjector } from "@/src/shared/components/agenrap-ui/header/header-segment-injector";
 import { useSectionParams } from "@/src/shared/hooks/use-section-params";
+import DurationPicker from "@/src/features/business/components/initial-config-business/create-occupation-form/duration-picker";
 
 export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, onSuccess?: () => void }) {
     const { handleCreateANewServiceAction, isPending: serviceIsPending } = useBusinessActions()
     const { setParam } = useSectionParams("/dashboard/service")
-    const [timeService, setTimeService] = useState([(3600 / 60) * 30])
+    const [timeService, setTimeService] = useState((3600 / 60) * 30)
 
     const form = useForm<InitialBusinessServiceSchema>({
         resolver: zodResolver(initialBusinessServiceSchema),
@@ -65,12 +66,9 @@ export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, o
                                 </FormItem>
                             )}
                         />
-                        <div className="w-full flex-col">
-                            {timeService.map(t => (
-                                <p key={t} className="font-tree font-medium text-lg text-white">{timeUtils.toHourString(t)}</p>
-                            ))}
-                            <Slider value={timeService} onValueChange={setTimeService} step={(3600 / 60) * 30} min={(3600 / 60) * 30} max={86400} />
-                        </div>
+
+                        <DurationPicker value={timeService} onChange={setTimeService} variant="dark" />
+
                         <FormField
                             control={form.control}
                             name="business.staging.price"
@@ -88,7 +86,7 @@ export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, o
                             )}
                         />
                         <AgenrapButton
-                            disabled={timeService.length < 1 || stagingHasError || stagingEmpty}
+                            disabled={timeService < 1 || stagingHasError || stagingEmpty}
                             variant="purplerap"
                             type="button"
                             onClick={async () => {
@@ -97,9 +95,9 @@ export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, o
                                 const staging = form.getValues("business.staging")
                                 append({ name: staging!.name, duration: timeService.toString(), price: staging!.price })
                                 form.resetField("business.staging")
-                                setTimeService([(3600 / 60) * 30])
+                                setTimeService((3600 / 60) * 30)
                             }}
-                            className={`flex gap-x-2 justify-center bg-(--agenrap-yellow-200) items-center p-2 mb-2 ${timeService.length < 1 || stagingHasError || stagingEmpty ? "cursor-not-allowed opacity-70" : ""}`}
+                            className={`flex gap-x-2 justify-center bg-(--agenrap-yellow-200) items-center p-2 mb-2 ${timeService < 1 || stagingHasError || stagingEmpty ? "cursor-not-allowed opacity-70" : ""}`}
                         >
                             <BadgePlus width={30} height={30} color="#000" />
                             <p className="font-tree text-lg text-black">Adicionar</p>

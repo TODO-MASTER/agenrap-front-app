@@ -20,7 +20,7 @@ import { completeAllAppointmentsAsync, CompleteAppointmentsReq } from "@/src/fea
 import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
 import { useSectionParams } from "@/src/shared/hooks/use-section-params";
 import { SubscriptionRequiredError } from "@/src/shared/utils/errors";
-import { handleActionError } from "@/src/shared/lib/handle-action-error";
+import { checkSubscriptionRequired, handleActionError } from "@/src/shared/lib/handle-action-error";
 export function useBusinessActions() {
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition();
@@ -81,6 +81,7 @@ function handleUpdateBusinessNameAction(values: EditBusinessNameSchema, onSucces
           router.push("/login")
         } else {
           const data = await CreatWorkingPeriod(bodyMount, atSign);
+           if (checkSubscriptionRequired(data, router, atSign)) return
           toast.success(data.message || 'Periodo cadastrado!');
           //  
 
@@ -120,6 +121,7 @@ function handleUpdateBusinessNameAction(values: EditBusinessNameSchema, onSucces
           router.push("/login")
         } else {
           const data = await CreateANewService(bodyServiceMount, atSign);
+                 if (checkSubscriptionRequired(data, router, atSign)) return
           toast.success(data.message || 'serviços cadastrados!');
           if (usePathName.startsWith("/dashboard/service")) {
               onSuccess?.()
@@ -261,6 +263,7 @@ const handleManagerSaveAppointment = async (
     onSuccess: () => void
 ) => {
     const svsById = searchParams.get("svs")
+    const atSign = searchParams.get("rap")
     startTransition(async () => {
         try {
             const res = await saveAppointment(
@@ -269,6 +272,7 @@ const handleManagerSaveAppointment = async (
                 customerId,
                 guestCustomerId
             )
+            if (checkSubscriptionRequired(res, router, atSign)) return
             if (res.data == null) {
                 toast.error(res.message || "Algo deu errado!")
             } else {
@@ -276,8 +280,7 @@ const handleManagerSaveAppointment = async (
                 onSuccess()
             }
         } catch (e) {
-            if (isRedirectError(e)) throw e
-            toast.error(e instanceof Error ? e.message : 'Erro ao agendar')
+            handleActionError(e, router, atSign, 'Erro ao agendar')
         }
     })
 }

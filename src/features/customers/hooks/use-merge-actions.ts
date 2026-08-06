@@ -1,4 +1,5 @@
 import { getMergePreview, mergeCustomerAsync, MergePreview } from "@/src/features/business/services/merge.service"
+import { checkSubscriptionRequired, handleActionError } from "@/src/shared/lib/handle-action-error"
 import { isRedirectError } from "next/dist/client/components/redirect-error"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useTransition } from "react"
@@ -31,19 +32,19 @@ export function useMergeActions() {
     preview: MergePreview,
     onSuccess: () => void
   ) {
-    const rap = searchParams.get("rap") ?? ""
+    const atSign = searchParams.get("rap")
     startMergeTransition(async () => {
       try {
-        const response = await mergeCustomerAsync(rap, {
+        const response = await mergeCustomerAsync(atSign ?? "", {
           customerIds: preview.customers.map(c => c.customerId),
           userId: preview.userId,
         })
-        toast.success( response.message??"Mesclagem realizada com sucesso!")
+        if (checkSubscriptionRequired(response, router, atSign)) return
+        toast.success(response.message ?? "Mesclagem realizada com sucesso!")
         onSuccess()
         router.refresh()
       } catch (e) {
-        if (isRedirectError(e)) throw e
-        toast.error(e instanceof Error ? e.message : "Algo deu errado na mesclagem.")
+        handleActionError(e, router, atSign, "Algo deu errado na mesclagem.")
       }
     })
   }
