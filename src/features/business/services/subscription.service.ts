@@ -8,8 +8,9 @@ export type SubscriptionStatusRes = {
     hasAccess: boolean
     trialEndsAt: string | null
     currentPeriodEnd: string | null
-    gracePeriodEndsAt:string|null
-    isNearRenewal:boolean
+    graceEndsAt: string | null
+    isInGracePeriod: boolean
+    isNearRenewal: boolean
     isManuallyOverridden: boolean
 }
 

@@ -16,8 +16,8 @@ type BannerVariant = 'trial' | 'grace' | 'renewal' | 'blocked'
 
 function getVariant(subscription: SubscriptionStatusRes): BannerVariant | null {
     if (!subscription.hasAccess) return 'blocked'
+    if (subscription.isInGracePeriod) return 'grace'
     if (subscription.status === 'Trial') return 'trial'
-    if (subscription.status === 'PastDue') return 'grace'
     if (subscription.status === 'Active' && subscription.isNearRenewal) return 'renewal'
     return null
 }
@@ -40,12 +40,12 @@ export default function SubscriptionBanner({ subscription }: Props) {
     const cfg = VARIANT_CONFIG[variant]
     const Icon = cfg.icon
 
-    const daysLeft = variant === 'trial' 
-        ? getDaysLeft(subscription.trialEndsAt) 
-        : variant === 'grace' 
-        ? getDaysLeft(subscription.gracePeriodEndsAt) 
-        : variant === 'renewal' 
-        ? getDaysLeft(subscription.currentPeriodEnd) 
+    const daysLeft = variant === 'trial'
+        ? getDaysLeft(subscription.trialEndsAt)
+        : variant === 'grace'
+        ? getDaysLeft(subscription.graceEndsAt)
+        : variant === 'renewal'
+        ? getDaysLeft(subscription.currentPeriodEnd)
         : null
 
     return (
@@ -61,21 +61,21 @@ export default function SubscriptionBanner({ subscription }: Props) {
                 <div className="space-y-1 min-w-0">
                     <div className="uppercase text-[10px] font-bold tracking-widest" style={{ color: cfg.accent }}>
                         {variant === 'trial' && 'TESTE ATIVO'}
-                        {variant === 'grace' && 'PAGAMENTO PENDENTE'}
+                        {variant === 'grace' && 'PERÍODO DE TOLERÂNCIA'}
                         {variant === 'renewal' && 'RENOVAÇÃO PRÓXIMA'}
                         {variant === 'blocked' && 'ACESSO BLOQUEADO'}
                     </div>
 
                     <p className="font-semibold text-base leading-tight" style={{ color: '#F5E6CC' }}>
                         {variant === 'trial' && 'Explore sem limites'}
-                        {variant === 'grace' && 'Pagamento não confirmado'}
+                        {variant === 'grace' && 'Sua assinatura venceu'}
                         {variant === 'renewal' && 'Seu plano está vencendo'}
                         {variant === 'blocked' && 'Acesso suspenso'}
                     </p>
 
                     <p className="text-sm leading-snug" style={{ color: '#a38d6b' }}>
                         {variant === 'trial' && `Restam ${daysLeft} dias de teste gratuito.`}
-                        {variant === 'grace' && 'Regularize seu pagamento para evitar interrupções.'}
+                        {variant === 'grace' && `Você tem até ${daysLeft} ${daysLeft === 1 ? 'dia' : 'dias'} para regularizar antes que o acesso seja bloqueado.`}
                         {variant === 'renewal' && 'Renove agora para manter todos os recursos.'}
                         {variant === 'blocked' && 'Assine novamente para voltar a usar o Agenrap.'}
                     </p>
