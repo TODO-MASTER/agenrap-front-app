@@ -1,6 +1,6 @@
 "use client"
 
-import { Dispatch, SetStateAction, useEffect } from "react"
+import { Dispatch, SetStateAction } from "react"
 import { Calendar } from "../../ui/calendar"
 import { ptBR } from "date-fns/locale"
 import { dateUtils } from "@/src/shared/utils/date.utils"
@@ -35,10 +35,6 @@ export default function AgenrapCalendar({
     setRange,
 }: AgenrapCalendarProps) {
     const { handleMonthChange } = useCustomerActions()
-    useEffect(()=>{
-
-        console.log(range)
-    },[range])
 
     return (
         <Calendar
@@ -59,26 +55,24 @@ export default function AgenrapCalendar({
             disabled={(day) => {
                 const today = new Date()
                 today.setHours(0, 0, 0, 0)
+
                 if (day < today) return true
-                if (isOwner) return false
-                const isWorkingDay = business?.weeks.some(wk =>
-                    day.getDay() === dateUtils.getWeekNumber(wk.week)
+
+                const isWorkingDay = business?.weeks?.some(
+                    (wk) => day.getDay() === dateUtils.getWeekNumber(wk.week)
                 )
                 if (!isWorkingDay) return true
+
                 return fullDays.includes(dateUtils.toDateString(day))
             }}
             classNames={{
                 weekday: cn("text-white/80 w-full mb-2", getDefaultClassNames().weekday),
-                // day_button recebe os data attrs do CalendarDayButton — sobrescreve aqui
                 day_button: cn(
                     "rounded-none transition-colors outline-none",
                     "hover:bg-[#BB77EE] hover:text-white",
-                    // single select
                     "data-[selected-single=true]:bg-[#BB77EE] data-[selected-single=true]:text-white",
-                    // range start/end: roxo, sem arredondamento
                     "data-[range-start=true]:bg-[#BB77EE] data-[range-start=true]:text-white data-[range-start=true]:rounded-none",
                     "data-[range-end=true]:bg-[#BB77EE] data-[range-end=true]:text-white data-[range-end=true]:rounded-none",
-                    // range middle: creme
                     "data-[range-middle=true]:bg-[#F5E6CC] data-[range-middle=true]:text-[#2e2e2e] data-[range-middle=true]:rounded-none",
                 ),
                 selected: cn(

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { DateRange } from "react-day-picker"
 import {
@@ -13,16 +13,12 @@ import {
 } from "@/src/features/business/services/range-turn.service"
 import { dateUtils } from "@/src/shared/utils/date.utils"
 import { toast } from "sonner"
-import { isRedirectError } from "next/dist/client/components/redirect-error"
-
 
 import RangeTurnList from "./range-turn-list/range-turn-list"
 import RangeTurnDetailsPanel from "@/src/features/business/components/ambience/range-turn/range-turn-details-panel"
 import RangeTurnTimeEditor from "@/src/features/business/components/ambience/range-turn/range-turn-time-editor"
 import RangeTurnDayEditor from "@/src/features/business/components/ambience/range-turn/range-turn-day-editor"
 import RangeTurnKindToggle from "@/src/features/business/components/ambience/range-turn/range-turn-kind-toggle"
-import RangeTurnHeader from "@/src/features/business/components/ambience/range-turn/range-turn-header"
-import { HeaderSegmentInjector } from "@/src/shared/components/agenrap-ui/header/header-segment-injector"
 
 import SubHeader from "@/src/shared/components/agenrap-ui/header/sub-header"
 import { timeBlockSchema } from "@/src/features/business/schemas"
@@ -37,6 +33,18 @@ type BlockKind = "day" | "time"
 type ViewMode = "new" | "list"
 type DayOffListItem = { id: number; start: string; end: string; reason: string }
 type TimeBlockListItem = { id: number; start: string; end: string; reason: string }
+
+function expandDayOffRange(start: string, end: string): string[] {
+    const days: string[] = []
+    const cur = dateUtils.fromDateString(start)
+    const last = dateUtils.fromDateString(end)
+
+    while (cur <= last) {
+        days.push(dateUtils.toDateString(cur))
+        cur.setDate(cur.getDate() + 1)
+    }
+    return days
+}
 
 export default function RangeTurnManager({ tgrap, initialKind, initialMode }: RangeTurnManagerProps) {
     const router = useRouter()
@@ -57,6 +65,10 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
     const [timeBlocksList, setTimeBlocksList] = useState<TimeBlockListItem[]>([])
     const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({})
 
+    const blockedDays = useMemo(
+        () => daysOffList.flatMap((d) => expandDayOffRange(d.start, d.end)),
+        [daysOffList]
+    )
 
     const updateQuery = (next: { kind?: BlockKind; mode?: ViewMode }) => {
         const params = new URLSearchParams(searchParams.toString())
@@ -95,7 +107,7 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
             setDaysOffList((prev) => prev.filter((i) => i.id !== id))
             toast.success(response.message ?? "Folga removida com sucesso!")
         } catch (e) {
-            handleActionError(e, router, tgrap, 'Erro ao tentar remover folga.')
+            handleActionError(e, router, tgrap, "Erro ao tentar remover folga.")
         }
     }
 
@@ -105,7 +117,7 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
             setTimeBlocksList((prev) => prev.filter((i) => i.id !== id))
             toast.success("Bloqueio de horário removido!")
         } catch (e) {
-            handleActionError(e, router, tgrap, 'Erro ao tentar remover folga.')
+            handleActionError(e, router, tgrap, "Erro ao tentar remover folga.")
         }
     }
 
@@ -141,7 +153,10 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
                     return
                 }
                 toast.success(response.message)
-                setDaysOffList((prev) => [...prev, { id: response.data!.id, start: startString, end: endString, reason: finalReason }])
+                setDaysOffList((prev) => [
+                    ...prev,
+                    { id: response.data!.id, start: startString, end: endString, reason: finalReason },
+                ])
                 setReason("")
                 setRange({ from: new Date(), to: undefined })
                 setDate(new Date())
@@ -167,11 +182,14 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
                     return
                 }
                 toast.success(response.message)
-                setTimeBlocksList((prev) => [...prev, { id: response.data!.id, start: timeStart, end: timeEnd, reason: finalReason }])
+                setTimeBlocksList((prev) => [
+                    ...prev,
+                    { id: response.data!.id, start: timeStart, end: timeEnd, reason: finalReason },
+                ])
                 setReason("")
             }
         } catch (e) {
-            handleActionError(e, router, tgrap, 'Erro ao tentar remover folga.')
+            handleActionError(e, router, tgrap, "Erro ao tentar remover folga.")
         } finally {
             setLoading(false)
         }
@@ -179,16 +197,19 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
 
     const selectedStart =
         blockKind === "day"
-            ? selectionMode === "range" ? range?.from?.toLocaleDateString("pt-BR") : date?.toLocaleDateString("pt-BR")
+            ? selectionMode === "range"
+                ? range?.from?.toLocaleDateString("pt-BR")
+                : date?.toLocaleDateString("pt-BR")
             : timeStart
 
     const selectedEnd =
         blockKind === "day"
-            ? selectionMode === "range" ? (range?.to ?? range?.from)?.toLocaleDateString("pt-BR") : date?.toLocaleDateString("pt-BR")
+            ? selectionMode === "range"
+                ? (range?.to ?? range?.from)?.toLocaleDateString("pt-BR")
+                : date?.toLocaleDateString("pt-BR")
             : timeEnd
 
     const activeCount = blockKind === "day" ? daysOffList.length : timeBlocksList.length
-    const baseQuery = `rap=${tgrap}&kind=${blockKind}`
 
     const modes = [
         { key: "new", label: blockKind === "day" ? "Bloquear Dias" : "Bloquear Horários" },
@@ -196,16 +217,18 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
     ]
 
     return (
-        <main className="flex flex-col w-full h-full  overflow-hidden">
-
-            <SubHeader title="Bloqueio de Turnos" viewMode={viewMode}
+        <main className="flex flex-col w-full h-full overflow-hidden">
+            <SubHeader
+                title="Bloqueio de Turnos"
+                viewMode={viewMode}
                 modes={modes}
-                onModeChange={(key) => setViewMode(key as ViewMode)} />
+                onModeChange={(key) => setViewMode(key as ViewMode)}
+            />
 
             <RangeTurnKindToggle blockKind={blockKind} onChange={setBlockKind} />
 
             {viewMode === "new" ? (
-                <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full flex-1 min-h-0 py-4 lg:overflow-hidden ">
+                <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full flex-1 min-h-0 py-4 lg:overflow-hidden">
                     {blockKind === "day" ? (
                         <RangeTurnDayEditor
                             selectionMode={selectionMode}
@@ -214,6 +237,7 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
                             setDate={setDate}
                             range={range}
                             setRange={setRange}
+                            blockedDays={blockedDays}
                         />
                     ) : (
                         <RangeTurnTimeEditor

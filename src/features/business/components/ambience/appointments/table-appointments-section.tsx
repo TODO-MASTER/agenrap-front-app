@@ -113,7 +113,7 @@ export default function TableAppointmentSection({ businessId, appointments, hasN
                     </span>
                     <DrawerTitle className="text-black font-tree text-center text-base">{row.fullName}</DrawerTitle>
                     <p className={`text-xs font-tree ${row.telephone?.trim() ? 'text-[#33333380]' : 'text-[#33333350] italic'}`}>
-                      {maskPhone(row.telephone??formatPhone(null))}
+                      {row.telephone!=null?maskPhone(row.telephone):formatPhone(null)}
                     </p>
                   </DrawerHeader>
                   <span className="w-full h-0.5 rounded-full bg-[#33333318] my-4 block" />
@@ -279,7 +279,7 @@ export default function TableAppointmentSection({ businessId, appointments, hasN
                 {selectedAppointment.fullName}
               </DrawerTitle>
               <p className={`text-xs font-tree ${selectedAppointment.telephone?.trim() ? 'text-[#33333380]' : 'text-[#33333350] italic'}`}>
-                {maskPhone(selectedAppointment.telephone??formatPhone(null))}
+                {selectedAppointment.telephone!=null?maskPhone(selectedAppointment.telephone):formatPhone(null)}
               </p>
             </DrawerHeader>
  

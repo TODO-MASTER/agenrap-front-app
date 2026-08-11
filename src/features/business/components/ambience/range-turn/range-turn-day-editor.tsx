@@ -13,9 +13,18 @@ type Props = {
     setDate: Dispatch<SetStateAction<Date | undefined>>
     range: DateRange | undefined
     setRange: Dispatch<SetStateAction<DateRange | undefined>>
+    blockedDays?: string[]
 }
 
-export default function RangeTurnDayEditor({ selectionMode, onSelectionModeChange, date, setDate, range, setRange }: Props) {
+export default function RangeTurnDayEditor({
+    selectionMode,
+    onSelectionModeChange,
+    date,
+    setDate,
+    range,
+    setRange,
+    blockedDays = [],
+}: Props) {
     const business = useBusinessStore((bsn) => bsn.business)
 
     return (
@@ -54,7 +63,7 @@ export default function RangeTurnDayEditor({ selectionMode, onSelectionModeChang
                     setDate={setDate}
                     range={range}
                     setRange={setRange}
-                    fullDays={[]}
+                    fullDays={blockedDays}
                     setFullDays={() => {}}
                     isOwner={true}
                 />

@@ -17,10 +17,11 @@ export async function JoinScheduleByRapName(atSign:string){
       return res;
 }
 export async function leaveBusinessAction(atSign: string){
-    await serverAction<boolean>(`business/leave?atSign=${normalizePublicHandle(atSign)}`, {
+   const res= await serverAction<boolean>(`business/leave?atSign=${normalizePublicHandle(atSign)}`, {
          headers: { 'Content-Type': 'application/json' },
         method: "DELETE",
     })
+    return res
 }
 export async function searchBusiness(query: string){
     const res =await serverAction<BusinessSearchResult[]>(`business/search?query=${query}`, {

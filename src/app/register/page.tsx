@@ -17,7 +17,7 @@ export default async function RegisterPage({
 })  {
   const {cmd:cmdp} = await searchParams;
   if(cmdp!="Y"&&cmdp!="N"||!cmdp){
-    redirect("/welcome")
+    redirect("/")
   }
   return (
     <main className="w-full h-full min-h-lvh   flex">

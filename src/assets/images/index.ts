@@ -5,3 +5,7 @@ export {default as calytraPureType} from "./calytra/type-calytra-pure.svg"
 export {default as verifyEmailIcon} from "./verify-email-continue.svg"
 export {default as verifyRecoverPasswordIcon} from "./verify-recover-password.svg"
 export {default as verifyMediumIcon} from "./agenrap/agenrap-medium-icon.svg"
+export {default as appointmentsTodayPng} from './appointments-today.png'
+export {default as appointmentsTodayMobile} from './appointments-today-mobile.png'
+export {default as scheduleDesktop} from './schedule-desktop.png'
+export {default as scheduleMobile} from './schedule-mobile.png'

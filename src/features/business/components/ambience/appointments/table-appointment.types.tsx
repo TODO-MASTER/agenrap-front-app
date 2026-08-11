@@ -73,7 +73,7 @@ export const columns: ColumnDef<AppointmentFull>[] = [
     header: "Telefone",
     cell: ({ row }) => (
       <span className={`font-tree text-sm ${!row.original.telephone?.trim() ? 'text-(--agenrap-brown-500)/40 italic' : ''}`}>
-        {maskPhone(row.original.telephone??formatPhone(null))}
+        {row.original.telephone!=null?maskPhone(row.original.telephone):formatPhone(null)}
       </span>
     ),
   },

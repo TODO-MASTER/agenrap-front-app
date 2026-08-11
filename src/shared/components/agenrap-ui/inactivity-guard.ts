@@ -3,13 +3,22 @@
 import { useInactivityLogout } from '@/src/shared/hooks/use-inactivity-logout'
 import { usePathname } from 'next/navigation'
 
-export function InactivityGuard() {
-    const pathname = usePathname()
-    
-    const isPublic = ['/login', '/register', '/welcome', '/verify-email', '/verify-pending-email']
-        .some(r => pathname.startsWith(r))
+const PUBLIC_ROUTES = [
+  '/',
+  '/login',
+  '/register',
+  '/verify-email',
+  '/verify-pending-email',
+]
 
-    useInactivityLogout(isPublic ? null : 1)
-    
-    return null
+export function InactivityGuard() {
+  const pathname = usePathname()
+
+  const isPublic = PUBLIC_ROUTES.some((route) =>
+    route === '/' ? pathname === '/' : pathname.startsWith(route)
+  )
+
+  useInactivityLogout(isPublic ? null : 3)
+
+  return null
 }
