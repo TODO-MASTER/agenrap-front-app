@@ -18,7 +18,7 @@ export function InactivityGuard() {
     route === '/' ? pathname === '/' : pathname.startsWith(route)
   )
 
-  useInactivityLogout(isPublic ? null : 25)
+  useInactivityLogout(isPublic ? null : 5)
 
   return null
 }
