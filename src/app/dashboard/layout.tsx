@@ -1,5 +1,6 @@
 import DashboardSidebarProvider from "@/src/providers/dashboard-side-bar-provider";
 import { HeaderSegmentsProvider } from "@/src/providers/header-segments-provider";
+import { FeedbackButton } from "@/src/shared/components/agenrap-ui/button/feedback-button";
 import DashboardMobileNav from "@/src/shared/components/agenrap-ui/dashboard-mobile-nav";
 import AgenrapHeader from "@/src/shared/components/agenrap-ui/header/agenrap-header";
 import MobileHeaderScroll from "@/src/shared/components/agenrap-ui/header/mobile-header-scroll";
@@ -24,6 +25,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                         {children}
                     </main>
                     <Suspense fallback={<div className="p-8">Carregando dashboard...</div>}>
+                    
                     <DashboardMobileNav />
                     </Suspense>
                 </SidebarInset>

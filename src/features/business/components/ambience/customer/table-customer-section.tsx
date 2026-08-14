@@ -21,6 +21,9 @@ import { maskPhone } from "@/src/shared/utils/formatters.utils"
 import RevertMergeDialog from "@/src/shared/components/agenrap-ui/dialog/revert-merge-dialog"
 import EditProfileDialog from "@/src/shared/components/agenrap-ui/dialog/edit-profile-dialog"
 import DeleteCustomerDialog from "@/src/shared/components/agenrap-ui/dialog/delete-customer-dialog"
+import { useLastUpdated } from "@/src/shared/hooks/use-last-updated"
+import { useDashboardPolling } from "@/src/shared/hooks/use-dashboard-pooling"
+import { LiveIndicator } from "@/src/shared/components/agenrap-ui/live-indication"
 
 const getInitials = (name: string) => {
   return name.split(" ").slice(0, 2).map((n: string) => n[0]).join("").toUpperCase()
@@ -186,6 +189,8 @@ type TableCustomerPageable = {
 }
 
 export default function TableCustomerSection({ customers, page, totalPages, hasNextPage, hasPrevPage, filter }: TableCustomerPageable) {
+          const { label, markUpdated } = useLastUpdated()
+      useDashboardPolling(markUpdated)
   const [schedulingOpen, setSchedulingOpen] = useState(false)
   const [schedulingCustomer, setSchedulingCustomer] = useState<BusinessCustomer | null>(null)
   const [mergeOpen, setMergeOpen] = useState(false)
@@ -250,7 +255,7 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
       <EditProfileDialog open={openEditGuest} setOpen={setOpenEditGuest} userGuest={editCustomer!} />
       <DeleteCustomerDialog open={openDeleteGuest} setOpen={setOpenDeleteGuest} customerGuest={deleteGuest!} setDrawerOpen={setDrawerOpen} />
       <div className={`flex flex-col gap-y-3 ${totalPages > 1 ? "pb-24" : "pb-6"} md:pb-0 lg:pb-0`}>
-
+        <LiveIndicator label={label} />
         <CustomerFilters page={page} totalPages={totalPages} hasNext={hasNextPage} hasPrev={hasPrevPage} />
 
         <div className="hidden lg:block">

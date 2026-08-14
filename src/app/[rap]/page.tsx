@@ -7,29 +7,30 @@ import OnlineCalendarSection from "@/src/features/customers/components/service-s
 import ServiceShowcaseHeader from "@/src/shared/components/agenrap-ui/header/service-showcase-header"
 import { BusinessCtx } from "@/src/shared/types"
 import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { normalizePublicHandle } from "@/src/shared/utils/formatters.utils"
 import ClosedTodayBanner from "@/src/features/customers/components/business-showcase/closed-today-banner"
 
 export const metadata: Metadata = {
-  title: "Agenda - Agenrap",
-  description: "Automatize sua agenda",
-  icons: {
-    icon: '/favicon.svg',
-  },
+    title: "Agenda - Agenrap",
+    description: "Automatize sua agenda",
+    icons: {
+        icon: '/favicon.svg',
+    },
 };
 
 export default async function ServiceScheduleServicePage({ params }: { params: Promise<{ rap: string }> }) {
     const { rap: rawRap } = await params
     const rap = decodeURIComponent(rawRap)
 
-    if (!rap?.startsWith("@")) return <div>ALGO ESTÁ ERRADO</div>
+    if (!rap?.startsWith("@")) notFound()
 
     const targetBusinessWithServices = await serverFetch<BusinessCtx>(
         `business/per?atSign=${normalizePublicHandle(rap)}`
     )
 
-    if (!targetBusinessWithServices) return <div>Negócio não encontrado</div>
+    if (!targetBusinessWithServices) notFound()
+    if (targetBusinessWithServices.isOwner) redirect(`/dashboard?rap=${rap}`)
 
     const token = (await cookies()).get('token')?.value
     const isLoggedIn = !!token
@@ -43,13 +44,13 @@ export default async function ServiceScheduleServicePage({ params }: { params: P
     return (
         <>
             <BusinessInitializer data={targetBusinessWithServices} />
-            <ServiceShowcaseHeader name={targetBusinessWithServices.mnrName??""} />
-      
+            <ServiceShowcaseHeader name={targetBusinessWithServices.mnrName ?? ""} />
+
             <OnlineCalendarSection />
-                  {!targetBusinessWithServices.isOpenToday && (
+            {!targetBusinessWithServices.isOpenToday && (
                 <ClosedTodayBanner statusMessage={targetBusinessWithServices.statusMessage} />
             )}
-            <ShowcaseSection rap={rap}/>
+            <ShowcaseSection rap={rap} />
         </>
     )
 }

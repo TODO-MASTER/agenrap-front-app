@@ -15,7 +15,7 @@ type PageMode = 'search' | 'list'
 
 // export const dynamic = 'force-dynamic'
 
-export default async function ServiceSchedulePage({
+export default async function SearchingViewSchedulesPage({
   searchParams,
 }: {
   searchParams: Promise<{ mode?: string }>
@@ -26,41 +26,40 @@ export default async function ServiceSchedulePage({
     serverFetch<UserAuthRes>('user/get-one'),
   ])
 
-
-
   const mode: PageMode = (() => {
     if (res.length === 0) return 'search'
     if (rawMode === 'search') return 'search'
     return 'list'
   })()
 
-
-
-if (mode === 'search') {
-  return (
-    <div className="h-dvh flex bg-(--agenrap-gray-200) p-8 pt-12 flex-col items-center">
-      <div className="w-full flex flex-col items-center">
-    <TopBusinessShowcase user={user} title="Buscar estabelecimento" searching bsnSize={res.length} />
-      </div>
-      <div className="flex flex-col w-full items-center gap-y-4 mt-16">
-        <ScheduleEntrance />
-     
-      </div>
-    </div>
-  )
-}else {
+  if (mode === 'search') {
     return (
+      <div className="min-h-dvh flex pb-12 bg-(--agenrap-gray-200)">
+        <div className="w-full max-w-3xl mx-auto flex flex-col px-6 md:px-10 pt-12 pb-8">
+          <TopBusinessShowcase user={user} title="Buscar" searching bsnSize={res.length} />
 
-      <div className="h-dvh flex bg-(--agenrap-gray-200) flex-col">
-        <div className="h-dvh rounded-md p-8 gap-y-8 pt-12 flex flex-col w-full">
+          <div className="flex-1 flex flex-col items-center justify-center gap-y-10 py-10">
+            <div className="relative w-full flex justify-center">
+              <div className="absolute inset-x-0 top-1/2 h-px bg-(--agenrap-brown-500)/10" />
+              <span className="relative bg-(--agenrap-gray-200) px-4 font-tree text-xs uppercase tracking-[0.3em] text-(--agenrap-brown-500)/50">
+                encontre e agende em segundos
+              </span>
+            </div>
 
-          <TopBusinessShowcase user={user}/>
+            <ScheduleEntrance />
 
+          </div>
+        </div>
+      </div>
+    )
+  } else {
+    return (
+      <div className="min-h-dvh flex  pb-12 bg-(--agenrap-gray-200) flex-col">
+        <div className="w-full max-w-6xl mx-auto flex flex-col px-6 md:px-10 pt-12 pb-16 gap-y-10">
+          <TopBusinessShowcase user={user} />
           <BusinessDisplay business={res} />
         </div>
       </div>
-
     )
   }
-
 }

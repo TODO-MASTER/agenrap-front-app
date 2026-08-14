@@ -1,6 +1,7 @@
 'use client'
 import { miniIcon } from "@/src/assets/images";
 import { ScrollHint } from "@/src/features/customers/components/service-showcase/showcase-section/scroll-hint";
+import { FeedbackButton } from "@/src/shared/components/agenrap-ui/button/feedback-button";
 import AgenrapDialogJoinSchedule from "@/src/shared/components/agenrap-ui/dialog/agenrap-dialog-join-schedule";
 import { useBusinessStore } from "@/src/shared/store/use-business.store";
 import Image from "next/image";
@@ -25,8 +26,17 @@ export default function OnlineCalendarSection() {
                 <span className="flex md:h-[45%] h-[25%] w-1 bg-(--agenrap-yellow-200)"></span>
                 <p className="font-tree text-white lg:text-3xl md:text-2xl text-lg  font-bold">Essa é sua agenda online</p>
             </div>
-            <div className=" bg-(--agenrap-gray-800)  w-fit  flex" >
-                <p className="font-tree lg:text-xl text-sm  p-2 font-bold text-white">Disponibilizado por <span className="text-(--agenrap-yellow-200)">agenrap</span></p>
+            <div className=" bg-(--agenrap-gray-800) rounded-t-md  w-fit p-1 items-center  flex" >
+                <p className="font-tree lg:text-xl text-sm  p-2 font-bold text-white">Disponibilizado por <span className="text-(--agenrap-yellow-200)">agenrap</span>
+                </p>
+                   <FeedbackButton
+                      plusClassName="
+                        static w-8 h-8 rounded-md
+                        flex items-center justify-center
+                        bg-(--agenrap-purple-500) text-white
+                        shadow-none hover:bg-(--agenrap-purple-500)/85
+                      "
+                    />
             </div>
                  
         </section>

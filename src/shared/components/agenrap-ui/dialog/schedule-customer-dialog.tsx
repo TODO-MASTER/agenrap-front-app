@@ -42,6 +42,7 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
 
   const [step, setStep] = useState<Step>('check')
   const [loadingCheck, setLoadingCheck] = useState(false)
+  const [slotError, setSlotError] = useState<string | null>(null)
   const [activeAppointment, setActiveAppointment] = useState<AppointmentItem | null>(null)
 
   const [date, setDate] = useState<Date | undefined>()
@@ -52,11 +53,12 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
   const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null)
 
   // Reset completo ao fechar
-  useEffect(() => {
+useEffect(() => {
     if (!open) {
       setStep('check')
       setDate(undefined)
       setSlots(null)
+      setSlotError(null)
       setSelectedSlot(null)
       setSelectedServiceId(null)
       setActiveAppointment(null)
@@ -81,20 +83,23 @@ export default function ScheduleCustomerDialog({ open, setOpen, customer }: Sche
   }, [open, customer, business])
 
 
-  useEffect(() => {
+useEffect(() => {
     if (!date || !selectedServiceId) return
     const handleGenerateSlots = async () => {
       setSlotLoading(true)
-      try {
-        const targetSlots = await GenerateSlots(
-          selectedServiceId,
-          dateUtils.toDateString(date),
-          dateUtils.getWeekDay(date)
-        )
-        setSlots(targetSlots)
-      } finally {
-        setSlotLoading(false)
+      setSlotError(null)
+      setSlots(null)
+      const res = await GenerateSlots(
+        selectedServiceId,
+        dateUtils.toDateString(date),
+        dateUtils.getWeekDay(date)
+      )
+      if (res.data == null) {
+        setSlotError(res.message || "Esse dia não está disponível para agendamento")
+      } else {
+        setSlots(res)
       }
+      setSlotLoading(false)
     }
     handleGenerateSlots()
     setSelectedSlot(null)
@@ -263,43 +268,44 @@ const handleServiceSelect = (serviceId: number) => {
                     <p className="font-tree font-medium text-base text-white">Horários disponíveis</p>
                   </div>
 
-                  {slotLoading ? (
-                    <div className="flex relative justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full flex-1">
-                      <Image src={macroLogo} alt="" className="w-16 h-16 opacity-15 animate-pulse" />
-                      <LoaderCircle className="animate-spin absolute w-16 h-16" color="#F5E6CC" />
-                    </div>
-                  ) : slots ? (
-                    slots.data!.slots.length === 0 ? (
-                      <div className="flex justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full flex-1 p-4">
-                        <p className="font-tree text-white text-center text-base">Ops, agenda lotada neste dia</p>
-                      </div>
-                    ) : (
-                      <div className="bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full flex-1">
-                        <ScrollArea className="h-56 lg:h-full w-full">
-                                                   <ScrollBar className="[&>[data-slot=scroll-area-thumb]]:rounded-full [&>[data-slot=scroll-area-thumb]]:bg-(--agenrap-yellow-200)" />
-                          <div className="grid grid-cols-[repeat(auto-fill,minmax(90px,1fr))] gap-1 p-2 pb-0">
-                            {slots?.data?.slots?.map((hrs, index) => (
-                                                                   <SlotButton
-                                   key={index}
-                                   time={hrs.time}
-                       
-                                   available={hrs.available !== false} 
-                                   blockReason={hrs.blockReason}
-                                   selected={selectedSlot === hrs.time}
-                                   onClick={() => setSelectedSlot(hrs.time)}
-                               />
-                                                               ))}
-                          </div>
-                        </ScrollArea>
-                      </div>
-                    )
-                  ) : (
-                    <div className="flex justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full flex-1 p-4">
-                      <p className="font-tree text-white text-center text-base font-semibold">
-                        {serviceNotSelected ? "Selecione um serviço acima" : "Selecione um dia para ver os horários"}
-                      </p>
-                    </div>
-                  )}
+                 {slotLoading ? (
+  <div className="flex relative justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full flex-1">
+    <Image src={macroLogo} alt="" className="w-16 h-16 opacity-15 animate-pulse" />
+    <LoaderCircle className="animate-spin absolute w-16 h-16" color="#F5E6CC" />
+  </div>
+) : slotError ? (
+  <div className="flex justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full flex-1 p-4">
+    <p className="font-tree text-white text-center text-base">{slotError}</p>
+  </div>
+) : slots?.data?.slots?.length ? (
+  <div className="bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full flex-1">
+    <ScrollArea className="h-56 lg:h-full w-full">
+      <ScrollBar className="[&>[data-slot=scroll-area-thumb]]:rounded-full [&>[data-slot=scroll-area-thumb]]:bg-(--agenrap-yellow-200)" />
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(90px,1fr))] gap-1 p-2 pb-0">
+        {slots.data.slots.map((hrs, index) => (
+          <SlotButton
+            key={index}
+            time={hrs.time}
+            available={hrs.available !== false}
+            blockReason={hrs.blockReason}
+            selected={selectedSlot === hrs.time}
+            onClick={() => setSelectedSlot(hrs.time)}
+          />
+        ))}
+      </div>
+    </ScrollArea>
+  </div>
+) : slots ? (
+  <div className="flex justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full flex-1 p-4">
+    <p className="font-tree text-white text-center text-base">Ops, agenda lotada neste dia</p>
+  </div>
+) : (
+  <div className="flex justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full flex-1 p-4">
+    <p className="font-tree text-white text-center text-base font-semibold">
+      {serviceNotSelected ? "Selecione um serviço acima" : "Selecione um dia para ver os horários"}
+    </p>
+  </div>
+)}
                 </div>
               </div>
             </ScrollArea>

@@ -22,10 +22,14 @@ export default function AgenrapLinkButton({
 }:AgenrapButtonProps){
     const Crate = "button"
     return(
-        <Link className={`${plusClassName} `} href={hrefLink!}>
-        <Crate className={`${cn(agenrapButtonVariants({variant,size,className})) +`${isLoading && variant=="purplerap"?" animate-spin transition-all  w-full":""} ${plusClassName}`} `} disabled={disabled || isLoading} {...props}>
+        // <Link className={`${plusClassName} `} href={hrefLink!}>
+        <Link href={hrefLink!} className={cn(
+        agenrapButtonVariants({ variant, size, className }),
+        "flex items-center justify-center",
+        plusClassName
+      )} >
             {children? isLoading && variant!="purplerap"?"Carregando...":children:icon?icon:children}
-        </Crate>
         </Link>
+      
     )
 }

@@ -33,6 +33,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useProfileDialogStore } from "@/src/shared/store/use-profile-dialog.store"
 import { LogoutButton } from "@/src/shared/components/agenrap-ui/button/logout-button"
 import Link from "next/link"
+import { FeedbackButton } from "@/src/shared/components/agenrap-ui/button/feedback-button"
 
 export default function AgenrapSideBar(
   props: React.ComponentProps<typeof Sidebar>
@@ -217,8 +218,11 @@ export default function AgenrapSideBar(
           )}
         </SidebarMenu>
       </SidebarContent>
+  <div className=" pb-2 px-3">
 
-      <div className="mt-auto px-3 pb-3">
+        <FeedbackButton/>
+      </div>
+      <div className="mt-auto px-3 pb-2">
         <button
           onClick={() => setProfileOpen(true)}
           className={[
@@ -234,7 +238,8 @@ export default function AgenrapSideBar(
           }
         </button>
       </div>
-      <div className="w-full px-3 pb-3">
+    
+      <div className="w-full relative px-3  pb-2">
       <LogoutButton showExpanded={showExpanded}/>
       </div>
       

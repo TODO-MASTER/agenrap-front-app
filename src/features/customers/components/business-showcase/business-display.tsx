@@ -55,11 +55,12 @@ export default function BusinessDisplay({ business }: { business: BusinessCtx[] 
               qtdService={bs.qtdServices!}
               isOpenToday={bs.isOpenToday}
               statusMessage={bs.statusMessage}
+              linkJoin={
+            <AgenrapLinkButton hrefLink={`/${atSign}`} className="rounded-md">
+              {bs.isOpenToday ? "Ver serviços" : "Ver agenda"}
+            </AgenrapLinkButton>}
             />
 
-            <AgenrapLinkButton hrefLink={`/${atSign}`}>
-              {bs.isOpenToday ? "Ver serviços" : "Ver agenda"}
-            </AgenrapLinkButton>
           </div>
         )
       })}

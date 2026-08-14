@@ -59,7 +59,7 @@ export default function ServiceShowcaseHeader({ name }: { name: string }) {
                                             <LogoutButton  />
                                           
                                         </div>
-                                              <div className="pt-2 pb-2 fixed z-40 right-[5%] top-[40%] md:top-[50%]  ">
+                                              <div className="pt-2 pb-2 fixed z-40 right-[5%] top-[15%] md:top-[50%]  ">
                 <ScrollHint targetId="meus-servicos" />
             </div>
         </header>

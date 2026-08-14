@@ -54,7 +54,7 @@ export default function QuickSchedulingAnnouncementSection({ businessTarget, ser
                 </nav>
             </div>
 
-            <div className="flex w-full md:bg-(--agenrap-purple-500) bg-(--agenrap-brown-500)/40 relative z-0 md:mb-8 mb-4 md:h-55 h-fit">
+            <div className="flex w-full md:bg-(--agenrap-purple-500) rounded-md overflow-hidden bg-(--agenrap-brown-500)/40 relative z-0 md:mb-8 mb-4 md:h-55 h-fit">
                 <div className="md:bg-(--agenrap-brown-500)/85 bg-(--agenrap-brown-500)/40 p-4 lg:pl-14 lg:pr-8 md:px-8 md:py-5 rounded-bl-[99px] flex justify-between w-full h-full">
                     <div className="hidden md:flex gap-2 lg:h-full md:h-[85%]">
                         <span className="flex w-1.5 h-full bg-(--agenrap-yellow-200)"></span>

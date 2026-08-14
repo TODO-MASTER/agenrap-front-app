@@ -11,6 +11,7 @@ import { HeaderSettings } from "@/src/shared/components/agenrap-ui/header/header
 import { AgenrapSegmentedControl } from "../button/agenrap-segment-button"
 import { useHeaderSegments } from "@/src/providers/header-segments-provider"
 import { LogoutButton } from "@/src/shared/components/agenrap-ui/button/logout-button"
+import { FeedbackButton } from "@/src/shared/components/agenrap-ui/button/feedback-button"
 interface AgenrapHeaderProps extends HeaderSettings {
     isScrolled?: boolean
 }
@@ -27,11 +28,12 @@ const segments = isDefault ? [] : context?.segments??[]
                         {children}
                     </AgenrapMenuBar>
                 </div>
-                <div>
+               
+            </div>
+             <div>
 
             <LogoutButton  />
                 </div>
-            </div>
         </header>
         :
 
@@ -42,15 +44,21 @@ const segments = isDefault ? [] : context?.segments??[]
                     ? "bg-(--agenrap-brown-200)/65 backdrop-blur-md border-b border-black/5 shadow-sm"
                     : "bg-(--agenrap-brown-200) border-b border-b-black"
                 }`}>
-                <div className="flex w-full items-center justify-between h-20 px-4">
+                <div className="flex  items-center justify-between h-20 px-4">
                     <div className="flex items-center gap-x-1">
                         <Image src={miniIcon} alt="logo" className="w-10" />
                         <p className="font-cinzel font-bold">Agenrap</p>
                         <SidebarTrigger />
                     </div>
+                    <div className="flex gap-x-3 items-center ">
+                      <div className="">
+                    
+                            <FeedbackButton plusClassName="flex h-fit w-fit p-2  "/>
+                          </div>
                     <div className="">
 
        <LogoutButton showExpanded={false} />
+                    </div>
                     </div>
                 </div>
             </div>

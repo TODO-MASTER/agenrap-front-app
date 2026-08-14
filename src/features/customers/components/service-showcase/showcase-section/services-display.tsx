@@ -15,11 +15,11 @@ export default function ServicesDisplay({ rap }: { rap: string }) {
             <div className="bg-(--agenrap-yellow-200)/5 p-4   no-scrollbar  rounded-md w-full  py-2 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 gap-x-10    ">
 
                 {business?.services.map((oc, index) => (
-                    <div key={index} className="flex flex-col ">
-                        <CardServiceMax name={oc.name} duration={oc.duration} value={currencyUtils.fromCents(oc.value, "BRL")} />
-                        <AgenrapLinkButton hrefLink={`/${rap}/schedule?svs=${oc.id}`}>
+                    <div key={index} className="flex flex-col w-full ">
+                        <CardServiceMax name={oc.name} duration={oc.duration} value={currencyUtils.fromCents(oc.value, "BRL")} actionButton={    <AgenrapLinkButton hrefLink={`/${rap}/schedule?svs=${oc.id}`} plusClassName="rounded-md">
                             Agendamento
-                        </AgenrapLinkButton>
+                        </AgenrapLinkButton>} />
+                    
                     </div>
                 ))
 

@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useCustomerActions } from "../../hooks/use-customer-actions";
 import { SlotRes } from "@/src/shared/types/slots.types";
 import SlotButton from "@/src/shared/components/agenrap-ui/button/slot-button";
+import { FeedbackButton } from "@/src/shared/components/agenrap-ui/button/feedback-button";
 
 type AppointmentItem = AppointmentCancelRes['data'][number]
 
@@ -27,6 +28,7 @@ export default function QuickSchedulingSection({ existingAppointment }: Props) {
     const business = useBusinessStore(bsnCtx => bsnCtx.business)
     const [date, setDate] = useState<Date | undefined>()
     const [slots, setSlots] = useState<SlotRes | null>(null)
+    const [slotError, setSlotError] = useState<string | null>(null)
     const [slotLoading, setSlotLoading] = useState<boolean>(false)
     const [selectedSlot, setSelectedSlot] = useState<string | null>()
     const [fullDays, setFullDays] = useState<string[]>([])
@@ -38,20 +40,27 @@ export default function QuickSchedulingSection({ existingAppointment }: Props) {
     useEffect(() => {
         setShowBooking(!existingAppointment)
     }, [existingAppointment])
-
-    useEffect(() => {
-        const handleGenerateSlots = async () => {
-            setSlotLoading(true)
-            try {
-                const targetSlots = await GenerateSlots(Number(useSearchParam.get("svs")), dateUtils.toDateString(date!), dateUtils.getWeekDay(date!))
-                setSlots(targetSlots)
-            } finally {
-                setSlotLoading(false)
-            }
+useEffect(() => {
+    const handleGenerateSlots = async () => {
+        const svsId = useSearchParam.get("svs")
+        if (!svsId) {
+            setSlotError("Serviço não identificado, tente novamente")
+            return
         }
-        if (date != null) handleGenerateSlots()
-        setSelectedSlot(null)
-    }, [date])
+        setSlotLoading(true)
+        setSlotError(null)
+        setSlots(null)
+        const res = await GenerateSlots(Number(svsId), dateUtils.toDateString(date!), dateUtils.getWeekDay(date!))
+        if (res.data == null) {
+            setSlotError(res.message || "Esse dia não está disponível para agendamento")
+        } else {
+            setSlots(res)
+        }
+        setSlotLoading(false)
+    }
+    if (date != null) handleGenerateSlots()
+    setSelectedSlot(null)
+}, [date])
 
       useEffect(() => {
         handleMonthChange(new Date(), setFullDays)
@@ -134,50 +143,66 @@ export default function QuickSchedulingSection({ existingAppointment }: Props) {
 
     return (
         <section className="flex flex-col gap-y-2">
+            <div className="w-full flex items-center justify-between">
+
             <div className="flex gap-x-1 items-center px-4 py-2">
+
                 <CalendarClockIcon size={35} />
                 <p className="font-tree font-bold text-4xl text-black">Dias Livres</p>
+
             </div>
-            <div className="flex md:flex-nowrap p-2 flex-wrap gap-x-5 bg-(--agenrap-yellow-200)/50 gap-y-4 justify-center">
+                               <FeedbackButton
+                                  plusClassName="
+                                    static w-8 h-8 rounded-md
+                                    flex items-center justify-center
+                                    bg-(--agenrap-purple-500) text-white
+                                    shadow-none hover:bg-(--agenrap-purple-500)/85
+                                  "
+                                />
+            </div>
+            <div className="flex md:flex-nowrap rounded-md p-2 flex-wrap gap-x-5 bg-(--agenrap-yellow-200)/50 gap-y-4 justify-center">
                 <AgenrapCalendar isOwner={business?.isOwner} fullDays={fullDays} setFullDays={setFullDays} business={business!} date={date} setDate={setDate} className="lg:w-[50%] w-full" />
 
                 <div className="lg:w-[50%] w-full flex flex-col rounded-lg">
                     <div className="p-2 flex w-full rounded-t-md bg-(--agenrap-gray-800)">
                         <p className="font-tree font-medium text-2xl text-(--agenrap-yellow-200)">Horários disponiveis</p>
                     </div>
-                    {slotLoading
-                        ? <div className="flex relative justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full h-full">
-                            <Image src={macroLogo} alt="" className="md:w-[80%] md:h-[80%] w-[50%] h-[50%] opacity-15 animate-pulse" />
-                            <LoaderCircle className="animate-spin absolute md:w-[80%] md:h-[80%] w-[50%] h-[50%]" color="#F5E6CC" />
-                        </div>
-                        : slots
-                            ? slots.data!.slots.length == 0
-                                ? <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
-                                    <p className="font-tree text-white text-center md:text-2xl text-lg">Ops, Agenda lotada, neste dia</p>
-                                </div>
-                                : <div className="bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full h-full">
-                                    <div className="grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] items-start gap-1 p-4 px-2 py-1 pb-2 pt-2 w-full">
-                                        {slots?.data?.slots?.map((hrs, index) => (
-                                            <SlotButton
-            key={index}
-            time={hrs.time}
-
-            available={hrs.available !== false} 
-            blockReason={hrs.blockReason}
-            selected={selectedSlot === hrs.time}
-            onClick={() => setSelectedSlot(hrs.time)}
-        />
-                                        ))}
-                                    </div>
-                                </div>
-                            : <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
-                                <p className="font-tree text-white text-2xl font-semibold text-center">Selecione um dia para ver os horários</p>
-                            </div>
-                    }
+{slotLoading
+    ? <div className="flex relative justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full h-full">
+        <Image src={macroLogo} alt="" className="md:w-[80%] md:h-[80%] w-[50%] h-[50%] opacity-15 animate-pulse" />
+        <LoaderCircle className="animate-spin absolute md:w-[80%] md:h-[80%] w-[50%] h-[50%]" color="#F5E6CC" />
+    </div>
+    : slotError
+        ? <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
+            <p className="font-tree text-white text-center md:text-2xl text-lg">{slotError}</p>
+        </div>
+        : slots?.data?.slots?.length
+            ? <div className="bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full h-full">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] items-start gap-1 p-4 px-2 py-1 pb-2 pt-2 w-full">
+                    {slots.data.slots.map((hrs, index) => (
+                        <SlotButton
+                            key={index}
+                            time={hrs.time}
+                            available={hrs.available !== false}
+                            blockReason={hrs.blockReason}
+                            selected={selectedSlot === hrs.time}
+                            onClick={() => setSelectedSlot(hrs.time)}
+                        />
+                    ))}
+                </div>
+            </div>
+            : slots
+                ? <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
+                    <p className="font-tree text-white text-center md:text-2xl text-lg">Ops, Agenda lotada, neste dia</p>
+                </div>
+                : <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
+                    <p className="font-tree text-white text-2xl font-semibold text-center">Selecione um dia para ver os horários</p>
+                </div>
+}
                 </div>
             </div>
 
-            <AgenrapButton onClick={() => handleSaveAppointment(dateUtils.toDateString(date!), selectedSlot!)} disabled={!date || !selectedSlot} className={`${!date || !selectedSlot ? "cursor-not-allowed opacity-50 hover:opacity-50" : ""} mt-5 py-4`}>
+            <AgenrapButton onClick={() => handleSaveAppointment(dateUtils.toDateString(date!), selectedSlot!)} disabled={!date || !selectedSlot} className={`${!date || !selectedSlot ? "cursor-not-allowed opacity-50 hover:opacity-50" : ""} mt-5 rounded-md py-4`}>
                 {isSaveAppointmentPending
                     ? <div className="flex relative justify-center items-center">
                         <Image src={macroLogo} alt="" className="w-10 h-10 opacity-15 animate-pulse" />

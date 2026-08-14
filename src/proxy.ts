@@ -67,7 +67,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/dashboard') ||
     pathname.startsWith('/business') ||
     pathname.startsWith('/appointments') ||
-    pathname.startsWith('/schedule');
+    pathname.startsWith('/schedule') ||
+        pathname.startsWith('/feedback');
 
   // ========== ROTAS PROTEGIDAS ==========
   if (isProtected) {

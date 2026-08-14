@@ -21,6 +21,9 @@ import { formatPublicHandle } from "@/src/shared/utils/formatters.utils"
 import { useState } from "react"
 import CopyLinkButton from "@/src/shared/components/agenrap-ui/button/copy-link-button"
 import EditBusinessNameDialog from "@/src/shared/components/agenrap-ui/dialog/edit-business-dialog"
+import { useLastUpdated } from "@/src/shared/hooks/use-last-updated"
+import { useDashboardPolling } from "@/src/shared/hooks/use-dashboard-pooling"
+import { LiveIndicator } from "@/src/shared/components/agenrap-ui/live-indication"
 
 
 type Props = {
@@ -31,6 +34,8 @@ type Props = {
 }
 
 export default function DashboardClient({ summary, businessName, atSign, subscription }: Props) {
+        const { label, markUpdated } = useLastUpdated()
+    useDashboardPolling(markUpdated)
     const [editNameOpen, setEditNameOpen] = useState(false)
     const {
         variation,
@@ -68,7 +73,7 @@ export default function DashboardClient({ summary, businessName, atSign, subscri
                             <Pencil size={13} style={{ color: TEXT_MUTED }} />
                         </button>
                     </div>
-
+<LiveIndicator label={label} />
                     <CopyLinkButton link={publicLink} />
                 </div>
 

@@ -20,6 +20,7 @@ import {
   Bell,
   Clock,
   Ban,
+  Flame,
 } from "lucide-react";
 import { ScrollHint } from "@/src/features/customers/components/service-showcase/showcase-section/scroll-hint";
 
@@ -55,11 +56,6 @@ const STEPS = [
 ];
 
 const FEATURES = [
-  {
-    icon: Bell,
-    title: "Lembrete automático",
-    text: "Confirmação por e-mail no momento do agendamento. Menos esquecimento, menos falta no dia.",
-  },
   {
     icon: Ban,
     title: "Sem choque de horário",
@@ -140,10 +136,13 @@ export default function LandingPage() {
               Sou cliente, quero agendar
             </Link>
           </div>
+          <div className="flex gap-x-1 items-center">
 
-          <p className="font-tree text-xs text-white/35">
-            Teste sem cartão. Cancele quando quiser.
+          <p className="font-tree text-lg text-white/35">
+            Teste 14 dias de graça
           </p>
+          <Flame size={44} fill="#F59E0B" />
+          </div>
 
           <p className="font-tree text-sm text-white/50">
             Já tem conta?{" "}

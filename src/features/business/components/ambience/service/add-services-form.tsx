@@ -53,7 +53,7 @@ export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, o
                 className="flex flex-col gap-y-2 md:gap-y-4 items-center "
             >
                 <div className="flex flex-col md:flex-row w-full h-full min-h-112 gap-y-2">
-                    <div className="bg-(--agenrap-gray-800) lg:w-[35%] md:w-[50%] w-full p-8 pb-12 flex flex-col gap-y-4">
+                    <div className="bg-(--agenrap-gray-800) lg:w-[35%] md:w-[50%] w-full p-8 pb-12 rounded-md md:rounded-none md:rounded-l-md  flex flex-col gap-y-4">
                         <h4 className="font-cinzel font-bold text-(--agenrap-yellow-200) text-3xl text-center">Agenrap</h4>
                         <FormField
                             control={form.control}
@@ -97,15 +97,15 @@ export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, o
                                 form.resetField("business.staging")
                                 setTimeService((3600 / 60) * 30)
                             }}
-                            className={`flex gap-x-2 justify-center bg-(--agenrap-yellow-200) items-center p-2 mb-2 ${timeService < 1 || stagingHasError || stagingEmpty ? "cursor-not-allowed opacity-70" : ""}`}
+                            className={`flex gap-x-2 justify-center bg-(--agenrap-yellow-200) rounded-md items-center p-2 mb-2 ${timeService < 1 || stagingHasError || stagingEmpty ? "cursor-not-allowed opacity-70" : ""}`}
                         >
                             <BadgePlus width={30} height={30} color="#000" />
                             <p className="font-tree text-lg text-black">Adicionar</p>
                         </AgenrapButton>
                     </div>
 
-                    <div className="flex flex-col w-full md:min-h-full justify-between items-center bg-(--agenrap-brown-500)/75 relative pb-20 md:pb-0">
-                        <div className="w-full flex items-center gap-3 border-b bg-(--agenrap-brown-500) pl-4 py-6 border-(--agenrap-gray-800)/50">
+                    <div className="flex flex-col w-full md:min-h-full rounded-md md:rounded-none md:rounded-r-md justify-between items-center bg-(--agenrap-brown-500)/75 relative pb-20 md:pb-0">
+                        <div className="w-full flex items-center gap-3 border-b rounded-md md:rounded-none md:rounded-tr-md bg-(--agenrap-brown-500) pl-4 py-6 border-(--agenrap-gray-800)/50">
                             <p className="font-tree text-white font-medium text-2xl">Lista de serviços</p>
                             {fields.length > 0 && (
                                 <span className="bg-(--agenrap-yellow-200) text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
@@ -115,10 +115,10 @@ export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, o
                         </div>
                         <ScrollArea className="h-65 m-2 w-[90%] px-2">
                             <ScrollBar className="[&>[data-slot=scroll-area-thumb]]:rounded-full [&>[data-slot=scroll-area-thumb]]:bg-(--agenrap-yellow-200)" />
-                            <div className="flex flex-col gap-y-2 p-4 relative">
-                                {fields.map((oc, indx) => (
+                            <div className="flex flex-col justify-center  gap-y-2 p-4 relative">
+                                {fields.length > 0 ?fields.map((oc, indx) => (
                                     <CollapsableServiceItem key={oc.id} name={oc.name} duration={oc.duration} price={oc.price} remove={remove} indx={indx} />
-                                ))}
+                                )):<p className="text-white/65 font-semibold self-center text-xl text-center font-tree">Sem serviços adicionados</p>}
                             </div>
                         </ScrollArea>
                         <div className="hidden md:flex w-full items-center justify-center border-t py-2 border-(--agenrap-gray-800)/50">
@@ -126,7 +126,7 @@ export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, o
                                 type="submit"
                                 variant="purplerap"
                                 disabled={!form.formState.isValid}
-                                className={`${!form.formState.isValid ? "cursor-not-allowed" : ""} flex justify-center w-[75%] items-center`}
+                                className={`${!form.formState.isValid ? "cursor-not-allowed" : ""} flex justify-center rounded-md w-[75%]  items-center`}
                             >
                                 {serviceIsPending ? (
                                     <div className="flex relative">
@@ -139,12 +139,12 @@ export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, o
                     </div>
                 </div>
 
-                <div className="md:hidden fixed bottom-10 left-0 right-0 z-20 px-4 py-3 bg-(--agenrap-brown-200) border-t border-(--agenrap-gray-800)/30">
+                <div className="md:hidden fixed bottom-10 left-0 right-0 z-20 px-4 py-3 bg-(--agenrap-brown-200) border-t pb-8 border-(--agenrap-gray-800)/30">
                     <AgenrapButton
                         type="submit"
                         variant="purplerap"
                         disabled={!form.formState.isValid}
-                        className={`${!form.formState.isValid ? "cursor-not-allowed opacity-50" : ""} flex justify-center w-full items-center`}
+                        className={`${!form.formState.isValid ? "cursor-not-allowed opacity-50" : ""} flex justify-center rounded-md  w-full items-center`}
                     >
                         {serviceIsPending ? (
                             <div className="flex relative">
