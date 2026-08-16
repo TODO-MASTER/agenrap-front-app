@@ -11,6 +11,7 @@ import {
     DeleteDayOff,
     DeleteTimeBlock,
 } from "@/src/features/business/services/range-turn.service"
+import { GetProfessionalWorkingPeriods } from "@/src/features/business/services"
 import { dateUtils } from "@/src/shared/utils/date.utils"
 import { toast } from "sonner"
 
@@ -23,11 +24,14 @@ import RangeTurnKindToggle from "@/src/features/business/components/ambience/ran
 import SubHeader from "@/src/shared/components/agenrap-ui/header/sub-header"
 import { timeBlockSchema } from "@/src/features/business/schemas"
 import { checkSubscriptionRequired, handleActionError } from "@/src/shared/lib/handle-action-error"
+import { WkCtx } from "@/src/shared/types"
 
 export type RangeTurnManagerProps = {
     tgrap: string
     initialKind: "day" | "time"
     initialMode: "new" | "list"
+    professionalId?: number | null
+    embedded?: boolean
 }
 type BlockKind = "day" | "time"
 type ViewMode = "new" | "list"
@@ -46,7 +50,7 @@ function expandDayOffRange(start: string, end: string): string[] {
     return days
 }
 
-export default function RangeTurnManager({ tgrap, initialKind, initialMode }: RangeTurnManagerProps) {
+export default function RangeTurnManager({ tgrap, initialKind, initialMode, professionalId = null, embedded = false }: RangeTurnManagerProps) {
     const router = useRouter()
     const searchParams = useSearchParams()
 
@@ -64,6 +68,7 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
     const [daysOffList, setDaysOffList] = useState<DayOffListItem[]>([])
     const [timeBlocksList, setTimeBlocksList] = useState<TimeBlockListItem[]>([])
     const [timeErrors, setTimeErrors] = useState<{ start?: string; end?: string }>({})
+    const [professionalWeeks, setProfessionalWeeks] = useState<WkCtx[] | null>(null)
 
     const blockedDays = useMemo(
         () => daysOffList.flatMap((d) => expandDayOffRange(d.start, d.end)),
@@ -71,6 +76,11 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
     )
 
     const updateQuery = (next: { kind?: BlockKind; mode?: ViewMode }) => {
+        if (embedded) {
+            if (next.kind) setBlockKindState(next.kind)
+            if (next.mode) setViewModeState(next.mode)
+            return
+        }
         const params = new URLSearchParams(searchParams.toString())
         if (next.kind) params.set("kind", next.kind)
         if (next.mode) params.set("mode", next.mode)
@@ -91,7 +101,10 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
     useEffect(() => {
         async function fetchInitialBlocks() {
             try {
-                const [daysRes, timesRes] = await Promise.all([GetDayOffs(tgrap), GetTimeBlocks(tgrap)])
+                const [daysRes, timesRes] = await Promise.all([
+                    GetDayOffs(tgrap, professionalId),
+                    GetTimeBlocks(tgrap, professionalId),
+                ])
                 if (daysRes?.data) setDaysOffList(daysRes.data as unknown as DayOffListItem[])
                 if (timesRes?.data) setTimeBlocksList(timesRes.data as unknown as TimeBlockListItem[])
             } catch {
@@ -99,7 +112,18 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
             }
         }
         fetchInitialBlocks()
-    }, [tgrap, blockKind])
+    }, [tgrap, blockKind, professionalId])
+
+    useEffect(() => {
+        if (professionalId == null) {
+            setProfessionalWeeks(null)
+            return
+        }
+        GetProfessionalWorkingPeriods(professionalId).then(res => {
+            const weeks = (res.data ?? []).map(w => ({ id: w.id ?? 0, week: w.week, initial: w.initial, end: w.end }))
+            setProfessionalWeeks(weeks)
+        })
+    }, [professionalId])
 
     const handleDeleteDayOff = async (id: number) => {
         try {
@@ -144,7 +168,7 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
                 }
 
                 const finalReason = reason || "Bloqueio de Agenda"
-                const response = await SaveDayOff(tgrap, { start: startString, end: endString, reason: finalReason })
+                const response = await SaveDayOff(tgrap, { start: startString, end: endString, reason: finalReason, professionalId })
 
                 if (checkSubscriptionRequired(response, router, tgrap)) return
 
@@ -173,7 +197,7 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
                 setTimeErrors({})
 
                 const finalReason = reason || "Bloqueio de horário"
-                const response = await SaveTimeBlock(tgrap, { start: timeStart, end: timeEnd, reason: finalReason })
+                const response = await SaveTimeBlock(tgrap, { start: timeStart, end: timeEnd, reason: finalReason, professionalId })
 
                 if (checkSubscriptionRequired(response, router, tgrap)) return
 
@@ -219,7 +243,7 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
     return (
         <main className="flex flex-col w-full h-full overflow-hidden">
             <SubHeader
-                title="Bloqueio de Turnos"
+                title={professionalId ? "Bloqueios do profissional" : "Bloqueio de Turnos"}
                 viewMode={viewMode}
                 modes={modes}
                 onModeChange={(key) => setViewMode(key as ViewMode)}
@@ -238,6 +262,8 @@ export default function RangeTurnManager({ tgrap, initialKind, initialMode }: Ra
                             range={range}
                             setRange={setRange}
                             blockedDays={blockedDays}
+                            professionalId={professionalId}
+                            professionalWeeks={professionalWeeks}
                         />
                     ) : (
                         <RangeTurnTimeEditor

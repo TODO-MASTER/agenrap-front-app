@@ -1,5 +1,5 @@
 import { Service } from "@/src/features/business/types"
-
+import { Professional } from "@/src/features/business/types/professional.types"
 
 export type WkCtx={
     id:number,
@@ -15,6 +15,7 @@ export type BusinessCtx = {
     name: string,
     services: Service[]
     weeks: WkCtx[]
+    professionals?: Professional[]
     mnrName?: string
     qtdServices?: number,
     haveAct?: boolean,

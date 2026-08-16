@@ -14,6 +14,12 @@ import { useCustomerActions } from "../../hooks/use-customer-actions";
 import { SlotRes } from "@/src/shared/types/slots.types";
 import SlotButton from "@/src/shared/components/agenrap-ui/button/slot-button";
 import { FeedbackButton } from "@/src/shared/components/agenrap-ui/button/feedback-button";
+import { Professional } from "@/src/features/business/types/professional.types";
+import { GetProfessionalsByService, } from "@/src/features/business/services/professional.service";
+import ProfessionalSelector from "@/src/features/customers/components/business-showcase/selector-professional";
+import { WkCtx } from "@/src/shared/types";
+import { GetProfessionalWorkingPeriodsForBooking } from "@/src/shared/services/working-period.service";
+
 
 type AppointmentItem = AppointmentCancelRes['data'][number]
 
@@ -33,6 +39,9 @@ export default function QuickSchedulingSection({ existingAppointment }: Props) {
     const [selectedSlot, setSelectedSlot] = useState<string | null>()
     const [fullDays, setFullDays] = useState<string[]>([])
     const [showBooking, setShowBooking] = useState(!existingAppointment)
+    const [professionals, setProfessionals] = useState<Professional[]>([])
+    const [selectedProfessionalId, setSelectedProfessionalId] = useState<number | null>(null)
+    const [professionalWeeks, setProfessionalWeeks] = useState<WkCtx[] | null>(null)
     const useSearchParam = useSearchParams()
     const router = useRouter()
 
@@ -40,31 +49,75 @@ export default function QuickSchedulingSection({ existingAppointment }: Props) {
     useEffect(() => {
         setShowBooking(!existingAppointment)
     }, [existingAppointment])
-useEffect(() => {
-    const handleGenerateSlots = async () => {
+
+    useEffect(() => {
         const svsId = useSearchParam.get("svs")
-        if (!svsId) {
-            setSlotError("Serviço não identificado, tente novamente")
+        if (!svsId) return
+        GetProfessionalsByService(Number(svsId)).then(res => {
+            const list = res.data ?? []
+            setProfessionals(list)
+            if (list.length === 1) setSelectedProfessionalId(list[0].id)
+        })
+    }, [useSearchParam])
+
+    useEffect(() => {
+        if (selectedProfessionalId == null) {
+            setProfessionalWeeks(null)
             return
         }
-        setSlotLoading(true)
-        setSlotError(null)
-        setSlots(null)
-        const res = await GenerateSlots(Number(svsId), dateUtils.toDateString(date!), dateUtils.getWeekDay(date!))
-        if (res.data == null) {
-            setSlotError(res.message || "Esse dia não está disponível para agendamento")
-        } else {
-            setSlots(res)
-        }
-        setSlotLoading(false)
-    }
-    if (date != null) handleGenerateSlots()
-    setSelectedSlot(null)
-}, [date])
+        setProfessionalWeeks(null)
+        setDate(undefined)
+        GetProfessionalWorkingPeriodsForBooking(selectedProfessionalId).then(res => {
+            const weeks = (res.data ?? []).map(w => ({ id: w.id ?? 0, week: w.week, initial: w.initial, end: w.end }))
+            setProfessionalWeeks(weeks)
+        })
+    }, [selectedProfessionalId])
 
-      useEffect(() => {
-        handleMonthChange(new Date(), setFullDays)
-      }, [date])
+    useEffect(() => {
+        const handleGenerateSlots = async () => {
+            const svsId = useSearchParam.get("svs")
+            if (!svsId) {
+                setSlotError("Serviço não identificado, tente novamente")
+                return
+            }
+            if (professionals.length > 0 && !selectedProfessionalId) {
+                return
+            }
+            setSlotLoading(true)
+            setSlotError(null)
+            setSlots(null)
+            const res = await GenerateSlots(Number(svsId), dateUtils.toDateString(date!), dateUtils.getWeekDay(date!), selectedProfessionalId ?? undefined)
+            if (res.data == null) {
+                setSlotError(res.message || "Esse dia não está disponível para agendamento")
+            } else {
+                setSlots(res)
+            }
+            setSlotLoading(false)
+        }
+        if (date != null) handleGenerateSlots()
+        setSelectedSlot(null)
+    }, [date, selectedProfessionalId])
+
+    useEffect(() => {
+        handleMonthChange(new Date(), setFullDays, undefined, Number(selectedProfessionalId))
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+        console.log(selectedProfessionalId)
+    }, [date, selectedProfessionalId])
 
     if (!showBooking && !business?.isOwner && existingAppointment) {
         const apptDate = dateUtils.fromDateString(existingAppointment.appointmentDate)
@@ -160,14 +213,39 @@ useEffect(() => {
                                   "
                                 />
             </div>
+
+            {professionals.length > 0 && (
+                <div className="px-4">
+                    <ProfessionalSelector
+                        professionals={professionals}
+                        selectedId={selectedProfessionalId}
+                        onSelect={setSelectedProfessionalId}
+                    />
+                </div>
+            )}
+
             <div className="flex md:flex-nowrap rounded-md p-2 flex-wrap gap-x-5 bg-(--agenrap-yellow-200)/50 gap-y-4 justify-center">
-                <AgenrapCalendar isOwner={business?.isOwner} fullDays={fullDays} setFullDays={setFullDays} business={business!} date={date} setDate={setDate} className="lg:w-[50%] w-full" />
+                <AgenrapCalendar
+                    isOwner={business?.isOwner}
+                    fullDays={fullDays}
+                    setFullDays={setFullDays}
+                    business={business!}
+                    date={date}
+                    setDate={setDate}
+                    className="lg:w-[50%] w-full"
+                    professionalId={selectedProfessionalId}
+                    professionalWeeks={professionalWeeks}
+                />
 
                 <div className="lg:w-[50%] w-full flex flex-col rounded-lg">
                     <div className="p-2 flex w-full rounded-t-md bg-(--agenrap-gray-800)">
                         <p className="font-tree font-medium text-2xl text-(--agenrap-yellow-200)">Horários disponiveis</p>
                     </div>
-{slotLoading
+{professionals.length > 0 && !selectedProfessionalId
+    ? <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
+        <p className="font-tree text-white text-center md:text-2xl text-lg">Escolha um profissional para ver os horários</p>
+    </div>
+    : slotLoading
     ? <div className="flex relative justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full h-full">
         <Image src={macroLogo} alt="" className="md:w-[80%] md:h-[80%] w-[50%] h-[50%] opacity-15 animate-pulse" />
         <LoaderCircle className="animate-spin absolute md:w-[80%] md:h-[80%] w-[50%] h-[50%]" color="#F5E6CC" />
@@ -202,7 +280,7 @@ useEffect(() => {
                 </div>
             </div>
 
-            <AgenrapButton onClick={() => handleSaveAppointment(dateUtils.toDateString(date!), selectedSlot!)} disabled={!date || !selectedSlot} className={`${!date || !selectedSlot ? "cursor-not-allowed opacity-50 hover:opacity-50" : ""} mt-5 rounded-md py-4`}>
+            <AgenrapButton onClick={() => handleSaveAppointment(dateUtils.toDateString(date!), selectedSlot!, selectedProfessionalId)} disabled={!date || !selectedSlot} className={`${!date || !selectedSlot ? "cursor-not-allowed opacity-50 hover:opacity-50" : ""} mt-5 rounded-md py-4`}>
                 {isSaveAppointmentPending
                     ? <div className="flex relative justify-center items-center">
                         <Image src={macroLogo} alt="" className="w-10 h-10 opacity-15 animate-pulse" />

@@ -1,11 +1,23 @@
 import { z } from "zod";
 export const initialBusinessServiceSchema = z.object({
     business: z.object({
-        occupations: z.array(z.object({
-            name: z.string().max(50, "encurte o nome do serviço se possivel"),
-            duration: z.string().max(5, "tamanho não suportado!"),
-            price: z.string().min(2, "minimo 2 caracteres"),
-        })).min(1, "pelo menos dois serviço"),
+occupations: z.array(
+  z.object({
+    name: z.string().min(1),
+    duration: z.string().min(1),
+    price: z.string().min(1),
+    assignToMe: z.boolean().default(true), // default true = UX amigável
+  })
+).min(1, "Adicione pelo menos um serviço")
+.superRefine((occupations, ctx) => {
+  if (!occupations.some(o => o.assignToMe)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Selecione pelo menos um serviço que você atende",
+      path: [], // erro no array
+    })
+  }
+}),
         staging: z.object({
             name: z.string().min(3, "Mínimo 3 caracteres").max(40,"Máximo de 40 caracteres").or(z.literal("")),
             price: z.string().min(2, "minimo 2 caracteres!").or(z.literal("")),

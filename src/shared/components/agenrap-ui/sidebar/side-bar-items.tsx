@@ -33,6 +33,13 @@ export const SidebarItems: {
       icon: LayoutDashboard,
       iconClass: "text-(--agenrap-purple-500)",
     },
+       {
+          title: "Profissionais",
+          url: "/dashboard/professionals",
+          icon: UsersRound,
+          iconClass: "text-(--agenrap-purple-500)",
+          activeFor: ["/dashboard/professionals"],
+        },
             {
           title: "Serviços",
           url: "/dashboard/service",
@@ -66,6 +73,7 @@ export const SidebarItems: {
           iconClass: "text-(--agenrap-purple-500)",
           activeFor: ["/dashboard/blocks"],
         },
+        
   ],
   navMain: [
     // {

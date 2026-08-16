@@ -65,7 +65,7 @@ export function useCustomerActions() {
 
     })
   }
-    const handleSaveAppointment = async (date:string,hour:string) => {
+    const handleSaveAppointment = async (date:string,hour:string,professionalId?:number|null) => {
     
 
     startSaveAppointment(async () => {
@@ -77,7 +77,7 @@ export function useCustomerActions() {
           hour:hour
         } 
 
-        const targetBuinessWithServices = await saveAppointment(mountAppointmentBody,serviceId!,null)
+        const targetBuinessWithServices = await saveAppointment(mountAppointmentBody,serviceId!,null,undefined,professionalId)
 
         if (targetBuinessWithServices.data == null) {
           toast.error(targetBuinessWithServices.message || "Algo deu errado, tente mais tarde!")
@@ -96,11 +96,11 @@ export function useCustomerActions() {
 
     })
   }
-const handleMonthChange = async (month: Date, setFullDays: Dispatch<SetStateAction<string[]>>, overrideServiceId?: number) => {
+const handleMonthChange = async (month: Date, setFullDays: Dispatch<SetStateAction<string[]>>, overrideServiceId?: number, professionalId?: number | null) => {
     const id = overrideServiceId ?? serviceId
     if (id == null) return
     startBookedDaysTransition(async () => {
-        const bookedDays = await GetFullDays(Number(id), month.getMonth() + 1, month.getFullYear())
+        const bookedDays = await GetFullDays(Number(id), month.getMonth() + 1, month.getFullYear(), professionalId)
         setFullDays(bookedDays.data.days)
     })
 }

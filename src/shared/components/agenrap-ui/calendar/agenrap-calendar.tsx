@@ -7,7 +7,7 @@ import { dateUtils } from "@/src/shared/utils/date.utils"
 import { cn } from "@/src/shared/lib/utils"
 import { getDefaultClassNames, DateRange } from "react-day-picker"
 import { useCustomerActions } from "@/src/features/customers/hooks/use-customer-actions"
-import { BusinessCtx } from "@/src/shared/types"
+import { BusinessCtx, WkCtx } from "@/src/shared/types"
 
 export type AgenrapCalendarProps = {
     business: BusinessCtx
@@ -20,6 +20,8 @@ export type AgenrapCalendarProps = {
     setDate?: Dispatch<SetStateAction<Date | undefined>>
     range?: DateRange
     setRange?: Dispatch<SetStateAction<DateRange | undefined>>
+    professionalId?: number | null
+    professionalWeeks?: WkCtx[] | null
 }
 
 export default function AgenrapCalendar({
@@ -33,8 +35,12 @@ export default function AgenrapCalendar({
     setDate,
     range,
     setRange,
+    professionalId,
+    professionalWeeks,
 }: AgenrapCalendarProps) {
     const { handleMonthChange } = useCustomerActions()
+
+    const activeWeeks = professionalId != null ? (professionalWeeks ?? []) : (business?.weeks ?? [])
 
     return (
         <Calendar
@@ -44,7 +50,7 @@ export default function AgenrapCalendar({
                 className
             )}
             onMonthChange={setFullDays
-                ? (month) => handleMonthChange(month, setFullDays)
+                ? (month) => handleMonthChange(month, setFullDays, undefined, professionalId)
                 : undefined
             }
             mode={selectionMode as any}
@@ -58,7 +64,9 @@ export default function AgenrapCalendar({
 
                 if (day < today) return true
 
-                const isWorkingDay = business?.weeks?.some(
+                if (professionalId != null && !professionalWeeks) return true
+
+                const isWorkingDay = activeWeeks.some(
                     (wk) => day.getDay() === dateUtils.getWeekNumber(wk.week)
                 )
                 if (!isWorkingDay) return true

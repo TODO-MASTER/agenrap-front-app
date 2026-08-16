@@ -5,6 +5,7 @@ import { DateRange } from "react-day-picker"
 import AgenrapCalendar from "@/src/shared/components/agenrap-ui/calendar/agenrap-calendar"
 import { useBusinessStore } from "@/src/shared/store/use-business.store"
 import { Dispatch, SetStateAction } from "react"
+import { WkCtx } from "@/src/shared/types"
 
 type Props = {
     selectionMode: "single" | "range"
@@ -14,6 +15,8 @@ type Props = {
     range: DateRange | undefined
     setRange: Dispatch<SetStateAction<DateRange | undefined>>
     blockedDays?: string[]
+    professionalId?: number | null
+    professionalWeeks?: WkCtx[] | null
 }
 
 export default function RangeTurnDayEditor({
@@ -24,6 +27,8 @@ export default function RangeTurnDayEditor({
     range,
     setRange,
     blockedDays = [],
+    professionalId = null,
+    professionalWeeks = null,
 }: Props) {
     const business = useBusinessStore((bsn) => bsn.business)
 
@@ -66,6 +71,8 @@ export default function RangeTurnDayEditor({
                     fullDays={blockedDays}
                     setFullDays={() => {}}
                     isOwner={true}
+                    professionalId={professionalId}
+                    professionalWeeks={professionalWeeks}
                 />
             </div>
         </div>

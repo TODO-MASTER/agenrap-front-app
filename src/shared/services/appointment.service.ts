@@ -8,25 +8,31 @@ export async function saveAppointment(
     values: AppointmentReq,
     serviceId: string,
     customerId: number | null,
-    guestCustomerId: number | null = null
+    guestCustomerId: number | null = null,
+    professionalId?: number | null
 ) {
     let path = 'appointment/save'
     if (guestCustomerId != null) path = `appointment/save/guest/${guestCustomerId}`
     else if (customerId != null) path = `appointment/save/customer/${customerId}`
+
+    const params = new URLSearchParams({ serviceId })
+    if (professionalId != null) params.append('professionalId', professionalId.toString())
 
     return await serverAction<{
   id: number
   name: string
   date: string
   hour: string
-}>(`${path}?serviceId=${serviceId}`, {
+}>(`${path}?${params}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values)
     })
 }
-export async function GetFullDays(serviceId: number, month: number, year: number) {
-    const res = await serverFetch<BookedDaysRes>(`appointment/full-days?serviceId=${serviceId}&month=${month}&year=${year}`, {
+export async function GetFullDays(serviceId: number, month: number, year: number, professionalId?: number | null) {
+    const params = new URLSearchParams({ serviceId: serviceId.toString(), month: month.toString(), year: year.toString() })
+    if (professionalId != null) params.append('professionalId', professionalId.toString())
+    const res = await serverFetch<BookedDaysRes>(`appointment/full-days?${params}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
     });

@@ -8,12 +8,12 @@ export type WeekStringType = "SEG" | "TER" | "QUA" | "QUI" | "SEX" | "SAB" | "DO
       
 
 
-export async function GenerateSlots(serviceId:number,date:string,week:WeekStringType){
-          const res = await serverAction<{slots:SlotItem[] , bookedSlots?: string[]}>(`appointment/slots/generate?serviceId=${serviceId}&date=${date}&week=${week}`, {
+export async function GenerateSlots(serviceId:number,date:string,week:WeekStringType,professionalId?:number){
+          const params = new URLSearchParams({ serviceId: serviceId.toString(), date, week })
+          if (professionalId != null) params.append('professionalId', professionalId.toString())
+          const res = await serverAction<{slots:SlotItem[] , bookedSlots?: string[]}>(`appointment/slots/generate?${params}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
       return res
 }
-
-

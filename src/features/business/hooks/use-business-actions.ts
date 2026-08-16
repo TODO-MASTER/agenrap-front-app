@@ -21,6 +21,7 @@ import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
 import { useSectionParams } from "@/src/shared/hooks/use-section-params";
 import { SubscriptionRequiredError } from "@/src/shared/utils/errors";
 import { checkSubscriptionRequired, handleActionError } from "@/src/shared/lib/handle-action-error";
+import { CreateServiceReq } from "@/src/features/business/types";
 export function useBusinessActions() {
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition();
@@ -100,44 +101,55 @@ function handleUpdateBusinessNameAction(values: EditBusinessNameSchema, onSucces
       }
     });
   }
-  function handleCreateANewServiceAction(values: InitialBusinessServiceSchema,onSuccess?:()=>void) {
-    const atSign = searchParams.get("rap")
+function handleCreateANewServiceAction(
+  values: InitialBusinessServiceSchema,
+  onSuccess?: () => void
+) {
+  const atSign = searchParams.get("rap")
 
-    let bodyServiceMount = {
-      services: values.business.occupations.map(wkp => {
-        let durationMount = timeUtils.toHourString(Number(wkp.duration))
-        let priceMount = currencyUtils.toCents(currencyUtils.toNumber(wkp.price))
+  const occupations = values.business.occupations
+  const assignToOwnerIndexes = occupations
+    .map((oc, idx) => (oc.assignToMe ? idx : -1))
+    .filter((i) => i >= 0)
 
-        return {
-          name: wkp.name,
-          duration: durationMount,
-          value: priceMount
-        }
-      })
-    }
-    startTransition(async () => {
-      try {
-        if (!atSign) {
-          router.push("/login")
-        } else {
-          const data = await CreateANewService(bodyServiceMount, atSign);
-                 if (checkSubscriptionRequired(data, router, atSign)) return
-          toast.success(data.message || 'serviços cadastrados!');
-          if (usePathName.startsWith("/dashboard/service")) {
-              onSuccess?.()
-          } else {
-            if (!data.data!.alreadyInitial) {
-              router.push(`/business/hours?rap=${formatPublicHandle(atSign)}`)
-            } else {
-              router.push(`/dashboard?rap=${formatPublicHandle(atSign)}`)
-            }
-          }
-        }
-      } catch (e) {
-      handleActionError(e, router, atSign, 'Erro ao tentar criar serviços')
-}
-    });
+  if (assignToOwnerIndexes.length === 0) {
+    toast.error("Selecione pelo menos um serviço que você atende")
+    return
   }
+
+  const bodyServiceMount: CreateServiceReq = {
+    services: occupations.map((oc) => ({
+      name: oc.name,
+      duration: timeUtils.toHourString(Number(oc.duration)),
+      value: currencyUtils.toCents(currencyUtils.toNumber(oc.price)),
+    })),
+    assignToOwnerIndexes,
+  }
+
+  startTransition(async () => {
+    try {
+      if (!atSign) {
+        router.push("/login")
+        return
+      }
+      const data = await CreateANewService(bodyServiceMount, atSign)
+      if (checkSubscriptionRequired(data, router, atSign)) return
+      toast.success(data.message || "serviços cadastrados!")
+
+      if (usePathName.startsWith("/dashboard/service")) {
+        onSuccess?.()
+      } else {
+        if (!data.data!.alreadyInitial) {
+          router.push(`/business/hours?rap=${formatPublicHandle(atSign)}`)
+        } else {
+          router.push(`/dashboard?rap=${formatPublicHandle(atSign)}`)
+        }
+      }
+    } catch (e) {
+      handleActionError(e, router, atSign, "Erro ao tentar criar serviços")
+    }
+  })
+}
   function handleEditServiceAction(values: EditBusinessServiceSchema, setOpenEdit: Dispatch<SetStateAction<boolean>>) {
     const atSign = searchParams.get("rap")
 
