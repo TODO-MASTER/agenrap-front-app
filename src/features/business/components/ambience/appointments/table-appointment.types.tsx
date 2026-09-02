@@ -87,6 +87,15 @@ export const columns: ColumnDef<AppointmentFull>[] = [
     ),
   },
   {
+  accessorKey: "professionalName",
+  header: "Profissional",
+  cell: ({ row }) => (
+    <span className="font-tree text-sm truncate max-w-[120px] block">
+      {row.original.professionalName ?? "Sem profissional"}
+    </span>
+  ),
+},
+  {
     accessorKey: "appointmentDate",
     header: "Data",
     cell: ({ row }) => (

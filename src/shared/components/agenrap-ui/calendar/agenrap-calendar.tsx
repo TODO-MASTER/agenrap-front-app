@@ -49,10 +49,17 @@ export default function AgenrapCalendar({
                 "w-full rounded-md border font-tree border-[#FFE082]/50 bg-(--agenrap-gray-800) text-white",
                 className
             )}
-            onMonthChange={setFullDays
-                ? (month) => handleMonthChange(month, setFullDays, undefined, professionalId)
-                : undefined
-            }
+        onMonthChange={
+  setFullDays
+    ? (month) => {
+        if (professionalId == null || professionalId <= 0) {
+          setFullDays([])
+          return
+        }
+        handleMonthChange(month, setFullDays, undefined, professionalId)
+      }
+    : undefined
+}
             mode={selectionMode as any}
             {...(selectionMode === "range"
                 ? { selected: range, onSelect: setRange }

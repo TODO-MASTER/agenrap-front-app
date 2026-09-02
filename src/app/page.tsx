@@ -17,10 +17,10 @@ import {
   ArrowRight,
   Check,
   Link2,
-  Bell,
   Clock,
   Ban,
   Flame,
+  Users,
 } from "lucide-react";
 import { ScrollHint } from "@/src/features/customers/components/service-showcase/showcase-section/scroll-hint";
 
@@ -121,7 +121,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="mt-2 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          <div className="mt-2 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center">
             <Link
               href="/register?cmd=N"
               className="flex items-center justify-center gap-2 rounded-md bg-(--agenrap-purple-500) px-8 py-3.5 font-tree font-bold text-white transition-colors hover:bg-(--agenrap-purple-500)/85"
@@ -135,13 +135,23 @@ export default function LandingPage() {
             >
               Sou cliente, quero agendar
             </Link>
+            <Link
+              href="/login?team=1"
+              className="flex items-center justify-center gap-2 rounded-md border border-(--agenrap-yellow-200)/25 bg-white/5 px-8 py-3.5 font-tree font-semibold text-(--agenrap-yellow-200) transition-colors hover:bg-white/10"
+            >
+              <Users size={18} />
+              Faço parte de uma equipe
+            </Link>
           </div>
-          <div className="flex gap-x-1 items-center">
 
-          <p className="font-tree text-lg text-white/35">
-            Teste 14 dias de graça
+          <p className="max-w-sm font-tree text-xs text-white/40">
+            Convidado pelo salão? Entre com o mesmo e-mail que cadastraram para você.
+            As equipes aparecem depois do login.
           </p>
-          <Flame size={44} fill="#F59E0B" />
+
+          <div className="flex gap-x-1 items-center">
+            <p className="font-tree text-lg text-white/35">Teste 14 dias de graça</p>
+            <Flame size={44} fill="#F59E0B" />
           </div>
 
           <p className="font-tree text-sm text-white/50">

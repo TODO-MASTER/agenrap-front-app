@@ -120,6 +120,7 @@ export default function TableAppointmentSection({ businessId, appointments, hasN
                   <div className="flex flex-col gap-y-3 mb-5">
                     {([
                       ['Serviço', row.serviceName],
+                      ['Profissional', row.professionalName ?? "sem profissional"],
                       ['Data', formatDate(row.appointmentDate)],
                       ['Horário', formatHour(row.appointmentHour)],
                       ['Valor', currencyUtils.fromCents(row.serviceValue)],
@@ -290,6 +291,7 @@ export default function TableAppointmentSection({ businessId, appointments, hasN
                 ['Serviço', selectedAppointment.serviceName],
                 ['Data', formatDate(selectedAppointment.appointmentDate)],
                 ['Horário', formatHour(selectedAppointment.appointmentHour)],
+                ['Profissional', selectedAppointment.professionalName ?? "Sem profissional"],
                 ['Valor', currencyUtils.fromCents(selectedAppointment.serviceValue)],
               ] as [string, string][]).map(([label, value]) => (
                 <div key={label} className="flex justify-between items-center">

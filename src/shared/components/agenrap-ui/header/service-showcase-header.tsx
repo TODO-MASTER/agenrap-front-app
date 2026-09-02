@@ -16,7 +16,7 @@ export default function ServiceShowcaseHeader({ name }: { name: string }) {
 
                     <div className="space-y-1.5 text-left z-10">
                         <p className="font-tree text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-(--agenrap-pure-white)">
-                            Olá, sou {name}!
+                            Agenda de {name}
                         </p>
                         <p className="text-(--agenrap-brown-200) text-sm md:text-base font-medium opacity-90">
                             Escolha um serviço abaixo para agendar seu horário.
@@ -49,17 +49,11 @@ export default function ServiceShowcaseHeader({ name }: { name: string }) {
                         <span>Voltar para agendas</span>
                     </AgenrapButton>
                 </div>
-             
-
             </div>
-                              <div className="
-                                           flex
-                                          fixed bottom-6 left-6 z-50
-                                        ">
-                                            <LogoutButton  />
-                                          
-                                        </div>
-                                              <div className="pt-2 pb-2 fixed z-40 right-[5%] top-[15%] md:top-[50%]  ">
+            <div className="flex fixed bottom-6 left-6 z-50">
+                <LogoutButton />
+            </div>
+            <div className="pt-2 pb-2 fixed z-40 right-[5%] top-[15%] md:top-[50%]">
                 <ScrollHint targetId="meus-servicos" />
             </div>
         </header>

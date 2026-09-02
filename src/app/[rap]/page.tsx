@@ -44,7 +44,7 @@ export default async function ServiceScheduleServicePage({ params }: { params: P
     return (
         <>
             <BusinessInitializer data={targetBusinessWithServices} />
-            <ServiceShowcaseHeader name={targetBusinessWithServices.mnrName ?? ""} />
+            <ServiceShowcaseHeader name={targetBusinessWithServices.name ?? targetBusinessWithServices.mnrName ?? ""} />
 
             <OnlineCalendarSection />
             {!targetBusinessWithServices.isOpenToday && (

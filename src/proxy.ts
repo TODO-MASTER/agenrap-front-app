@@ -57,9 +57,10 @@ async function tryRefresh(
 }
 
 export async function proxy(request: NextRequest) {
-  const token = request.cookies.get('token')?.value;
+ const token = request.cookies.get('token')?.value;
   const refreshToken = request.cookies.get('refreshToken')?.value;
   const pathname = request.nextUrl.pathname;
+  const isServerActionCall = request.headers.has('next-action');
 
   const isPublic = isPublicRoute(pathname);
   const isCustomerRoute = pathname.startsWith('/@');
@@ -68,7 +69,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/business') ||
     pathname.startsWith('/appointments') ||
     pathname.startsWith('/schedule') ||
-        pathname.startsWith('/feedback');
+    pathname.startsWith('/feedback');
 
   // ========== ROTAS PROTEGIDAS ==========
   if (isProtected) {
@@ -116,7 +117,9 @@ export async function proxy(request: NextRequest) {
   }
 
   // ========== USUÁRIO LOGADO TENTANDO ACESSAR ROTA PÚBLICA ==========
-  if (isPublic && token && !isTokenExpired(token)) {
+  // Ignora esse redirect quando a requisição é uma Server Action
+  // (ex: chamadas feitas logo após o login, ainda na página /login)
+  if (isPublic && token && !isTokenExpired(token) && !isServerActionCall) {
     if (pathname.includes('verify')) return NextResponse.next();
 
     const role = getUserRole(token);

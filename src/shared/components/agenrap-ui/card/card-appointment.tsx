@@ -1,5 +1,7 @@
 import { dateUtils } from "@/src/shared/utils/date.utils"
 import { AppointmentCancelRes } from "@/src/shared/types/appointment.types"
+import ProfessionalAvatar from "@/src/shared/components/professional-avatar"
+import { maskPhone } from "@/src/shared/utils/formatters.utils"
 
 type AppointmentItem = AppointmentCancelRes['data'][number]
 
@@ -40,6 +42,27 @@ export default function CardAppointment({ ap, onSelect }: Props) {
           <span className="text-gray-600">·</span>
           <span className="text-gray-400">{ap.serviceDuration}</span>
         </div>
+
+        {/* Profissional */}
+        {ap.professionalName && (
+          <div className="flex items-center gap-2 mt-1.5">
+            <ProfessionalAvatar
+              name={ap.professionalName}
+              color={ap.professionalAvatarColor ?? "slate"}
+              size="sm"
+            />
+            <div className="flex flex-col min-w-0 bg-(--agenrap-brown-500)/15 rounded-md p-2">
+              <span className="text-sm font-semibold text-white/90 truncate">
+                {ap.professionalName}
+              </span>
+              {ap.professionalTelephone && (
+                <span className="text-xs text-white truncate">
+                        {ap.professionalTelephone?.trim() ? maskPhone(ap.professionalTelephone) : 'Sem telefone'}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center px-3 sm:px-4 shrink-0">

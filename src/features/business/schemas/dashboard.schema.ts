@@ -1,23 +1,15 @@
-import { z } from "zod";
-export const initialBusinessServiceSchema = z.object({
+import { z } from "zod"
+
+export const dashboardBusinessServiceSchema = z.object({
     business: z.object({
-occupations: z.array(
-  z.object({
-    name: z.string().min(1),
-    duration: z.string().min(1),
-    price: z.string().min(1),
-    assignToMe: z.boolean().default(false), // default true = UX amigável
-  })
-).min(1, "Adicione pelo menos um serviço")
-.superRefine((occupations, ctx) => {
-  if (!occupations.some(o => o.assignToMe)) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Selecione pelo menos um serviço que você atende",
-      path: [], // erro no array
-    })
-  }
-}),
+        occupations: z.array(
+            z.object({
+                name: z.string().min(1),
+                duration: z.string().min(1),
+                price: z.string().min(1),
+                assignToMe: z.boolean().default(false),
+            })
+        ).min(1, "Adicione pelo menos um serviço"),
         staging: z.object({
             name: z.string().min(3, "Mínimo 3 caracteres").max(40,"Máximo de 40 caracteres").or(z.literal("")),
             price: z.string().min(2, "minimo 2 caracteres!").or(z.literal("")),
@@ -44,14 +36,4 @@ occupations: z.array(
     })
 })
 
-
-
-
-export const editBusinessServiceSchema = z.object({
-    name: z.string().min(3, "Mínimo 3 caracteres").max(40, "Máximo de 40 caracteres"),
-    duration: z.string().max(5, "tamanho não suportado!"),
-    price: z.string().min(2, "minimo 2 caracteres"),
-})
-
-export type EditBusinessServiceSchema = z.infer<typeof editBusinessServiceSchema>
-export type InitialBusinessServiceSchema = z.infer<typeof initialBusinessServiceSchema>
+export type DashboardBusinessServiceSchema = z.infer<typeof dashboardBusinessServiceSchema>

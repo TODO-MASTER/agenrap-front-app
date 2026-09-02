@@ -9,9 +9,10 @@ export type BusinessCustomer = {
     email: string | null
     lastAppointment: string | null
     lastServiceName: string | null
+    lastProfessionalName: string | null
     totalAppointments: number
     totalSpent: number
     isRegistered: boolean
     possibleDuplicate?: boolean
-    mergeTargetCustomerIds: number[] 
+    mergeTargetCustomerIds: number[]
 }

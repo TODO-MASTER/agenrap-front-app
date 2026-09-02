@@ -1,294 +1,427 @@
 'use client'
-import { macroLogo } from "@/src/assets/images";
-import AgenrapButton from "@/src/shared/components/agenrap-ui/button/agenrap-button";
-import AgenrapCalendar from "@/src/shared/components/agenrap-ui/calendar/agenrap-calendar";
-import { GenerateSlots } from "@/src/shared/services/slot.service";
-import { useBusinessStore } from "@/src/shared/store/use-business.store";
-import { dateUtils } from "@/src/shared/utils/date.utils";
-import { AppointmentCancelRes } from "@/src/shared/types/appointment.types";
-import { CalendarClockIcon, CalendarX2, LoaderCircle, RotateCcw } from "lucide-react";
-import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useCustomerActions } from "../../hooks/use-customer-actions";
-import { SlotRes } from "@/src/shared/types/slots.types";
-import SlotButton from "@/src/shared/components/agenrap-ui/button/slot-button";
-import { FeedbackButton } from "@/src/shared/components/agenrap-ui/button/feedback-button";
-import { Professional } from "@/src/features/business/types/professional.types";
-import { GetProfessionalsByService, } from "@/src/features/business/services/professional.service";
-import ProfessionalSelector from "@/src/features/customers/components/business-showcase/selector-professional";
-import { WkCtx } from "@/src/shared/types";
-import { GetProfessionalWorkingPeriodsForBooking } from "@/src/shared/services/working-period.service";
+import { macroLogo } from "@/src/assets/images"
+import AgenrapButton from "@/src/shared/components/agenrap-ui/button/agenrap-button"
+import AgenrapCalendar from "@/src/shared/components/agenrap-ui/calendar/agenrap-calendar"
+import { GenerateSlots } from "@/src/shared/services/slot.service"
+import { useBusinessStore } from "@/src/shared/store/use-business.store"
+import { dateUtils } from "@/src/shared/utils/date.utils"
+import { AppointmentCancelRes } from "@/src/shared/types/appointment.types"
+import { CalendarClockIcon, CalendarX2, LoaderCircle, RotateCcw } from "lucide-react"
+import Image from "next/image"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useCustomerActions } from "../../hooks/use-customer-actions"
+import { SlotRes } from "@/src/shared/types/slots.types"
+import SlotButton from "@/src/shared/components/agenrap-ui/button/slot-button"
+import { FeedbackButton } from "@/src/shared/components/agenrap-ui/button/feedback-button"
+import { Professional } from "@/src/features/business/types/professional.types"
+import { GetProfessionalsByService } from "@/src/features/business/services/professional.service"
+import ProfessionalSelector from "@/src/features/customers/components/business-showcase/selector-professional"
+import { WkCtx } from "@/src/shared/types"
+import { GetProfessionalWorkingPeriodsForBooking } from "@/src/shared/services/working-period.service"
+import ProfessionalAvatar from "@/src/shared/components/professional-avatar"
+import { maskPhone } from "@/src/shared/utils/formatters.utils"
 
-
-type AppointmentItem = AppointmentCancelRes['data'][number]
+type AppointmentItem = AppointmentCancelRes["data"][number]
 
 const MONTHS = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
 
 type Props = {
-    existingAppointment: AppointmentItem | null
+  existingAppointment: AppointmentItem | null
 }
 
 export default function QuickSchedulingSection({ existingAppointment }: Props) {
-    const { handleSaveAppointment, isSaveAppointmentPending, handleMonthChange, handleCancelAppointmentAction, isStartCancelApptTransition } = useCustomerActions()
-    const business = useBusinessStore(bsnCtx => bsnCtx.business)
-    const [date, setDate] = useState<Date | undefined>()
-    const [slots, setSlots] = useState<SlotRes | null>(null)
-    const [slotError, setSlotError] = useState<string | null>(null)
-    const [slotLoading, setSlotLoading] = useState<boolean>(false)
-    const [selectedSlot, setSelectedSlot] = useState<string | null>()
-    const [fullDays, setFullDays] = useState<string[]>([])
-    const [showBooking, setShowBooking] = useState(!existingAppointment)
-    const [professionals, setProfessionals] = useState<Professional[]>([])
-    const [selectedProfessionalId, setSelectedProfessionalId] = useState<number | null>(null)
-    const [professionalWeeks, setProfessionalWeeks] = useState<WkCtx[] | null>(null)
-    const useSearchParam = useSearchParams()
-    const router = useRouter()
+  const {
+    handleSaveAppointment,
+    isSaveAppointmentPending,
+    handleMonthChange,
+    handleCancelAppointmentAction,
+    isStartCancelApptTransition,
+  } = useCustomerActions()
+  const business = useBusinessStore((bsnCtx) => bsnCtx.business)
+  const [date, setDate] = useState<Date | undefined>()
+  const [slots, setSlots] = useState<SlotRes | null>(null)
+  const [slotError, setSlotError] = useState<string | null>(null)
+  const [slotLoading, setSlotLoading] = useState(false)
+  const [selectedSlot, setSelectedSlot] = useState<string | null>()
+  const [fullDays, setFullDays] = useState<string[]>([])
+  const [showBooking, setShowBooking] = useState(!existingAppointment)
+  const [professionals, setProfessionals] = useState<Professional[]>([])
+  const [selectedProfessionalId, setSelectedProfessionalId] = useState<number | null>(null)
+  const [professionalWeeks, setProfessionalWeeks] = useState<WkCtx[] | null>(null)
+  const searchParams = useSearchParams()
+  const router = useRouter()
 
+  const needsProfessional = professionals.length > 0
+  const hasValidProfessional =
+    selectedProfessionalId != null && selectedProfessionalId > 0
 
-    useEffect(() => {
-        setShowBooking(!existingAppointment)
-    }, [existingAppointment])
+  useEffect(() => {
+    setShowBooking(!existingAppointment)
+  }, [existingAppointment])
 
-    useEffect(() => {
-        const svsId = useSearchParam.get("svs")
-        if (!svsId) return
-        GetProfessionalsByService(Number(svsId)).then(res => {
-            const list = res.data ?? []
-            setProfessionals(list)
-            if (list.length === 1) setSelectedProfessionalId(list[0].id)
-        })
-    }, [useSearchParam])
+  useEffect(() => {
+    const svsId = searchParams.get("svs")
+    if (!svsId) return
+    GetProfessionalsByService(Number(svsId)).then((res) => {
+      const list = res.data ?? []
+      setProfessionals(list)
+      setSelectedProfessionalId((prev) => {
+        if (prev != null && list.some((p) => p.id === prev)) return prev
+        const fromAppt = (existingAppointment as { professionalId?: number } | null)
+          ?.professionalId
+        if (fromAppt && list.some((p) => p.id === fromAppt)) return fromAppt
+        if (list.length === 1) return list[0].id
+        return null
+      })
+    })
+  }, [searchParams, existingAppointment])
 
-    useEffect(() => {
-        if (selectedProfessionalId == null) {
-            setProfessionalWeeks(null)
-            return
-        }
-        setProfessionalWeeks(null)
-        setDate(undefined)
-        GetProfessionalWorkingPeriodsForBooking(selectedProfessionalId).then(res => {
-            const weeks = (res.data ?? []).map(w => ({ id: w.id ?? 0, week: w.week, initial: w.initial, end: w.end }))
-            setProfessionalWeeks(weeks)
-        })
-    }, [selectedProfessionalId])
+useEffect(() => {
+  setDate(undefined)
+  setSlots(null)
+  setSelectedSlot(null)
+  setSlotError(null)
+  setFullDays([])
+  setProfessionalWeeks(null)
 
-    useEffect(() => {
-        const handleGenerateSlots = async () => {
-            const svsId = useSearchParam.get("svs")
-            if (!svsId) {
-                setSlotError("Serviço não identificado, tente novamente")
-                return
-            }
-            if (professionals.length > 0 && !selectedProfessionalId) {
-                return
-            }
-            setSlotLoading(true)
-            setSlotError(null)
-            setSlots(null)
-            const res = await GenerateSlots(Number(svsId), dateUtils.toDateString(date!), dateUtils.getWeekDay(date!), selectedProfessionalId ?? undefined)
-            if (res.data == null) {
-                setSlotError(res.message || "Esse dia não está disponível para agendamento")
-            } else {
-                setSlots(res)
-            }
-            setSlotLoading(false)
-        }
-        if (date != null) handleGenerateSlots()
-        setSelectedSlot(null)
-    }, [date, selectedProfessionalId])
+  if (!hasValidProfessional) return
 
-    useEffect(() => {
-        handleMonthChange(new Date(), setFullDays, undefined, Number(selectedProfessionalId))
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-        console.log(selectedProfessionalId)
-    }, [date, selectedProfessionalId])
+  GetProfessionalWorkingPeriodsForBooking(selectedProfessionalId!).then((res) => {
+    const weeks = (res.data ?? []).map((w) => ({
+      id: w.id ?? 0,
+      week: w.week,
+      initial: w.initial,
+      end: w.end,
+    }))
+    setProfessionalWeeks(weeks)
+  })
+}, [selectedProfessionalId, hasValidProfessional])
 
-    if (!showBooking && !business?.isOwner && existingAppointment) {
-        const apptDate = dateUtils.fromDateString(existingAppointment.appointmentDate)
-        const day = apptDate.getDate()
-        const month = MONTHS[apptDate.getMonth()]
-        const hour = existingAppointment.appointmentHour.slice(0, 5)
-        const price = (existingAppointment.serviceValue / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+useEffect(() => {
+  if (date == null) return
+  if (needsProfessional && !hasValidProfessional) return
+  if (needsProfessional && professionalWeeks == null) return
 
-        return (
-            <section className="flex flex-col gap-y-3 mt-2">
-                <div className="flex gap-x-2 items-center px-1 py-2 border-b border-(--agenrap-brown-500)/15 mb-1">
-                    <CalendarX2 size={28} className="text-(--agenrap-brown-500)" />
-                    <p className="font-tree font-bold text-3xl text-black">Reagendamento</p>
-                </div>
+  let cancelled = false
 
-                <div className="flex flex-col rounded-xl overflow-hidden shadow-lg shadow-black/10 border border-(--agenrap-brown-500)/15">
-                    <div className="bg-(--agenrap-brown-500) px-5 py-3 flex items-center gap-2.5">
-                        <span className="w-[3px] h-4 rounded-full bg-(--agenrap-yellow-200) shrink-0" />
-                        <p className="font-tree font-semibold text-white text-xs tracking-widest uppercase">Agendamento ativo</p>
-                    </div>
-
-                    <div className="bg-white p-4 flex flex-col gap-3">
-                        <div className="flex items-stretch rounded-xl overflow-hidden bg-(--agenrap-gray-800) border border-white/5">
-                            <div className="w-1.5 shrink-0" style={{ background: 'linear-gradient(to bottom, #FFE082, #C46210)' }} />
-
-                            <div className="flex flex-col items-center justify-center px-5 py-4 border-r border-white/5 min-w-[5rem]">
-                                <span className="text-[9px] font-black tracking-[0.35em] text-(--agenrap-yellow-200) uppercase">{month}</span>
-                                <span className="text-[2.5rem] font-black leading-none text-white mt-0.5">{day}</span>
-                                <span className="text-[9px] tracking-widest font-bold mt-1 text-gray-500 uppercase">{existingAppointment.workingPeriodWeek}</span>
-                            </div>
-
-                            <div className="flex flex-col justify-center gap-1.5 px-4 py-4 flex-1 min-w-0">
-                                <p className="text-sm font-bold text-white truncate">{existingAppointment.serviceName}</p>
-                                <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="text-sm font-bold text-(--agenrap-yellow-200)">{hour}</span>
-                                    <span className="text-gray-600 text-[10px]">·</span>
-                                    <span className="text-xs text-gray-400">{existingAppointment.serviceDuration}</span>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center px-4 shrink-0">
-                                <span className="text-sm font-bold text-(--agenrap-green-300)">{price}</span>
-                            </div>
-                        </div>
-
-                        <p className="text-[11px] text-(--agenrap-brown-500)/60 font-tree leading-relaxed px-0.5">
-                            Você já possui um agendamento ativo para este serviço. Cancele o atual para escolher um novo horário.
-                        </p>
-
-                        <AgenrapButton
-                            className="w-full py-3.5 bg-(--agenrap-purple-500) hover:bg-(--agenrap-purple-500)/85 flex items-center justify-center gap-2"
-                            onClick={() => handleCancelAppointmentAction(
-                                existingAppointment.appointmentId,
-                                existingAppointment.businessId,
-                                null,null,
-                                () =>{      handleMonthChange(new Date(), setFullDays) 
-                                     router.refresh()}
-                            )}
-                        >
-                            {isStartCancelApptTransition
-                                ? <div className="flex relative">
-                                    <Image src={macroLogo} alt="" className="w-7 h-7 opacity-15 animate-pulse" />
-                                    <LoaderCircle className="animate-spin absolute w-7 h-7" color="#F5E6CC" />
-                                </div>
-                                : <div className="flex items-center gap-2">
-                                    <RotateCcw size={15} color="#F5E6CC" />
-                                    <span className="font-tree font-bold text-(--agenrap-yellow-200)/90 text-sm">Cancelar e Reagendar</span>
-                                </div>
-                            }
-                        </AgenrapButton>
-                    </div>
-                </div>
-            </section>
-        )
+  const handleGenerateSlots = async () => {
+    const svsId = searchParams.get("svs")
+    if (!svsId) {
+      if (!cancelled) setSlotError("Serviço não identificado, tente novamente")
+      return
     }
+    if (!cancelled) {
+      setSlotLoading(true)
+      setSlotError(null)
+      setSlots(null)
+    }
+    const res = await GenerateSlots(
+      Number(svsId),
+      dateUtils.toDateString(date),
+      dateUtils.getWeekDay(date),
+      hasValidProfessional ? selectedProfessionalId! : undefined
+    )
+    if (cancelled) return
+    if (res.data == null) {
+      setSlotError(res.message || "Esse dia não está disponível para agendamento")
+    } else {
+      setSlots(res)
+    }
+    setSlotLoading(false)
+  }
+
+  handleGenerateSlots()
+  setSelectedSlot(null)
+
+  return () => {
+    cancelled = true
+  }
+}, [
+  date,
+  selectedProfessionalId,
+  needsProfessional,
+  hasValidProfessional,
+  professionalWeeks,
+  searchParams,
+])
+
+useEffect(() => {
+  if (!hasValidProfessional) {
+    setFullDays([])
+    return
+  }
+  handleMonthChange(
+    new Date(),
+    setFullDays,
+    undefined,
+    selectedProfessionalId!
+  )
+}, [selectedProfessionalId, hasValidProfessional])
+
+  if (!showBooking && !business?.isOwner && existingAppointment) {
+    const apptDate = dateUtils.fromDateString(existingAppointment.appointmentDate)
+    const day = apptDate.getDate()
+    const month = MONTHS[apptDate.getMonth()]
+    const hour = existingAppointment.appointmentHour.slice(0, 5)
+    const price = (existingAppointment.serviceValue / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    })
 
     return (
-        <section className="flex flex-col gap-y-2">
-            <div className="w-full flex items-center justify-between">
-
-            <div className="flex gap-x-1 items-center px-4 py-2">
-
-                <CalendarClockIcon size={35} />
-                <p className="font-tree font-bold text-4xl text-black">Dias Livres</p>
-
-            </div>
-                               <FeedbackButton
-                                  plusClassName="
-                                    static w-8 h-8 rounded-md
-                                    flex items-center justify-center
-                                    bg-(--agenrap-purple-500) text-white
-                                    shadow-none hover:bg-(--agenrap-purple-500)/85
-                                  "
-                                />
-            </div>
-
-            {professionals.length > 0 && (
-                <div className="px-4">
-                    <ProfessionalSelector
-                        professionals={professionals}
-                        selectedId={selectedProfessionalId}
-                        onSelect={setSelectedProfessionalId}
-                    />
-                </div>
-            )}
-
-            <div className="flex md:flex-nowrap rounded-md p-2 flex-wrap gap-x-5 bg-(--agenrap-yellow-200)/50 gap-y-4 justify-center">
-                <AgenrapCalendar
-                    isOwner={business?.isOwner}
-                    fullDays={fullDays}
-                    setFullDays={setFullDays}
-                    business={business!}
-                    date={date}
-                    setDate={setDate}
-                    className="lg:w-[50%] w-full"
-                    professionalId={selectedProfessionalId}
-                    professionalWeeks={professionalWeeks}
-                />
-
-                <div className="lg:w-[50%] w-full flex flex-col rounded-lg">
-                    <div className="p-2 flex w-full rounded-t-md bg-(--agenrap-gray-800)">
-                        <p className="font-tree font-medium text-2xl text-(--agenrap-yellow-200)">Horários disponiveis</p>
-                    </div>
-{professionals.length > 0 && !selectedProfessionalId
-    ? <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
-        <p className="font-tree text-white text-center md:text-2xl text-lg">Escolha um profissional para ver os horários</p>
-    </div>
-    : slotLoading
-    ? <div className="flex relative justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full h-full">
-        <Image src={macroLogo} alt="" className="md:w-[80%] md:h-[80%] w-[50%] h-[50%] opacity-15 animate-pulse" />
-        <LoaderCircle className="animate-spin absolute md:w-[80%] md:h-[80%] w-[50%] h-[50%]" color="#F5E6CC" />
-    </div>
-    : slotError
-        ? <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
-            <p className="font-tree text-white text-center md:text-2xl text-lg">{slotError}</p>
+      <section className="flex flex-col gap-y-3 mt-2">
+        <div className="flex gap-x-2 items-center px-1 py-2 border-b border-(--agenrap-brown-500)/15 mb-1">
+          <CalendarX2 size={28} className="text-(--agenrap-brown-500)" />
+          <p className="font-tree font-bold text-3xl text-black">Reagendamento</p>
         </div>
-        : slots?.data?.slots?.length
-            ? <div className="bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full h-full">
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] items-start gap-1 p-4 px-2 py-1 pb-2 pt-2 w-full">
-                    {slots.data.slots.map((hrs, index) => (
-                        <SlotButton
-                            key={index}
-                            time={hrs.time}
-                            available={hrs.available !== false}
-                            blockReason={hrs.blockReason}
-                            selected={selectedSlot === hrs.time}
-                            onClick={() => setSelectedSlot(hrs.time)}
-                        />
-                    ))}
-                </div>
-            </div>
-            : slots
-                ? <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
-                    <p className="font-tree text-white text-center md:text-2xl text-lg">Ops, Agenda lotada, neste dia</p>
-                </div>
-                : <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
-                    <p className="font-tree text-white text-2xl font-semibold text-center">Selecione um dia para ver os horários</p>
-                </div>
-}
-                </div>
-            </div>
 
-            <AgenrapButton onClick={() => handleSaveAppointment(dateUtils.toDateString(date!), selectedSlot!, selectedProfessionalId)} disabled={!date || !selectedSlot} className={`${!date || !selectedSlot ? "cursor-not-allowed opacity-50 hover:opacity-50" : ""} mt-5 rounded-md py-4`}>
-                {isSaveAppointmentPending
-                    ? <div className="flex relative justify-center items-center">
-                        <Image src={macroLogo} alt="" className="w-10 h-10 opacity-15 animate-pulse" />
-                        <LoaderCircle className="animate-spin absolute w-10 h-10" color="#F5E6CC" />
-                    </div>
-                    : "Salvar agendamento"
-                }
+        <div className="flex flex-col rounded-xl overflow-hidden shadow-lg shadow-black/10 border border-(--agenrap-brown-500)/15">
+          <div className="bg-(--agenrap-brown-500) px-5 py-3 flex items-center gap-2.5">
+            <span className="w-[3px] h-4 rounded-full bg-(--agenrap-yellow-200) shrink-0" />
+            <p className="font-tree font-semibold text-white text-xs tracking-widest uppercase">
+              Agendamento ativo
+            </p>
+          </div>
+
+          <div className="bg-white p-4 flex flex-col gap-3">
+            <div className="flex items-stretch rounded-xl overflow-hidden bg-(--agenrap-gray-800) border border-white/5">
+              <div
+                className="w-1.5 shrink-0"
+                style={{ background: "linear-gradient(to bottom, #FFE082, #C46210)" }}
+              />
+              <div className="flex flex-col items-center justify-center px-5 py-4 border-r border-white/5 min-w-[5rem]">
+                <span className="text-[9px] font-black tracking-[0.35em] text-(--agenrap-yellow-200) uppercase">
+                  {month}
+                </span>
+                <span className="text-[2.5rem] font-black leading-none text-white mt-0.5">
+                  {day}
+                </span>
+                <span className="text-[9px] tracking-widest font-bold mt-1 text-gray-500 uppercase">
+                  {existingAppointment.workingPeriodWeek}
+                </span>
+              </div>
+              <div className="flex flex-col justify-center gap-1.5 px-4 py-4 flex-1 min-w-0">
+                <p className="text-sm font-bold text-white truncate">
+                  {existingAppointment.serviceName}
+                </p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm font-bold text-(--agenrap-yellow-200)">{hour}</span>
+                  <span className="text-gray-600 text-[10px]">·</span>
+                  <span className="text-xs text-gray-400">
+                    {existingAppointment.serviceDuration}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center px-4 shrink-0">
+                <span className="text-sm font-bold text-(--agenrap-green-300)">{price}</span>
+              </div>
+            </div>
+            {existingAppointment.professionalName && (
+  <div className="flex items-center gap-2.5 px-1">
+    <ProfessionalAvatar
+      name={existingAppointment.professionalName}
+      color={existingAppointment.professionalAvatarColor ?? "slate"}
+      size="sm"
+    />
+    <div className="flex flex-col min-w-0">
+      <span className="text-lg font-semibold text-(--agenrap-gray-800)">
+        {existingAppointment.professionalName}
+      </span>
+      {existingAppointment.professionalTelephone && (
+        <span className="text-sm font-tree text-(--agenrap-brown-500)/60">
+             {existingAppointment.professionalTelephone?.trim() ? maskPhone(existingAppointment.professionalTelephone) : 'Sem telefone'}
+        </span>
+      )}
+    </div>
+  </div>
+)}
+
+            <p className="text-[11px] text-(--agenrap-brown-500)/60 font-tree leading-relaxed px-0.5">
+              Você já possui um agendamento ativo para este serviço. Cancele o atual para
+              escolher um novo horário.
+            </p>
+
+            <AgenrapButton
+              className="w-full py-3.5 bg-(--agenrap-purple-500) hover:bg-(--agenrap-purple-500)/85 flex items-center justify-center gap-2"
+              onClick={() =>
+                handleCancelAppointmentAction(
+                  existingAppointment.appointmentId,
+                  existingAppointment.businessId,
+                  null,
+                  null,
+                  () => {
+                    setShowBooking(true)
+                    setDate(undefined)
+                    setSlots(null)
+                    setSelectedSlot(null)
+                    setFullDays([])
+                    router.refresh()
+                  }
+                )
+              }
+            >
+              {isStartCancelApptTransition ? (
+                <div className="flex relative">
+                  <Image
+                    src={macroLogo}
+                    alt=""
+                    className="w-7 h-7 opacity-15 animate-pulse"
+                  />
+                  <LoaderCircle className="animate-spin absolute w-7 h-7" color="#F5E6CC" />
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <RotateCcw size={15} color="#F5E6CC" />
+                  <span className="font-tree font-bold text-(--agenrap-yellow-200)/90 text-sm">
+                    Cancelar e Reagendar
+                  </span>
+                </div>
+              )}
             </AgenrapButton>
-        </section>
+          </div>
+        </div>
+      </section>
     )
+  }
+
+  return (
+    <section className="flex flex-col gap-y-2">
+      <div className="w-full flex items-center justify-between">
+        <div className="flex gap-x-1 items-center px-4 py-2">
+          <CalendarClockIcon size={35} />
+          <p className="font-tree font-bold text-4xl text-black">Dias Livres</p>
+        </div>
+        <FeedbackButton
+          plusClassName="
+            static w-8 h-8 rounded-md
+            flex items-center justify-center
+            bg-(--agenrap-purple-500) text-white
+            shadow-none hover:bg-(--agenrap-purple-500)/85
+          "
+        />
+      </div>
+
+      {professionals.length > 0 && (
+        <div className="px-4">
+          <ProfessionalSelector
+            professionals={professionals}
+            selectedId={selectedProfessionalId}
+          onSelect={(id) => {
+  setSelectedProfessionalId(id)
+  setDate(undefined)
+  setSlots(null)
+  setSelectedSlot(null)
+  setSlotError(null)
+  setFullDays([])
+  setProfessionalWeeks(null)
+}}
+          />
+        </div>
+      )}
+      {selectedProfessionalId!=null&&
+      <div className="flex md:flex-nowrap rounded-md p-2 flex-wrap gap-x-5 bg-(--agenrap-yellow-200)/50 gap-y-4 justify-center">
+        <AgenrapCalendar
+          isOwner={business?.isOwner}
+          fullDays={fullDays}
+          setFullDays={setFullDays}
+          business={business!}
+          date={date}
+          setDate={setDate}
+          className="lg:w-[50%] w-full"
+          professionalId={hasValidProfessional ? selectedProfessionalId : null}
+          professionalWeeks={professionalWeeks}
+        />
+
+        <div className="lg:w-[50%] w-full flex flex-col rounded-lg">
+          <div className="p-2 flex w-full rounded-t-md bg-(--agenrap-gray-800)">
+            <p className="font-tree font-medium text-2xl text-(--agenrap-yellow-200)">
+              Horários disponiveis
+            </p>
+          </div>
+          {needsProfessional && !hasValidProfessional ? (
+            <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
+              <p className="font-tree text-white text-center md:text-2xl text-lg">
+                Escolha um profissional para ver os horários
+              </p>
+            </div>
+          ) :date == null ? (
+   <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
+              <p className="font-tree text-white text-center md:text-2xl text-lg">
+      Selecione um dia para ver os horários
+    </p>
+  </div>): slotLoading ? (
+            <div className="flex relative justify-center items-center bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full h-full">
+              <Image
+                src={macroLogo}
+                alt=""
+                className="md:w-[80%] md:h-[80%] w-[50%] h-[50%] opacity-15 animate-pulse"
+              />
+              <LoaderCircle
+                className="animate-spin absolute md:w-[80%] md:h-[80%] w-[50%] h-[50%]"
+                color="#F5E6CC"
+              />
+            </div>
+          ) : slotError ? (
+            <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
+              <p className="font-tree text-white text-center md:text-2xl text-lg">{slotError}</p>
+            </div>
+          ) : slots?.data?.slots?.length ? (
+            <div className="bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 border-(--agenrap-purple-500)/20 w-full h-full">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] items-start gap-1 p-4 px-2 py-1 pb-2 pt-2 w-full">
+                {slots.data.slots.map((hrs, index) => (
+                  <SlotButton
+                    key={index}
+                    time={hrs.time}
+                    available={hrs.available !== false}
+                    blockReason={hrs.blockReason}
+                    selected={selectedSlot === hrs.time}
+                    onClick={() => setSelectedSlot(hrs.time)}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : slots ? (
+            <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
+              <p className="font-tree text-white text-center md:text-2xl text-lg">
+                Ops, Agenda lotada, neste dia
+              </p>
+            </div>
+          ) : (
+            <div className="p-4 px-2 py-1 pb-2 pt-2 bg-(--agenrap-purple-500)/50 rounded-b-lg border-4 justify-center items-center flex border-(--agenrap-purple-500)/20 w-full h-full">
+              <p className="font-tree text-white text-2xl font-semibold text-center">
+                Selecione um dia para ver os horários
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+}
+
+      <AgenrapButton
+        onClick={() =>
+          handleSaveAppointment(
+            dateUtils.toDateString(date!),
+            selectedSlot!,
+            hasValidProfessional ? selectedProfessionalId : null
+          )
+        }
+        disabled={!date || !selectedSlot || (needsProfessional && !hasValidProfessional)}
+        className={`${
+          !date || !selectedSlot || (needsProfessional && !hasValidProfessional)
+            ? "cursor-not-allowed opacity-50 hover:opacity-50"
+            : ""
+        } mt-5 rounded-md py-4`}
+      >
+        {isSaveAppointmentPending ? (
+          <div className="flex relative justify-center items-center">
+            <Image src={macroLogo} alt="" className="w-10 h-10 opacity-15 animate-pulse" />
+            <LoaderCircle className="animate-spin absolute w-10 h-10" color="#F5E6CC" />
+          </div>
+        ) : (
+          "Salvar agendamento"
+        )}
+      </AgenrapButton>
+    </section>
+  )
 }

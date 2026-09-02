@@ -96,13 +96,32 @@ export function useCustomerActions() {
 
     })
   }
-const handleMonthChange = async (month: Date, setFullDays: Dispatch<SetStateAction<string[]>>, overrideServiceId?: number, professionalId?: number | null) => {
-    const id = overrideServiceId ?? serviceId
-    if (id == null) return
-    startBookedDaysTransition(async () => {
-        const bookedDays = await GetFullDays(Number(id), month.getMonth() + 1, month.getFullYear(), professionalId)
-        setFullDays(bookedDays.data.days)
-    })
+const handleMonthChange = async (
+  month: Date,
+  setFullDays: Dispatch<SetStateAction<string[]>>,
+  overrideServiceId?: number,
+  professionalId?: number | null
+) => {
+  const id = overrideServiceId ?? serviceId
+  if (id == null) return
+  if (professionalId == null || Number(professionalId) <= 0) {
+    setFullDays([])
+    return
+  }
+  startBookedDaysTransition(async () => {
+    try {
+      const bookedDays = await GetFullDays(
+        Number(id),
+        month.getMonth() + 1,
+        month.getFullYear(),
+        professionalId
+      )
+      setFullDays(bookedDays.data?.days ?? [])
+    } catch (e) {
+      setFullDays([])
+      toast.error(e instanceof Error ? e.message : "Erro ao carregar dias")
+    }
+  })
 }
   const handleCancelAppointmentAction = async (appontmentId:number,businessId:number,customerId:number|null=null,customerGuestId:number|null=null,onSucess:()=>void) => {
     if(!businessId){

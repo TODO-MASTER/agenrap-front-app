@@ -106,13 +106,14 @@ function handleCreateANewServiceAction(
   onSuccess?: () => void
 ) {
   const atSign = searchParams.get("rap")
+  const isDashboard = usePathName.startsWith("/dashboard/service")
 
   const occupations = values.business.occupations
   const assignToOwnerIndexes = occupations
     .map((oc, idx) => (oc.assignToMe ? idx : -1))
     .filter((i) => i >= 0)
 
-  if (assignToOwnerIndexes.length === 0) {
+  if (!isDashboard && assignToOwnerIndexes.length === 0) {
     toast.error("Selecione pelo menos um serviço que você atende")
     return
   }
@@ -136,7 +137,7 @@ function handleCreateANewServiceAction(
       if (checkSubscriptionRequired(data, router, atSign)) return
       toast.success(data.message || "serviços cadastrados!")
 
-      if (usePathName.startsWith("/dashboard/service")) {
+      if (isDashboard) {
         onSuccess?.()
       } else {
         if (!data.data!.alreadyInitial) {
@@ -210,79 +211,91 @@ function handleCreateANewServiceAction(
       }
     });
   }
-    function handleEditWorkingPeriodAction(values: EditBusinessWorkingPeriodSchema, setOpenEdit: Dispatch<SetStateAction<boolean>>) {
-    const atSign = searchParams.get("rap")
+function handleEditWorkingPeriodAction(
+  values: EditBusinessWorkingPeriodSchema,
+  setOpenEdit: Dispatch<SetStateAction<boolean>>,
+  wkpId?: number
+) {
+  const atSign = searchParams.get("rap")
+  const id = wkpId ?? tgWkp?.id
 
-    let bodyWkpMount = {
-      week: values.name,
-      initial: values.initial,
-      end: values.end
+  let bodyWkpMount = {
+    week: values.name,
+    initial: values.initial,
+    end: values.end
+  }
 
+  startTransition(async () => {
+    try {
+      if (!atSign || !id) {
+        toast.error("Erro desconhecido ocorreu!")
+        setOpenEdit(false)
+        return
+      }
 
+      const data = await EditWorkingPeriodService(bodyWkpMount, atSign, id)
+      toast.success(data.message || 'Periodo foi editado!')
+
+      const resWorkingPeriod = await GetWorkingPeriodPerRap(atSign)
+      setWeeks(normalizeWeek(resWorkingPeriod))
+      setOpenEdit(false)
+    } catch (e) {
+      if (isRedirectError(e)) throw e
+      toast.error(e instanceof Error ? e.message : 'Erro ao tentar editar periodo')
     }
-    startTransition(async () => {
-      try {
-        if (!atSign||!tgWkp?.id) {
-          toast.error("Erro desconhecido ocorreu!");
-          setOpenEdit(false)
-          return
-        } else {
-          const data = await EditWorkingPeriodService(bodyWkpMount, atSign, tgWkp?.id);
-          toast.success(data.message || 'Periodo foi editado!');
+  })
+}
 
-          const resWorkingPeriod = await GetWorkingPeriodPerRap(atSign)
-          setWeeks(normalizeWeek(resWorkingPeriod))
-          setOpenEdit(false)
+function handleDeleteWkpAction(
+  setOpenDelete: Dispatch<SetStateAction<boolean>>,
+  wkpId?: number
+) {
+  const atSign = searchParams.get("rap")
+  const id = wkpId ?? tgWkp?.id
 
-        }
-      } catch (e) {
-              if (isRedirectError(e)) throw e
-        toast.error(e instanceof Error ? e.message : 'Erro ao tentar criar serviços');
+  startTransition(async () => {
+    try {
+      if (!atSign || !id) {
+        toast.error("Erro desconhecido ocorreu!")
+        setOpenDelete(false)
+        return
       }
-    });
-  }
 
-      function handleDeleteWkpAction(setOpenDelete: Dispatch<SetStateAction<boolean>>) {
-    const atSign = searchParams.get("rap")
-    startTransition(async () => {
-      try {
-        if (!atSign || !tgWkp?.id) {
-          toast.error("Erro desconhecido ocorreu!");
-          setOpenDelete(false)
-          return
-        } else {
-          const data = await DeleteWkpService(atSign,tgWkp?.id);
-          toast.success(data.message || 'Periodo foi deletado!');
+      const data = await DeleteWkpService(atSign, id)
+      toast.success(data.message || "Periodo foi deletado!")
 
-        const resWorkingPeriod = await GetWorkingPeriodPerRap(atSign)
-          setWeeks(normalizeWeek(resWorkingPeriod))
-          setOpenDelete(false)
-
-        }
-      } catch (e) {
-              if (isRedirectError(e)) throw e
-        toast.error(e instanceof Error ? e.message : 'Erro ao tentar criar serviços');
-      }
-    });
-  }
-
+      const resWorkingPeriod = await GetWorkingPeriodPerRap(atSign)
+      setWeeks(normalizeWeek(resWorkingPeriod))
+      setOpenDelete(false)
+    } catch (e) {
+      if (isRedirectError(e)) throw e
+      toast.error(e instanceof Error ? e.message : "Erro ao tentar deletar periodo")
+    }
+  })
+}
 const handleManagerSaveAppointment = async (
     date: string,
     hour: string,
     customerId: number | null,
     guestCustomerId: number | null,
     customerName: string,
+    professionalId: number | null,
     onSuccess: () => void
 ) => {
     const svsById = searchParams.get("svs")
     const atSign = searchParams.get("rap")
     startTransition(async () => {
         try {
+            if (professionalId == null || professionalId <= 0) {
+                toast.error("Selecione o profissional")
+                return
+            }
             const res = await saveAppointment(
                 { name: customerName, date, hour },
                 svsById!,
                 customerId,
-                guestCustomerId
+                guestCustomerId,
+                professionalId
             )
             if (checkSubscriptionRequired(res, router, atSign)) return
             if (res.data == null) {
@@ -292,7 +305,7 @@ const handleManagerSaveAppointment = async (
                 onSuccess()
             }
         } catch (e) {
-            handleActionError(e, router, atSign, 'Erro ao agendar')
+            handleActionError(e, router, atSign, "Erro ao agendar")
         }
     })
 }

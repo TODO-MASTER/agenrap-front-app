@@ -24,10 +24,14 @@ import DeleteCustomerDialog from "@/src/shared/components/agenrap-ui/dialog/dele
 import { useLastUpdated } from "@/src/shared/hooks/use-last-updated"
 import { useDashboardPolling } from "@/src/shared/hooks/use-dashboard-pooling"
 import { LiveIndicator } from "@/src/shared/components/agenrap-ui/live-indication"
+import { useStaffContext } from "@/src/providers/staff-context-provider"
+import { StaffContext } from "@/src/features/business/types/professional.types"
+import { hasPerm } from "@/src/shared/utils/perm-utils"
 
 const getInitials = (name: string) => {
   return name.split(" ").slice(0, 2).map((n: string) => n[0]).join("").toUpperCase()
 }
+
 
 const columns: ColumnDef<BusinessCustomer>[] = [
   {
@@ -77,19 +81,28 @@ const columns: ColumnDef<BusinessCustomer>[] = [
     ),
   },
   {
+    accessorKey: "lastProfessionalName",
+    header: "Últ. profissional",
+    cell: ({ row }) => (
+      <span className="block max-w-[120px] truncate font-tree" title={row.original.lastProfessionalName ?? "—"}>
+        {row.original.lastProfessionalName ?? "—"}
+      </span>
+    ),
+  },
+  {
     accessorKey: "lastAppointment",
     header: "Últ. Agendamento",
     cell: ({ row }) => (
       <span className="font-tree text-sm">{row.original.lastAppointment ?? "—"}</span>
     ),
   },
-  {
-    accessorKey: "totalAppointments",
-    header: "Agendamentos",
-    cell: ({ row }) => (
-      <span className="font-tree text-sm">{row.original.totalAppointments}</span>
-    ),
-  },
+  // {
+  //   accessorKey: "totalAppointments",
+  //   header: "Agendamentos",
+  //   cell: ({ row }) => (
+  //     <span className="font-tree text-sm">{row.original.totalAppointments}</span>
+  //   ),
+  // },
   {
     accessorKey: "totalSpent",
     header: "Total gasto",
@@ -101,7 +114,12 @@ const columns: ColumnDef<BusinessCustomer>[] = [
     id: "actions",
     header: "Ações",
     cell: ({ row, table }) => {
-      const { openScheduling, handleOpen, openEditCustomer,openDeleteCustomer, openMerge, openRevert, business } =
+      const { openScheduling, handleOpen, openEditCustomer, openDeleteCustomer, openMerge, openRevert, business, canSchedule,
+        canEditGuest,
+        canDeleteGuest,
+        canMerge,
+      canCancel
+      } =
         table.options.meta as {
           openScheduling: (row: BusinessCustomer) => void
           openEditCustomer: (row: BusinessCustomer) => void
@@ -110,6 +128,11 @@ const columns: ColumnDef<BusinessCustomer>[] = [
           openMerge: (row: BusinessCustomer) => void
           openRevert: (row: BusinessCustomer) => void
           business: BusinessCtx
+          canSchedule: boolean
+          canEditGuest: boolean
+          canDeleteGuest: boolean
+          canMerge: boolean
+          canCancel:boolean
         }
 
       return (
@@ -126,19 +149,21 @@ const columns: ColumnDef<BusinessCustomer>[] = [
                   <p className="text-black/50 text-xs font-tree text-center">{row.original.telephone?.trim() ? maskPhone(row.original.telephone) : 'Sem telefone'}</p>
                 </div>
                 <span className="w-full h-0.5 rounded-full bg-(--agenrap-gray-800)/15" />
+                {canSchedule&&
                 <div className="flex items-center gap-x-2">
                   <AgenrapButton className="w-fit h-fit rounded-md bg-(--agenrap-gray-800) px-0 py-0 p-1" onClick={() => openScheduling(row.original)}>
                     <CalendarPlus color="#BB77EE" />
                   </AgenrapButton>
                   <p className="text-black font-tree">Agendar</p>
                 </div>
+    }
                 <div className="flex items-center gap-x-2">
                   <AgenrapButton className="w-fit h-fit rounded-md bg-(--agenrap-gray-800) px-0 py-0 p-1" onClick={() => handleOpen(business!, row.original)}>
                     <ScrollText color="#FFE082" />
                   </AgenrapButton>
                   <p className="text-black font-tree">Ver agendamentos</p>
                 </div>
-                {row.original.possibleDuplicate && (
+                {row.original.possibleDuplicate && canMerge && (
                   <div className="flex items-center gap-x-2">
                     <AgenrapButton className="w-fit h-fit rounded-md bg-(--agenrap-gray-800) px-0 py-0 p-1" onClick={() => openMerge(row.original)}>
                       <GitMerge color="#BB77EE" />
@@ -146,7 +171,7 @@ const columns: ColumnDef<BusinessCustomer>[] = [
                     <p className="text-black font-tree">Mesclar</p>
                   </div>
                 )}
-                {row.original.isRegistered && (
+                {row.original.isRegistered && canMerge&& (
                   <div className="flex items-center gap-x-2">
                     <AgenrapButton className="w-fit h-fit rounded-md bg-(--agenrap-gray-800) px-0 py-0 p-1" onClick={() => openRevert(row.original)}>
                       <RotateCcw color="#f87171" />
@@ -154,7 +179,7 @@ const columns: ColumnDef<BusinessCustomer>[] = [
                     <p className="text-black font-tree">Mesclagens</p>
                   </div>
                 )}
-                {!row.original.isRegistered && (
+               {!row.original.isRegistered && canEditGuest && (
                   <div className="flex items-center gap-x-2">
                     <AgenrapButton className="w-fit h-fit rounded-md bg-(--agenrap-gray-800) px-0 py-0 p-1" onClick={() => openEditCustomer(row.original)}>
                       <PencilLine color="#3B82F6" />
@@ -162,10 +187,10 @@ const columns: ColumnDef<BusinessCustomer>[] = [
                     <p className="text-black font-tree">Editar</p>
                   </div>
                 )}
-                {!row.original.isRegistered && (
+                {!row.original.isRegistered && canDeleteGuest &&(
                   <div className="flex items-center gap-x-2">
                     <AgenrapButton className="w-fit h-fit rounded-md bg-(--agenrap-gray-800) px-0 py-0 p-1" onClick={() => openDeleteCustomer(row.original)}>
-                          <Trash color="#FF0000"  />
+                      <Trash color="#FF0000" />
                     </AgenrapButton>
                     <p className="text-black font-tree">Deletar</p>
                   </div>
@@ -189,8 +214,20 @@ type TableCustomerPageable = {
 }
 
 export default function TableCustomerSection({ customers, page, totalPages, hasNextPage, hasPrevPage, filter }: TableCustomerPageable) {
-          const { label, markUpdated } = useLastUpdated()
-      useDashboardPolling(markUpdated)
+  const { staffContext } = useStaffContext()
+
+  const lockedProfessionalId =
+    !staffContext.isManager && staffContext.professionalId != null
+      ? staffContext.professionalId
+      : null
+
+  const canSchedule = hasPerm(staffContext, "house.appointment.create")
+  const canCancel = hasPerm(staffContext,"house.appointment.cancel")
+  const canEditGuest = hasPerm(staffContext, "house.customer.edit")
+  const canDeleteGuest = hasPerm(staffContext, "house.customer.delete")
+  const canMerge = hasPerm(staffContext, "house.customer.merge")
+  const { label, markUpdated } = useLastUpdated()
+  useDashboardPolling(markUpdated)
   const [schedulingOpen, setSchedulingOpen] = useState(false)
   const [schedulingCustomer, setSchedulingCustomer] = useState<BusinessCustomer | null>(null)
   const [mergeOpen, setMergeOpen] = useState(false)
@@ -209,7 +246,7 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
   const openScheduling = (customer: BusinessCustomer) => {
     setSchedulingCustomer(customer)
     setSchedulingOpen(true)
-    
+
   }
 
   const openMerge = (customer: BusinessCustomer) => {
@@ -248,7 +285,12 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
 
   return (
     <>
-      <ScheduleCustomerDialog open={schedulingOpen} setOpen={setSchedulingOpen} customer={schedulingCustomer} />
+      <ScheduleCustomerDialog
+        open={schedulingOpen}
+        setOpen={setSchedulingOpen}
+        customer={schedulingCustomer}
+        lockedProfessionalId={lockedProfessionalId}
+      />
       <ShowAppointmentsDialog appointments={appointments!} open={openAppointments} onClose={() => setOpenAppointments(false)} />
       <MergeCustomerDialog open={mergeOpen} setOpen={setMergeOpen} customer={mergeCustomer} />
       <RevertMergeDialog open={revertOpen} setOpen={setRevertOpen} customer={revertCustomer} />
@@ -263,7 +305,15 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
             columns={columns}
             data={customers}
             notHaveFallBack="Ainda não há clientes"
-            meta={{ openScheduling, handleOpen, openMerge, openRevert, openEditCustomer,openDeleteCustomer, business }}
+            meta={{
+              openScheduling, handleOpen, openMerge, openRevert, openEditCustomer, openDeleteCustomer, business,
+
+              canSchedule,
+              canEditGuest,
+              canDeleteGuest,
+              canMerge,
+              canCancel
+            }}
           />
         </div>
 
@@ -301,7 +351,7 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
 
                   {/* Lado Direito: Tags Semânticas de Ação */}
                   <div className="flex items-center gap-x-1.5 shrink-0 pt-0.5">
-                    {customer.possibleDuplicate && (
+                    {customer.possibleDuplicate && canMerge && (
                       <span className="flex items-center gap-x-1 px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 text-[10px] font-tree font-bold animate-pulse">
                         <GitMerge size={10} />
                         Mesclar
@@ -378,10 +428,10 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
                 {selectedCustomerForDrawer.telephone?.trim() ? maskPhone(selectedCustomerForDrawer.telephone) : 'Sem telefone'}
               </p>
               {selectedCustomerForDrawer.email?.trim() && (
-  <p className="text-black/30 text-[10px] font-tree text-center truncate max-w-[220px]">
-    {selectedCustomerForDrawer.email}
-  </p>
-)}
+                <p className="text-black/30 text-[10px] font-tree text-center truncate max-w-[220px]">
+                  {selectedCustomerForDrawer.email}
+                </p>
+              )}
               {selectedCustomerForDrawer.possibleDuplicate && (
                 <span className="flex items-center gap-x-1 mt-1.5 px-2 py-0.5 rounded-full bg-[#BB77EE20] text-[#BB77EE] text-xs font-tree font-semibold">
                   <GitMerge size={11} />
@@ -391,8 +441,9 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
             </DrawerHeader>
 
             <span className="w-full h-0.5 rounded-full bg-(--agenrap-gray-800)/15 my-4 block" />
-
+              
             <div className={`grid gap-2 ${selectedCustomerForDrawer.isRegistered ? 'grid-cols-2' : 'grid-cols-2'}`}>
+              {canSchedule&&
               <button
                 onClick={() => { setDrawerOpen(false); openScheduling(selectedCustomerForDrawer) }}
                 className="flex flex-col items-center gap-y-1.5 py-3 rounded-xl bg-(--agenrap-gray-800)/5 active:bg-(--agenrap-gray-800)/10 transition-colors"
@@ -402,6 +453,7 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
                 </span>
                 <p className="text-black font-tree text-xs text-center">Agendar</p>
               </button>
+}
 
               <button
                 onClick={() => { setDrawerOpen(false); handleOpen(business!, selectedCustomerForDrawer) }}
@@ -413,7 +465,7 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
                 <p className="text-black font-tree text-xs text-center leading-tight">Ver agend.</p>
               </button>
 
-              {selectedCustomerForDrawer.possibleDuplicate && (
+              {selectedCustomerForDrawer.possibleDuplicate && canMerge && (
                 <button
                   onClick={() => { setDrawerOpen(false); openMerge(selectedCustomerForDrawer) }}
                   className="flex flex-col items-center gap-y-1.5 py-3 rounded-xl bg-[#BB77EE10] active:bg-[#BB77EE20] transition-colors"
@@ -425,7 +477,7 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
                 </button>
               )}
 
-              {!selectedCustomerForDrawer.isRegistered && (
+              {!selectedCustomerForDrawer.isRegistered && canEditGuest && (
                 <AgenrapButton
                   onClick={() => openEditCustomer(selectedCustomerForDrawer)}
                   // Sobrescrevendo os estilos padrões do componente para virar o card completo
@@ -438,7 +490,7 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
                   <p className="text-black font-tree text-xs text-center font-normal">Editar</p>
                 </AgenrapButton>
               )}
-              {!selectedCustomerForDrawer.isRegistered && (
+              {!selectedCustomerForDrawer.isRegistered && canDeleteGuest && (
                 <AgenrapButton
                   onClick={() => openDeleteCustomer(selectedCustomerForDrawer)}
                   // Sobrescrevendo os estilos padrões do componente para virar o card completo
@@ -452,7 +504,7 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
                 </AgenrapButton>
               )}
 
-              {selectedCustomerForDrawer.isRegistered && (
+              {selectedCustomerForDrawer.isRegistered && canMerge&& (
                 <button
                   onClick={() => { setDrawerOpen(false); openRevert(selectedCustomerForDrawer) }}
                   className="flex flex-col items-center gap-y-1.5 py-3 rounded-xl bg-red-500/5 active:bg-red-500/10 transition-colors"

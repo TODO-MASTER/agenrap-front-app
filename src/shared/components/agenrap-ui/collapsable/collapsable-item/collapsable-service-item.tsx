@@ -11,6 +11,7 @@ type Props = {
   remove: UseFieldArrayRemove
   indx: number
   register: UseFormRegister<InitialBusinessServiceSchema>
+  
 }
 
 export default function CollapsableServiceItem({

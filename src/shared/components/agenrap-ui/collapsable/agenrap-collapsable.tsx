@@ -7,7 +7,7 @@ import { AgenrapCollapsableProps } from "@/src/shared/components/agenrap-ui/coll
 export default function AgenrapCollapsable({ children, collapseName, spawnNotifier }: AgenrapCollapsableProps) {
     const [collapseOpen,setCollapseOpen] = useState<boolean>(false)
     return (
-        <Collapsible className=" ">
+        <Collapsible className=" " defaultOpen>
             <CollapsibleTrigger className="flex w-full justify-between items-center bg-(--agenrap-brown-500) rounded-md px-1 py-2 mb-4">
                 <p className="text-white font-tree font-bold text-xl">{collapseName}</p>
                 <div className="flex gap-1 items-center">

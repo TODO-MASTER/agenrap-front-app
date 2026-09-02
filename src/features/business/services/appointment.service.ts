@@ -18,6 +18,8 @@ export type AppointmentFull = {
   serviceValue: number
   appointmentDate: string
   appointmentHour: string
+  professionalId?: number | null
+  professionalName?: string | null
 }
 
 export type CompleteAppointmentsReq={

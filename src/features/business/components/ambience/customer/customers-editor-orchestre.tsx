@@ -1,8 +1,13 @@
 'use client'
 import CreateCustomerForm from "@/src/features/business/components/ambience/customer/create-customer-form"
 import TableCustomerSection from "@/src/features/business/components/ambience/customer/table-customer-section"
+import { BusinessCustomer } from "@/src/features/business/types"
+import { useStaffContext } from "@/src/providers/staff-context-provider"
+
 import SubHeader from "@/src/shared/components/agenrap-ui/header/sub-header"
 import { useSectionParams } from "@/src/shared/hooks/use-section-params"
+import { PageableResponse } from "@/src/shared/types"
+import { hasPerm } from "@/src/shared/utils/perm-utils"
 import { useState } from "react"
 
 
@@ -11,7 +16,7 @@ type ViewMode = "new" | "list"
 type Props = {
     tgrap: string
     initialMode: ViewMode
-    customers: any        // seus tipos
+    customers: BusinessCustomer[]        // seus tipos
     page: number
     hasNextPage: boolean
     hasPrevPage: boolean
@@ -19,11 +24,13 @@ type Props = {
     totalCount: number
 }
 
+
 export default function CustomersEditorOrchestre({ tgrap, initialMode, customers, page, hasNextPage, hasPrevPage, totalPages, totalCount }: Props) {
     const { setParam } = useSectionParams("/dashboard/customers")
+    const { staffContext } = useStaffContext()
     const [viewMode, setViewModeState] = useState<ViewMode>(initialMode)
-
-    const modes = [
+    const modes =!hasPerm(staffContext,"house.customer.create")?
+    [      { key: "list", label: `Ver Todos` },]: [
         { key: "new", label: "Adicionar" },
         { key: "list", label: `Ver Todos` },
     ]

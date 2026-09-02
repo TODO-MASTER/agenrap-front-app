@@ -27,6 +27,10 @@ export type AppointmentCancelRes = ApiResponse<{
   workingPeriodWeek: string
   appointmentDate: string
   appointmentHour: string
+  professionalId?: number | null
+  professionalName?: string | null
+  professionalTelephone?: string | null
+  professionalAvatarColor?: string | null
 }[]>
 
 export type BookedDaysRes = ApiResponse<{

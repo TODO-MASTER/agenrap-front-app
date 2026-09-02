@@ -1,6 +1,5 @@
 'use client'
 import { Form, FormControl, FormField, FormItem } from "@/src/shared/components/ui/form";
-import { initialBusinessServiceSchema, InitialBusinessServiceSchema } from "@/src/features/business/schemas/business-service.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -21,14 +20,17 @@ import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/butt
 import { HeaderSegmentInjector } from "@/src/shared/components/agenrap-ui/header/header-segment-injector";
 import { useSectionParams } from "@/src/shared/hooks/use-section-params";
 import DurationPicker from "@/src/features/business/components/initial-config-business/create-occupation-form/duration-picker";
+import { dashboardBusinessServiceSchema, DashboardBusinessServiceSchema } from "@/src/features/business/schemas/dashboard.schema";
+
+
 
 export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, onSuccess?: () => void }) {
     const { handleCreateANewServiceAction, isPending: serviceIsPending } = useBusinessActions()
     const { setParam } = useSectionParams("/dashboard/service")
     const [timeService, setTimeService] = useState((3600 / 60) * 30)
 
-    const form = useForm<InitialBusinessServiceSchema>({
-        resolver: zodResolver(initialBusinessServiceSchema),
+    const form = useForm<DashboardBusinessServiceSchema>({
+        resolver: zodResolver(dashboardBusinessServiceSchema),
         defaultValues: {
             business: {
                 staging: { name: "", price: "", duration: "" },
@@ -93,7 +95,7 @@ export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, o
                                 const valid = await form.trigger(["business.staging.name", "business.staging.price"])
                                 if (!valid) return
                                 const staging = form.getValues("business.staging")
-                                append({ name: staging!.name, duration: timeService.toString(), price: staging!.price })
+                                append({ name: staging!.name, duration: timeService.toString(), price: staging!.price,assignToMe:false })
                                 form.resetField("business.staging")
                                 setTimeService((3600 / 60) * 30)
                             }}
@@ -117,7 +119,7 @@ export default function AddServicesForm({ tgrap, onSuccess }: { tgrap: string, o
                             <ScrollBar className="[&>[data-slot=scroll-area-thumb]]:rounded-full [&>[data-slot=scroll-area-thumb]]:bg-(--agenrap-yellow-200)" />
                             <div className="flex flex-col justify-center  gap-y-2 p-4 relative">
                                 {fields.length > 0 ?fields.map((oc, indx) => (
-                                    <CollapsableServiceItem key={oc.id} name={oc.name} duration={oc.duration} price={oc.price} remove={remove} indx={indx} />
+                                    <CollapsableServiceItem register={form.register} key={oc.id} name={oc.name} duration={oc.duration} price={oc.price} remove={remove} indx={indx} />
                                 )):<p className="text-white/65 font-semibold self-center text-xl text-center font-tree">Sem serviços adicionados</p>}
                             </div>
                         </ScrollArea>

@@ -1,13 +1,13 @@
 'use client'
 
 import { useFieldArray, useForm } from "react-hook-form";
-import { initialBusinessWeeksSchema, InitialBusinessWeeksSchema } from "../../../schemas/business-week.schema";
+import { makeInitialBusinessWeeksSchema, InitialBusinessWeeksSchema } from "../../../schemas/business-week.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { FieldGroup } from "@/src/shared/components/ui/field";
 import { Form, FormControl, FormField, FormItem } from "@/src/shared/components/ui/form";
 import AgenrapInput from "@/src/shared/components/agenrap-ui/input/agenrap-input";
-import { DeleteIcon, LoaderCircle, LucideGalleryVerticalEnd, Watch } from "lucide-react";
+import { LoaderCircle, Watch } from "lucide-react";
 import AgenrapButton from "@/src/shared/components/agenrap-ui/button/agenrap-button";
 import Image from "next/image";
 import { macroLogo } from "@/src/assets/images";
@@ -16,28 +16,31 @@ import GroupButtonWeeks from "../../initial-config-business/config-weeks-form/gr
 import AgenrapLinkButton from "@/src/shared/components/agenrap-ui/button/agenrap-link-button/agenrap-link-button";
 import CardDayWeek from "@/src/shared/components/agenrap-ui/card/card-day-week/card-day-week";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { NormalizedWeek } from "@/src/shared/utils/normalize-week.utils";
-import { AgenrapSegmentedControl } from "@/src/shared/components/agenrap-ui/button/agenrap-segment-button";
+import { useStaffContext } from "@/src/providers/staff-context-provider";
 
 interface ICtnCreateWkpProps {
     tgrap: string,
     weeks: NormalizedWeek[],
-    onSuccess:()=>void
+    onSuccess: () => void
 }
 
-export default function AddWorkingPeriodForm({ tgrap, weeks,onSuccess }: ICtnCreateWkpProps) {
+export default function AddWorkingPeriodForm({ tgrap, weeks, onSuccess }: ICtnCreateWkpProps) {
     const { handleCreateWkPeriodAction, isPending } = useBusinessActions()
-    const linkButtonResponsive = "md:w-fit  md:rounded-none md:h-21.25 md:px-3  md:gap-x-1 md:items-center md:self-auto  md:justify-center " +
-        " items-center   justify-start  w-full  flex  w-fit self-end px-4 py-2 h-fit gap-x-2"
+    const { staffContext } = useStaffContext()
+    const isManager = staffContext.isManager
+
+    const schema = useMemo(() => makeInitialBusinessWeeksSchema(isManager), [isManager])
+
     const form = useForm<InitialBusinessWeeksSchema>({
-        resolver: zodResolver(initialBusinessWeeksSchema),
+        resolver: zodResolver(schema),
         defaultValues: {
-              business: {
-        weeks: weeks
-            .filter(w => !w.active)
-            .map(({ week, initial, end }) => ({ name: week, initial, end })),
-    },
+            business: {
+                weeks: weeks
+                    .filter(w => !w.active)
+                    .map(({ week, initial, end }) => ({ name: week, initial, end })),
+            },
         },
         mode: "onChange"
     });
@@ -47,18 +50,16 @@ export default function AddWorkingPeriodForm({ tgrap, weeks,onSuccess }: ICtnCre
         name: "business.weeks"
     })
 
-
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit((values) => handleCreateWkPeriodAction(values,onSuccess))}
+                onSubmit={form.handleSubmit((values) => handleCreateWkPeriodAction(values, onSuccess))}
                 className="flex flex-col gap-y-4 md:gap-y-10 items-center"
             >
                 <section className="flex flex-col lg:w-[55%] md:w-[75%]">
                     <div className="bg-(--agenrap-brown-500)/15 flex justify-center w-full flex-nowrap md:py-2 py-1 my-2 items-center ">
-
                         <GroupButtonWeeks
-                        weeks={null}
+                            weeks={null}
                             normalizedWeeks={weeks}
                             fields={fields}
                             append={append}
@@ -66,13 +67,19 @@ export default function AddWorkingPeriodForm({ tgrap, weeks,onSuccess }: ICtnCre
                         />
                     </div>
 
+                    {!isManager && fields.length > 0 && (
+                        <div className="bg-(--agenrap-purple-500)/10 border border-(--agenrap-purple-500)/15 px-3 py-2 rounded-lg my-2">
+                            <p className="font-tree text-xs text-white/70">
+                                Você está adicionando o dia à jornada da casa. O horário é definido pelo dono.
+                            </p>
+                        </div>
+                    )}
+
                     <div className="flex flex-col  w-full   ">
                         <div className=" flex ">
-
                             <p className="text-2xl font-tree my-2 text-start ">Dias não adicionados</p>
-
                         </div>
-                        {weeks.filter(wk=>wk.active).length == 7 ? <p className="p-1 font-tree bg-(--agenrap-brown-500)/15 rounded-md px-2">todos os dias da semana já foram adicionados</p> :
+                        {weeks.filter(wk => wk.active).length == 7 ? <p className="p-1 font-tree bg-(--agenrap-brown-500)/15 rounded-md px-2">todos os dias da semana já foram adicionados</p> :
                             <FieldGroup className="flex    gap-2">
                                 <div className="flex flex-wrap  gap-2">
                                     {fields.map((wk, index) => (
@@ -83,7 +90,6 @@ export default function AddWorkingPeriodForm({ tgrap, weeks,onSuccess }: ICtnCre
                                                         <FormField
                                                             control={form.control}
                                                             name={`business.weeks.${index}.name`}
-
                                                             render={({ field }) => (
                                                                 <FormItem className="">
                                                                     <FormControl>
@@ -95,26 +101,24 @@ export default function AddWorkingPeriodForm({ tgrap, weeks,onSuccess }: ICtnCre
                                                                             onChange={field.onChange}
                                                                             label="Semana"
                                                                             variant="brownrap"
-
                                                                             allErrors={"calyBlackInputError"}
                                                                             autoComplete="off"
-
                                                                             placeholder="nome do seu negócio ex:salao-agenrap"
                                                                             removeFormMessage={true}
-
-
-
                                                                         />
                                                                     </FormControl>
                                                                 </FormItem>
                                                             )}
                                                         />
                                                     </div>
-
                                                 </div>
-
                                             </div>
-                                            <CardDayWeek form={form} remove={remove} index={index} />
+                                            <CardDayWeek
+                                                form={form}
+                                                remove={remove}
+                                                index={index}
+                                                showTimeFields={isManager}
+                                            />
                                             <div className="">
                                                 {(form.formState.errors.business?.weeks?.[index]?.name?.message ||
                                                     form.formState.errors.business?.weeks?.[index]?.initial?.message ||
@@ -125,15 +129,13 @@ export default function AddWorkingPeriodForm({ tgrap, weeks,onSuccess }: ICtnCre
                                                         </span>
                                                     )}
                                             </div>
-
                                         </div>
-
                                     ))}
                                 </div>
                             </FieldGroup>
                         }
                         <div className="flex flex-col items-start w-full mt-4">
-                            {weeks.filter(wk=>wk.active).length == 7 ?
+                            {weeks.filter(wk => wk.active).length == 7 ?
                                 <AgenrapLinkButton variant={"purplerap"} hrefLink={`/dashboard/journey/list?rap=${tgrap}`} className="w-full flex justify-center items-center" plusClassName="flex justify-center w-full items-center">
                                     <Watch color="#fff" size={25} />
                                     <p className="font-tree md:text-2xl text-lg ">Ver Adicionados</p></AgenrapLinkButton>
@@ -142,15 +144,11 @@ export default function AddWorkingPeriodForm({ tgrap, weeks,onSuccess }: ICtnCre
                                     {isPending ? <div className="flex relative" >
                                         <Image src={macroLogo} alt="" className="w-10 h-10 opacity-15 animate-pulse" />
                                         <LoaderCircle className="animate-spin absolute w-10 h-10" color="#F5E6CC" />
-
                                     </div> : <p className="flex items-center gap-1">Salvar expediente</p>}
                                 </AgenrapButton>}
                         </div>
                     </div>
-
                 </section>
-
-
             </form>
         </Form >
     )

@@ -8,6 +8,8 @@ import { JoinScheduleByRapName } from "@/src/features/customers/services/custome
 import { clearPendingRap, getPendingRap, setPendingRap } from "@/src/shared/utils/cookies.utils";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { GetBusinessPerRap } from "@/src/shared/services/business.service";
+import { formatPublicHandle } from "@/src/shared/utils/formatters.utils";
+import { GetMyStaffBusinesses } from "@/src/features/business/services/professional.service";
 
 export function useAuth() {
     const [isAuthLoading, setIsAuthLoading] = useState(false);
@@ -54,27 +56,37 @@ export function useAuth() {
 
         }
     };
-    const onLoginSubmit = async (values: any) => {
-        setIsAuthLoading(true);
-        try {
-            const response = await loginUser(values);
-            if (!response.data.emailHasVerified) {
-                router.push('/verify-pending-email')
-            } else {
-                const rap = searchParams.get('rap')
-                if (rap) return rap
-                if (response.data.role == "Customer") {
-                    router.push('/appointments')
-                } else {
-                    router.push('/business/booking-link')
-                }
-            }
-        } catch (error) {
-    toast.error(error instanceof Error ? error.message : 'Erro ao tentar logar');
-}finally {
-            setIsAuthLoading(false);
+const onLoginSubmit = async (values: any) => {
+    setIsAuthLoading(true);
+    try {
+        const response = await loginUser(values);
+        if (!response.data.emailHasVerified) {
+            router.push('/verify-pending-email')
+            return
         }
-    };
+
+        const rap = searchParams.get('rap')
+        if (rap) return rap
+
+        if (response.data.role === "Customer") {
+            const staffBusinesses = await GetMyStaffBusinesses()
+            const list = staffBusinesses.data ?? []
+            if (list.length === 1) {
+                router.push(`/dashboard/me?rap=${formatPublicHandle(list[0].atSign)}`)
+            } else if (list.length > 1) {
+                router.push('/select-business')
+            } else {
+                router.push('/appointments')
+            }
+        } else {
+            router.push('/business/booking-link')
+        }
+    } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Erro ao tentar logar');
+    } finally {
+        setIsAuthLoading(false);
+    }
+};
 
 
     const onVerifyEmailSubmit = async (values: any) => {
