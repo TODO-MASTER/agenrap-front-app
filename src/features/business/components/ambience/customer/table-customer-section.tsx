@@ -85,7 +85,7 @@ const columns: ColumnDef<BusinessCustomer>[] = [
     header: "Últ. profissional",
     cell: ({ row }) => (
       <span className="block max-w-[120px] truncate font-tree" title={row.original.lastProfessionalName ?? "—"}>
-        {row.original.lastProfessionalName ?? "—"}
+        {row.original.lastProfessionalName ?? "nenhum atendimento"}
       </span>
     ),
   },
@@ -93,7 +93,7 @@ const columns: ColumnDef<BusinessCustomer>[] = [
     accessorKey: "lastAppointment",
     header: "Últ. Agendamento",
     cell: ({ row }) => (
-      <span className="font-tree text-sm">{row.original.lastAppointment ?? "—"}</span>
+      <span className="font-tree text-sm">{row.original.lastAppointment ?? "nenhum marcado"}</span>
     ),
   },
   // {
@@ -386,7 +386,7 @@ export default function TableCustomerSection({ customers, page, totalPages, hasN
                     <span className="text-(--agenrap-brown-500)/50 dark:text-white/40 text-[10px] uppercase font-semibold tracking-wider">Últ. Agendamento</span>
                     <span className="text-(--agenrap-gray-800) dark:text-white/90 font-medium mt-1 flex items-center gap-x-1">
                       <CalendarDays size={12} className="text-(--agenrap-brown-500)/40" />
-                      {customer.lastAppointment ?? "—"}
+                      {customer.lastAppointment ?? "nenhum marcado"}
                     </span>
                   </div>
 

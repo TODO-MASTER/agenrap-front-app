@@ -136,7 +136,7 @@ export default function LandingPage() {
               Sou cliente, quero agendar
             </Link>
             <Link
-              href="/login?team=1"
+                 href="/register?cmd=Y"
               className="flex items-center justify-center gap-2 rounded-md border border-(--agenrap-yellow-200)/25 bg-white/5 px-8 py-3.5 font-tree font-semibold text-(--agenrap-yellow-200) transition-colors hover:bg-white/10"
             >
               <Users size={18} />
@@ -337,7 +337,7 @@ export default function LandingPage() {
             </h2>
             <p className="font-tree text-sm text-(--agenrap-gray-800)/60">
               Tudo o que o Agenrap oferece hoje, em uma assinatura mensal. Sem
-              fidelidade. Cancele quando quiser.
+              fidelidade.
             </p>
           </div>
 
@@ -348,13 +348,13 @@ export default function LandingPage() {
               </p>
               <div className="flex items-end justify-center gap-x-1">
                 <span className="font-tree text-2xl font-semibold text-white/70">R$</span>
-                <span className="font-cinzel text-6xl font-bold text-white">59</span>
+                <span className="font-cinzel text-6xl font-bold text-white">20</span>
                 <span className="mb-1.5 font-tree text-2xl font-semibold text-white/70">
-                  ,90
+                  ,00
                 </span>
               </div>
               <p className="font-tree text-sm text-white/50">
-                por mês · renovação automática
+                por mês · renovação manual
               </p>
             </div>
 
