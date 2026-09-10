@@ -348,7 +348,7 @@ export default function LandingPage() {
               </p>
               <div className="flex items-end justify-center gap-x-1">
                 <span className="font-tree text-2xl font-semibold text-white/70">R$</span>
-                <span className="font-cinzel text-6xl font-bold text-white">20</span>
+                <span className="font-cinzel text-6xl font-bold text-white">35</span>
                 <span className="mb-1.5 font-tree text-2xl font-semibold text-white/70">
                   ,00
                 </span>
