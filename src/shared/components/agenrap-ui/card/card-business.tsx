@@ -59,9 +59,7 @@ export default function CardBusiness({
                     <span className="h-1 w-1 rounded-full bg-(--agenrap-gray-800)/20" />
                     <span className="h-1 w-1 rounded-full bg-(--agenrap-gray-800)/20" />
                 </div>
-                <p className="font-tree text-(--agenrap-gray-800) font-bold text-2xl md:text-3xl">
-                    {isOpenToday ? `${init} às ${end}` : "Fechado hoje"}
-                </p>
+             
                 <p className="font-tree text-(--agenrap-gray-800)/70 text-sm mt-1">
                     {isOpenToday
                         ? `${qtdService} ${qtdService === 1 ? "serviço disponível" : "serviços disponíveis"}`
